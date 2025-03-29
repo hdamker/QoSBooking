@@ -9,25 +9,9 @@
 
 # QoSBooking
 
-* API Repository wiki page: https://lf-camaraproject.atlassian.net/wiki/x/AgDe !! Update with concrete link when available and delete the task
-
-
-<!-- Alternative for Sandbox API Repositories within the context of an existing Sub Project
 Sandbox API Repository to describe, develop, document, and test the QoSBooking Service API(s) within the Sub Project [QualityOnDemand](https://lf-camaraproject.atlassian.net/wiki/x/XCPe)
 
-* API Repository wiki page: https://lf-camaraproject.atlassian.net/wiki/x/AgDe !! Will be added later and updated
-* Sub Project home page: [QualityOnDemand](https://lf-camaraproject.atlassian.net/wiki/x/XCPe) 
-!! Update with concrete link
--->
-
-<!-- Alternative for Incubated API Repositories (always part of Sub Project, potentially created as part of the Incubation): 
-
-Incubated API Repository to evolve and maintain the definitions and documentation of QoSBooking Service API(s) within the Sub Project [$Sub Project Name§](https://wiki.camaraproject.org/display/CAM/Sub+Projects)
-
-* API Repository wiki page: https://lf-camaraproject.atlassian.net/wiki/x/AgDe !! Update with concrete link
-* Sub Project home page: https://lf-camaraproject.atlassian.net/wiki/x/AgDe 
-!! Update with concrete link
--->
+* API Repository wiki page: https://lf-camaraproject.atlassian.net/wiki/x/SADHB
 
 ## Scope
 
