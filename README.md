@@ -9,7 +9,7 @@
 
 # QoSBooking
 
-Sandbox API Repository to describe, develop, document, and test the QoSBooking Service API(s) within the Sub Project [QualityOnDemand](https://lf-camaraproject.atlassian.net/wiki/x/XCPe)
+Sandbox API Repository to describe, develop, document, and test the QoSBooking Service API(s) within the Sub Project [QualityOnDemand](https://lf-camaraproject.atlassian.net/wiki/x/XCPe) 
 
 * API Repository [wiki page](https://lf-camaraproject.atlassian.net/wiki/x/SADHB)
 
