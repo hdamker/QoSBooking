@@ -769,7 +769,7 @@ components:
               $ref: "#/components/schemas/PointList"
 
     AreaName:
-      description: Name of a predefined area
+      description: The value of "AreaName" might be predefined and only regional or even an operator-specific in this API version. As a prerequisite, the API Provider may offer API Consumer the "AreaName" values, which API consumer can request, in a preparation phase. And then API Consumers can select from the "AreaNames" as Service Areas.
       allOf:
         - $ref: "#/components/schemas/Area"
         - type: object
