@@ -1288,7 +1288,6 @@ components:
                       - 422
                   code:
                     enum:
-                      - IDENTIFIER_MISMATCH
                       - SERVICE_NOT_APPLICABLE
                       - MISSING_IDENTIFIER
                       - UNSUPPORTED_IDENTIFIER
