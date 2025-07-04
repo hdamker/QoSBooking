@@ -162,6 +162,11 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/BookingInfo"
+              examples:
+                BOOKING_AVAILABLE_WITH_DEVICE_RESPONSE:
+                  $ref: "#/components/examples/BOOKING_AVAILABLE_WITH_DEVICE_RESPONSE"
+                BOOKING_UNAVAILABLE:
+                  $ref: "#/components/examples/BOOKING_UNAVAILABLE"
         "400":
           $ref: "#/components/responses/CreateBooking400"
         "401":
@@ -208,8 +213,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/BookingInfo"
               examples:
-                BOOKING_AVAILABLE:
-                  $ref: "#/components/examples/BOOKING_AVAILABLE"
+                BOOKING_AVAILABLE_WITH_DEVICE_RESPONSE:
+                  $ref: "#/components/examples/BOOKING_AVAILABLE_WITH_DEVICE_RESPONSE"
                 BOOKING_UNAVAILABLE:
                   $ref: "#/components/examples/BOOKING_UNAVAILABLE"
         "400":
@@ -406,7 +411,7 @@ components:
         Booking related information returned in responses.
         Optional device object only to be returned if provided in createBooking. If more than one type of device identifier was provided, only one identifier will be returned (at implementation choice and with the original value provided in createBooking).
         Please note that IP addresses of devices can change and get reused, so the original values may no longer identify the same device. They identified the device at the time of QoS Booking creation.
-      allOf:      
+      allOf:
         - $ref: "#/components/schemas/BaseBookingInfo"
         - type: object
           properties:
@@ -1289,9 +1294,9 @@ components:
                 message: Rate limit reached.
 
   examples:
-    BOOKING_AVAILABLE_WITH_DEVICE_DISAMBIGUATION:
-      summary: QoS booking status is available, with device disambiguation
-      description: QoS booking info when status is available and several 
+    BOOKING_AVAILABLE_WITH_DEVICE_RESPONSE:
+      summary: QoS booking status is available, with device included in response
+      description: QoS booking info when status is available, and request used a 2-legged access token with multiple device identifiers, or possibly only a single device identifier
       value:
         qosProfile: "QOS_L"
         sink: "https://application-server.com/notifications"
@@ -1312,8 +1317,8 @@ components:
         status: "AVAILABLE"
 
     BOOKING_UNAVAILABLE:
-      summary: QoS booking is unavailable
-      description: QoS booking info when status is unavailable due to network termination
+      summary: QoS booking is unavailable, with device not included in response
+      description: QoS booking info when status is unavailable due to network termination. Request used a 3-legged access token, or possibly a single device identifier
       value:
         qosProfile: "Acme2"
         sink: "https://application-server.com/notifications"
