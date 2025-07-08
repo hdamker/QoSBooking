@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: QoS Booking and Assignment
+  title: QoS Booking and Assignment-2
   description: |
     This API enables API consumers to request, in advance, certain network performance to be provided by Telco networks, without having in-depth knowledge of the underlying network complexities (e.g. the 4G/5G system in case of a mobile network) for a number of devices, at a given location, for a period of time.
 
@@ -96,7 +96,7 @@ tags:
     description: Manage the assignment of devices of QoS
 
 paths:
-  /book-qos:
+  /qos-booking:
     post:
       tags:
         - Advance QoS Booking
@@ -191,7 +191,7 @@ paths:
         - openId:
             - "qos-booking-and-assignment:book-qos:create"
 
-  /book-qos/{bookingId}:
+  /qos-booking/{bookingId}:
     get:
       tags:
         - Advance QoS Booking
@@ -216,7 +216,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/DeviceAssignmentOutput"
+                $ref: "#/components/schemas/BookingOutput"
         "400":
           $ref: "#/components/responses/Generic400"
         "401":
@@ -259,7 +259,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/DeviceAssignmentOutput"
+                $ref: "#/components/schemas/BookingOutput"
         "202":
           description: Deletion request accepted to be processed. It applies for an async deletion process. `status` in the response will be `SCHEDULED` 
           headers:
@@ -268,7 +268,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/DeviceAssignmentOutput"
+                $ref: "#/components/schemas/BookingOutput"
         "400":
           $ref: "#/components/responses/Generic400"
         "401":
@@ -283,7 +283,7 @@ paths:
         - openId:
             - "qos-booking-and-assignment:existing-qos-booking:delete"
 
-  /devices/assign:
+  /devices/{bookingId}/assign:
     post:
       tags:
         - Device QoS Assignment
@@ -297,6 +297,7 @@ paths:
         
       operationId: assignDevices
       parameters:
+        - $ref: "#/components/parameters/BookingId"
         - $ref: "#/components/parameters/x-correlator"
       requestBody:
         description: Parameters to create a new booking
@@ -367,7 +368,49 @@ paths:
         - openId:
             - "qos-booking-and-assignment:assign-devices-to-booking:create"
 
-  /devices/release:
+  /devices/{bookingId}:
+    get:
+      tags:
+        - Device QoS Assignment
+      summary: Get the list of devices assign to the existing QoS Booking
+      description: |
+        This end-point allows the enduser to retrieve the list of devices assigned to the exisitng QoS Booking. 
+        - status = 'SUCCESSFUL' if the operation is successful 
+        - status = 'FAILURE'  if the operation is unsuccessful and the 'statusInfo' will have more information.
+        
+      operationId: getDevicesByBookingId
+      parameters:
+        - $ref: "#/components/parameters/BookingId"
+        - $ref: "#/components/parameters/x-correlator"
+      responses:
+        "201":
+          description: At least one device is assigned to the booking. The developer can call this endpoint mulitple times with appropriate information
+          headers:
+            x-correlator:
+              $ref: "#/components/headers/x-correlator"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeviceAssignmentOutput"
+        "400":
+          $ref: "#/components/responses/CreateBooking400"
+        "401":
+          $ref: "#/components/responses/Generic401"
+        "403":
+          $ref: "#/components/responses/Generic403"
+        "404":
+          $ref: "#/components/responses/GenericDevice404"
+        "409":
+          $ref: "#/components/responses/BookingConflict409"
+        "422":
+          $ref: "#/components/responses/Generic422"
+        "429":
+          $ref: "#/components/responses/Generic429"
+      security:
+        - openId:
+            - "qos-booking-and-assignment:get-devices-for-a-booking:get"
+
+  /devices/{bookingId}/release:
     post:
       tags:
         - Device QoS Assignment
@@ -375,6 +418,7 @@ paths:
       description: Release one or more already assigned devices. This is a synchronous call. 
       operationId: deleteQoS
       parameters:
+        - $ref: "#/components/parameters/BookingId"
         - $ref: "#/components/parameters/x-correlator"
       requestBody:
         description: Parameters to release devices
@@ -538,8 +582,14 @@ components:
           properties:
             numDevices:
               $ref: "#/components/schemas/DeviceCount"                   
-            bookingProfile:
-              $ref: "#/components/schemas/BookingProfile"
+            qosProfile:
+              $ref: "#/components/schemas/QosProfileName"
+            startTime:
+              $ref: "#/components/schemas/Time"
+            duration:
+              $ref: "#/components/schemas/Duration"
+            serviceArea:
+              $ref: "#/components/schemas/Area"   
             sink:
               type: string
               format: uri
@@ -548,7 +598,10 @@ components:
             sinkCredential:
               $ref: "#/components/schemas/SinkCredential"              
           required:
-            - bookingProfile
+            - qosProfile
+            - startTime
+            - duration
+            - serviceArea
 
     BookingDetails: 
       description: |
@@ -563,13 +616,22 @@ components:
               $ref: "#/components/schemas/DeviceCount"     
             remainingDevicesInBooking:
               $ref: "#/components/schemas/DeviceCount"                             
-            requestedBookingProfile:
-              $ref: "#/components/schemas/BookingProfile"         
+            qosProfile:
+              $ref: "#/components/schemas/QosProfileName"
+            startTime:
+              $ref: "#/components/schemas/Time"
+            duration:
+              $ref: "#/components/schemas/Duration"
+            serviceArea:
+              $ref: "#/components/schemas/Area"   
           required:
             - bookingId
             - totalDevicesInBooking
             - remainingDevicesInBooking
-            - requestedBookingProfile
+            - qosProfile
+            - startTime
+            - duration
+            - serviceArea
     
     BookingOutput: 
       description: |
@@ -588,8 +650,14 @@ components:
               $ref: "#/components/schemas/DeviceCount"     
             remainingDevicesInBooking:
               $ref: "#/components/schemas/DeviceCount"                             
-            requestedBookingProfile:
-              $ref: "#/components/schemas/BookingProfile"         
+            qosProfile:
+              $ref: "#/components/schemas/QosProfileName"
+            startTime:
+              $ref: "#/components/schemas/Time"
+            duration:
+              $ref: "#/components/schemas/Duration"
+            serviceArea:
+              $ref: "#/components/schemas/Area"   
             status:
               $ref: "#/components/schemas/Status"
             statusInfo:
@@ -600,15 +668,16 @@ components:
             - bookingId
             - totalDevicesInBooking
             - remainingDevicesInBooking
-            - requestedBookingProfile
+            - qosProfile
+            - startTime
+            - duration
+            - serviceArea
             - status
   
     DeviceAssignmentInput:
       description: Array of devices that needs to be assigned to a booking. The size of the array should be less than or equal to the devices that are remaining in the original booking 
       type: object
       properties:
-        bookingId:
-          $ref: "#/components/schemas/BookingId"
         devices:
           $ref: "#/components/schemas/Devices"
         sink:
@@ -618,8 +687,6 @@ components:
           example: "https://endpoint.example.com/sink"
         sinkCredential:
           $ref: "#/components/schemas/SinkCredential" 
-      required:
-        - bookingId
   
     DeviceAssignmentOutput :
       description: |
@@ -627,9 +694,9 @@ components:
       allOf:
         - type: object
           properties:
-            requestedBookingDetails:
+            bookingDetails:
               $ref: "#/components/schemas/BookingDetails"
-            assignedDevices:
+            devices:
               $ref: "#/components/schemas/Devices"         
             status:
               $ref: "#/components/schemas/Status"
