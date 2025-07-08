@@ -48,6 +48,11 @@ info:
 
     - If the subject can be identified from the access token and the optional `device` object is also included in the request, then the server will return an error with the `422 UNNECESSARY_IDENTIFIER` error code. This will be the case even if the same device is identified by these two methods, as the server is unable to make this comparison.
 
+    ### Additional CAMARA error responses
+    The list of error codes in this API specification is not exhaustive. Therefore the API specification may not document some non-mandatory error statuses as indicated in `CAMARA API Design Guide`.
+    Please refer to the `CAMARA_common.yaml` of the Commonalities Release associated to this API version for a complete list of error responses. The applicable Commonalities Release can be identified in the `API Readiness Checklist` document associated to this API version.
+    As a specific rule, error `501 - NOT_IMPLEMENTED` can be only a possible error response if it is explicitly documented in the API.
+
     # Multi-SIM scenario handling
 
     In multi-SIM scenarios where more than one mobile device is associated with a phone number (e.g. a smartphone with an associated smartwatch), it might not be possible to uniquely identify the device to which the enhanced QoS profile should apply from that phone number. If the phone number is used as the device identifier when creating a QoS booking in a multi-SIM scenario, the API may respond with an error, apply the enhanced QoS profile to all devices in the multi-SIM group, or apply the enhanced QoS profile to a single device in the multi-SIM group which may not be the intended device.
@@ -162,6 +167,11 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/BookingInfo"
+              examples:
+                BOOKING_AVAILABLE_WITH_DEVICE_RESPONSE:
+                  $ref: "#/components/examples/BOOKING_AVAILABLE_WITH_DEVICE_RESPONSE"
+                BOOKING_UNAVAILABLE:
+                  $ref: "#/components/examples/BOOKING_UNAVAILABLE"
         "400":
           $ref: "#/components/responses/CreateBooking400"
         "401":
@@ -173,7 +183,7 @@ paths:
         "409":
           $ref: "#/components/responses/BookingConflict409"
         "422":
-          $ref: "#/components/responses/Generic422"
+          $ref: "#/components/responses/BookingUnprocessableEntity422"
         "429":
           $ref: "#/components/responses/Generic429"
       security:
@@ -208,8 +218,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/BookingInfo"
               examples:
-                BOOKING_AVAILABLE:
-                  $ref: "#/components/examples/BOOKING_AVAILABLE"
+                BOOKING_AVAILABLE_WITH_DEVICE_RESPONSE:
+                  $ref: "#/components/examples/BOOKING_AVAILABLE_WITH_DEVICE_RESPONSE"
                 BOOKING_UNAVAILABLE:
                   $ref: "#/components/examples/BOOKING_UNAVAILABLE"
         "400":
@@ -358,16 +368,13 @@ components:
       in: header
       description: Correlation id for the different services
       schema:
-        type: string
-        pattern: ^[a-zA-Z0-9-]{0,55}$
-        example: "b4333c46-49c0-4f62-80d7-f0ef930f1c46"
+        $ref: "#/components/schemas/XCorrelator"
 
   headers:
     x-correlator:
       description: Correlation id for the different services
       schema:
-        type: string
-        pattern: ^[a-zA-Z0-9-]{0,55}$
+        $ref: "#/components/schemas/XCorrelator"
 
   schemas:
     BookingId:
@@ -379,8 +386,6 @@ components:
       description: Common attributes of a QoS Booking
       type: object
       properties:
-        device:
-          $ref: "#/components/schemas/Device"
         qosProfile:
           $ref: "#/components/schemas/QosProfileName"
         applicationServer:
@@ -412,11 +417,12 @@ components:
         - $ref: "#/components/schemas/BaseBookingInfo"
         - type: object
           properties:
+            device:
+              $ref: "#/components/schemas/DeviceResponse"            
             startTime:
               description: Date and time when QoS profile is scheduled to become available. Format must follow RFC 3339 and must indicate time zone (UTC or local).
               type: string
               format: date-time
-              example: "2024-06-01T12:00:00Z"
             duration:
               description: |
                 Session duration in seconds. Implementations can grant the requested session duration or set a different duration from `startTime`, based on network policies or conditions.
@@ -426,7 +432,6 @@ components:
               type: integer
               format: int32
               minimum: 1
-              example: 3600
             serviceArea:
               $ref: "#/components/schemas/Area"
             bookingId:
@@ -435,7 +440,6 @@ components:
               description: Date and time when the Booking became "AVAILABLE". Not to be returned when `status` is "REQUESTED" or "SCHEDULED". Format must follow RFC 3339 and must indicate time zone (UTC or local).
               type: string
               format: date-time
-              example: "2024-06-01T12:00:00Z"
             status:
               $ref: "#/components/schemas/Status"
             statusInfo:
@@ -453,18 +457,18 @@ components:
         - $ref: "#/components/schemas/BaseBookingInfo"
         - type: object
           properties:
+            device:
+              $ref: "#/components/schemas/Device"
             startTime:
               description: Date and time when the API consumer requests the QoS profile to become available. Format must follow RFC 3339 and must indicate time zone (UTC or local).
               type: string
               format: date-time
-              example: "2024-06-01T12:00:00Z"
             duration:
               description:
                 Requested session duration in seconds.  Value may be explicitly limited for the QoS profile, as specified in the Qos Profile (see qos-profile API). Implementations can grant the requested session duration or set a different duration from `startTime`, based on network policies or conditions.
               type: integer
               format: int32
               minimum: 1
-              example: 3600
             serviceArea:
               $ref: "#/components/schemas/Area"
           required:
@@ -727,6 +731,7 @@ components:
         mapping:
           CIRCLE: "#/components/schemas/Circle"
           POLYGON: "#/components/schemas/Polygon"
+          AREANAME: "#/components/schemas/AreaName"
 
     AreaType:
       type: string
@@ -734,9 +739,11 @@ components:
         Type of this area.
         CIRCLE - The area is defined as a circle.
         POLYGON - The area is defined as a polygon.
+        AREANAME - The area is defined as an area name.
       enum:
         - CIRCLE
         - POLYGON
+        - AREANAME
 
     Circle:
       description: Circular area
@@ -764,6 +771,17 @@ components:
           properties:
             boundary:
               $ref: "#/components/schemas/PointList"
+
+    AreaName:
+      description: The value of "AreaName" might be predefined and only regional or even an operator-specific in this API version. As a prerequisite, the API Provider may offer API Consumer the "AreaName" values, which API consumer can request, in a preparation phase. And then API Consumers can select from the "AreaNames" as Service Areas.
+      allOf:
+        - $ref: "#/components/schemas/Area"
+        - type: object
+          required:
+            - areaName
+          properties:
+            areaName:
+              type: string
 
     PointList:
       description: List of points defining a polygon
@@ -914,6 +932,14 @@ components:
       format: ipv6
       example: 2001:db8:85a3:8d3:1319:8a2e:370:7344
 
+    DeviceResponse:
+      description: |
+        An identifier for the end-user equipment able to connect to the network that the response refers to. This parameter is only returned when the API consumer includes the `device` parameter in their request (i.e. they are using a two-legged access token), and is relevant when more than one device identifier is specified, as only one of those device identifiers is allowed in the response.
+        If the API consumer provides more than one device identifier in their request, the API provider must return a single identifier which is the one they are using to fulfil the request, even if the identifiers do not match the same device. API provider does not perform any logic to validate/correlate that the indicated device identifiers match the same device. No error should be returned if the identifiers are otherwise valid to prevent API consumers correlating different identifiers with a given end user.
+      allOf:
+        - $ref: "#/components/schemas/Device"
+        - maxProperties: 1
+
     Status:
       description: |
         The current status of the requested QoS Booking. The status can be one of the following:
@@ -957,6 +983,11 @@ components:
         - code
         - message
 
+    XCorrelator:
+      type: string
+      pattern: ^[a-zA-Z0-9-_:;.\/<>{}]{0,256}$
+      example: "b4333c46-49c0-4f62-80d7-f0ef930f1c46"
+      
   responses:
     Generic400:
       description: Bad Request
@@ -1220,18 +1251,11 @@ components:
                       - 422
                   code:
                     enum:
-                      - IDENTIFIER_MISMATCH
                       - SERVICE_NOT_APPLICABLE
                       - MISSING_IDENTIFIER
                       - UNSUPPORTED_IDENTIFIER
                       - UNNECESSARY_IDENTIFIER
           examples:
-            GENERIC_422_IDENTIFIER_MISMATCH:
-              description: Inconsistency between identifiers not pointing to the same device
-              value:
-                status: 422
-                code: IDENTIFIER_MISMATCH
-                message: Provided identifiers are not consistent.
             GENERIC_422_SERVICE_NOT_APPLICABLE:
               description: Service not applicable for the provided identifier
               value:
@@ -1257,6 +1281,77 @@ components:
                 code: UNNECESSARY_IDENTIFIER
                 message: The device is already identified by the access token.
 
+    BookingUnprocessableEntity422:
+      description: Unprocessable Content
+      headers:
+        x-correlator:
+          $ref: "#/components/headers/x-correlator"
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/ErrorInfo"
+              - type: object
+                properties:
+                  status:
+                    enum:
+                      - 422
+                  code:
+                    enum:
+                      - SERVICE_NOT_APPLICABLE
+                      - MISSING_IDENTIFIER
+                      - UNSUPPORTED_IDENTIFIER
+                      - UNNECESSARY_IDENTIFIER
+                      - QOS_BOOKING.NOT_MANAGED_AREA_TYPE
+                      - QOS_BOOKING.AREA_NOT_COVERED
+                      - QOS_BOOKING.INVALID_AREA
+          examples:
+            GENERIC_422_SERVICE_NOT_APPLICABLE:
+              description: Service not applicable for the provided identifier
+              value:
+                status: 422
+                code: SERVICE_NOT_APPLICABLE
+                message: The service is not available for the provided identifier.
+            GENERIC_422_MISSING_IDENTIFIER:
+              description: An identifier is not included in the request and the device or phone number identification cannot be derived from the access token
+              value:
+                status: 422
+                code: MISSING_IDENTIFIER
+                message: The device cannot be identified.
+            GENERIC_422_UNSUPPORTED_IDENTIFIER:
+              description: None of the provided identifiers is supported by the implementation
+              value:
+                status: 422
+                code: UNSUPPORTED_IDENTIFIER
+                message: The identifier provided is not supported.
+            GENERIC_422_UNNECESSARY_IDENTIFIER:
+              description: An explicit identifier is provided when a device or phone number has already been identified from the access token
+              value:
+                status: 422
+                code: UNNECESSARY_IDENTIFIER
+                message: The device is already identified by the access token.
+            QOS_BOOKING_422_NOT_MANAGED_AREA_TYPE:
+              summary: Not managed area type
+              description: The requested area type is currently not supported by implementation
+              value:
+                status: 422
+                code: QOS_BOOKING.NOT_MANAGED_AREA_TYPE
+                message: "The requested area type is not managed"
+            QOS_BOOKING_422_AREA_NOT_COVERED:
+              summary: The area cannot be covered
+              description: The system is not able cover the requested area
+              value:
+                status: 422
+                code: QOS_BOOKING.AREA_NOT_COVERED
+                message: "Unable to cover the requested area"
+            QOS_BOOKING_422_INVALID_AREA:
+              summary: Invalid area
+              description: The requested area value is not valid for the system. Details to be provided in the message.
+              value:
+                status: 422
+                code: QOS_BOOKING.INVALID_AREA
+                message: "The requested area is too small"
+                
     Generic429:
       description: Too Many Requests
       headers:
@@ -1291,45 +1386,45 @@ components:
                 message: Rate limit reached.
 
   examples:
-    BOOKING_AVAILABLE:
-      summary: QoS booking status is available
-      description: QoS booking info when status is available
+    BOOKING_AVAILABLE_WITH_DEVICE_RESPONSE:
+      summary: QoS booking status is available, with device included in response
+      description: QoS booking info when status is available, and request used a 2-legged access token with multiple device identifiers, or possibly only a single device identifier
       value:
-        bookingId: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-        duration: 3600
+        qosProfile: "QOS_L"
+        sink: "https://application-server.com/notifications"
         device:
           ipv4Address:
             publicAddress: "203.0.113.0"
             publicPort: 59765
-        qosProfile: "QOS_L"
-        sink: "https://application-server.com/notifications"
         startTime: "2024-06-01T12:00:00Z"
-        startedAt: "2024-06-01T12:00:00Z"
-        status: "AVAILABLE"
+        duration: 3600
         serviceArea:
           areaType: "CIRCLE"
           center:
             latitude: 50.735851
             longitude: 7.10066
           radius: 100
+        bookingId: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        startedAt: "2024-06-01T12:00:00Z"
+        status: "AVAILABLE"
 
     BOOKING_UNAVAILABLE:
-      summary: QoS booking is unavailable
-      description: QoS booking info when status is unavailable due to network termination
+      summary: QoS booking is unavailable, with device not included in response
+      description: QoS booking info when status is unavailable due to network termination. Request used a 3-legged access token, or possibly a single device identifier
       value:
-        bookingId: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-        duration: 2428
         qosProfile: "Acme2"
         sink: "https://application-server.com/notifications"
         startTime: "2024-06-01T12:00:00Z"
-        startedAt: "2024-06-01T12:00:00Z"
-        status: "UNAVAILABLE"
+        duration: 2428
         serviceArea:
           areaType: "CIRCLE"
           center:
             latitude: 50.735851
             longitude: 7.10066
           radius: 100
+        bookingId: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        startedAt: "2024-06-01T12:00:00Z"
+        status: "UNAVAILABLE"
         statusInfo: "NETWORK_TERMINATED"
 
     BOOKING_STATUS_CHANGED_EXAMPLE:
@@ -1338,8 +1433,8 @@ components:
       value:
         id: "83a0d986-0866-4f38-b8c0-fc65bfcda452"
         source: "https://api.example.com/qod/v1/sessions/123e4567-e89b-12d3-a456-426614174000"
-        specversion: "1.0"
         type: "org.camaraproject.qos-booking.v0.status-changed"
+        specversion: "1.0"
         time: "2024-06-01T13:00:00Z"
         data:
           bookingId: "123e4567-e89b-12d3-a456-426614174000"
@@ -1350,23 +1445,23 @@ components:
       summary: List of QoS sessions for the device
       description: A single QoS session for the device is available
       value:
-        - bookingId: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-          duration: 3600
-          device:
-            phoneNumber: "+123456789"
+        - qosProfile: "QOS_L"
           applicationServer:
             ipv4Address: "0.0.0.0/0"
-          qosProfile: "QOS_L"
           sink: "https://application-server.com/notifications"
+          device:
+            phoneNumber: "+123456789"
           startTime: "2024-06-01T12:00:00Z"
-          startedAt: "2024-06-01T12:00:00Z"
-          status: "AVAILABLE"
+          duration: 3600
           serviceArea:
             areaType: "CIRCLE"
             center:
               latitude: 50.735851
               longitude: 7.10066
             radius: 100
+          bookingId: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          startedAt: "2024-06-01T12:00:00Z"
+          status: "AVAILABLE"
 
     RETRIEVE_BOOKINGS_NO_ITEMS:
       summary: No bookings found for the device
