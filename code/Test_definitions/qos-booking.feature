@@ -20,7 +20,7 @@ Feature: CAMARA QoS Booking API, vwip - API Operations
     Background: Common QoS Booking setup
         Given an environment at "apiRoot"
         And the header "Authorization" is set to a valid access token
-        And the header "x-correlator" is set to a string value
+        And the header "x-correlator" complies with the schema at "#/components/schemas/XCorrelator"
 
     # Success scenarios for POST /device-qos-bookings
 
