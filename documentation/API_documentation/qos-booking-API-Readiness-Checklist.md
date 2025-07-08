@@ -15,4 +15,5 @@ Checklist for qos-booking v0.1.0-rc.1 in r1.1
 |  9 | Test result statement                        |   O   |         O         |    O    |    M   |  N   |      |
 | 10 | API release numbering convention applied     |   M   |         M         |    M    |    M   |  Y   |      |
 | 11 | Change log updated                           |   M   |         M         |    M    |    M   |  Y   | [link](/CHANGELOG.md) |
-| 12 | Previous public release was certified        |   O   |         O         |    O    |    M   |  N   |      | 
+| 12 | Previous public release was certified        |   O   |         O         |    O    |    M   |  N   |      |
+| 13 | API description (for marketing)              |   O   |         O         |    M    |    M   | Y | [wiki link](https://lf-camaraproject.atlassian.net/wiki/x/3YPVB) |
