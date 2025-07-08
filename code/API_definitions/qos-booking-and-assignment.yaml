@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: QoS Booking and Assignment-2
+  title: QoS Booking and Assignment
   description: |
     This API enables API consumers to request, in advance, certain network performance to be provided by Telco networks, without having in-depth knowledge of the underlying network complexities (e.g. the 4G/5G system in case of a mobile network) for a number of devices, at a given location, for a period of time.
 
@@ -31,6 +31,7 @@ info:
 
      - An operation to assign one or more devices to the existing booking identified by its 'BookingId'
      - An operation to release one or more devices from the booking identified by its 'BookingId'
+     - An operation to get all the devices assigned to a given booking identified by its 'BookingId'
      - An operation to get all the associated QoS Booking for a given device.
 
     # Authorization and authentication
@@ -76,7 +77,7 @@ info:
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
-  version: wip
+  version: 0.1.0-rc.1
   x-camara-commonalities: 0.6
 
 externalDocs:
@@ -84,26 +85,25 @@ externalDocs:
   url: https://github.com/camaraproject/QoSBooking
 
 servers:
-  - url: "{apiRoot}/qos-booking-and-assignment/vwip"
+  - url: "{apiRoot}/qos-booking-and-assignment/v0.1rc1"
     variables:
       apiRoot:
         default: http://localhost:9091
         description: API root, defined by the service provider, e.g. `api.example.com` or `api.example.com/somepath`
 tags:
-  - name: Advance QoS Booking
+  - name: QoS Booking
     description: Book and manage QoS for multiple devices in advance
-  - name: Device QoS Assignment
-    description: Manage the assignment of devices of QoS
+  - name: Device Assignment
+    description: Manage the assignment of devices for a given QoS Booking
 
 paths:
   /qos-booking:
     post:
       tags:
-        - Advance QoS Booking
-      summary: Reserve QoS in advance for one or more devices. Devices can be assigned later to this booking
+        - QoS Booking
+      summary: This operation reserves required QoS in advance up to a certain number of devices in certain serviceArea and time slot. The devices have to be attached with a subsequent operation.
       description: |
         Triggers a new booking in advance and assign this reserved booking profile to one or more devices when the devices are ready.
-
         - If the booking is completed synchronously, the response will be 201 with `status` = `SUCCESSFUL`.
         - If the booking request is accepted but not yet completed, the response will be 201 with `status` = `PENDING`. 
         - If the operator determines synchronously that the booking request cannot be fulfilled, the response will be 201 with `status` = `FAILURE`.
@@ -194,7 +194,7 @@ paths:
   /qos-booking/{bookingId}:
     get:
       tags:
-        - Advance QoS Booking
+        - QoS Booking
       summary: Get the Booking information for an existing QoS Booking.
       description: |
         This endpoint gets booking information for the given bookingId.  
@@ -233,7 +233,7 @@ paths:
 
     delete:
       tags:
-        - Advance QoS Booking
+        - QoS Booking
       summary: Cancel an existing QoS Booking
       description: |
         Cancel an existing booking and release resources related to that booking.
@@ -286,14 +286,15 @@ paths:
   /devices/{bookingId}/assign:
     post:
       tags:
-        - Device QoS Assignment
-      summary: Assign one or more devices to the existing QoS Booking
+        - Device Assignment
+      summary: Assign one or more devices to an existing QoS Booking
       description: |
         This end-point allows the enduser to assign one or more devices to the exisitng QoS Booking. 
-        - status = 'SUCCESSFUL' if the assignment is successful and the network is available for the said devices to connect and use them at the requested time 
+        - status = 'SUCCESSFUL' if the assignment is successful for all the devices, and the network is available for the said devices to connect and use them at the requested time 
         - status = 'FAILURE'  if the assignment is unsuccessful and the 'statusInfo' will have more information.
         - This is an asynchronus call,  and status = PENDING if the network is still working on your request. A callback will come with appropriate status. 
         - 'statusInfo' contains additional information under certain conditions. 
+        - If the network could not assign all the requested devices then status = 'PARTIAL SUCCESS' and the statusInfo will have additional information.
         
       operationId: assignDevices
       parameters:
@@ -371,8 +372,8 @@ paths:
   /devices/{bookingId}:
     get:
       tags:
-        - Device QoS Assignment
-      summary: Get the list of devices assign to the existing QoS Booking
+        - Device Assignment
+      summary: Get the list of devices assigned to an existing QoS Booking
       description: |
         This end-point allows the enduser to retrieve the list of devices assigned to the exisitng QoS Booking. 
         - status = 'SUCCESSFUL' if the operation is successful 
@@ -413,7 +414,7 @@ paths:
   /devices/{bookingId}/release:
     post:
       tags:
-        - Device QoS Assignment
+        - Device Assignment
       summary: Release one or more devices from the given QoS Booking
       description: Release one or more already assigned devices. This is a synchronous call. 
       operationId: deleteQoS
@@ -429,7 +430,13 @@ paths:
         required: true
       responses:
         "201":
-          description: Release of devices successful
+          description: | 
+            At least one of the requested devices is successfully released from the booking.
+            Example: 
+              If the enduser asks to release 2 devices and the network can release only one device 
+                'status = PARTIAL_SUCCESS' and statusInfo will have additional details
+              In addition, the returned message body will contain the list of actual devices that are released.
+
           headers:
             x-correlator:
               $ref: "#/components/headers/x-correlator"
@@ -458,7 +465,7 @@ paths:
   /devices/retrieve:
     post:
       tags:
-        - Device QoS Assignment
+        - Device Assignment
       summary: Retrieves all the bookings that corresponds to a device
       description: |
         Querying for QoS Booking resource information details for a device.
@@ -1193,7 +1200,7 @@ components:
       description: |
         The current status of the requests in any of the endpoints in Booking or Assignment. The status can be one of the following:
         * `PENDING` - The request is stil being processed. For booking, booking is requested and for assignements, the request is pending. 'statusInfo' may have additional information.
-        * `SUCCESSFUL` - The request is processed successfully. This may happen immediately.  The state will go to PENDING and then back to SUCCESSFUL
+        * `SUCCESSFUL` - The request is processed successfully. This may happen immediately.  The state will go to PENDING and then back to SUCCESSFUL in certain conditions.ƒ
         * 'PARTIAL_SUCCESS' -  The request is processed with partial success - mostly applicable to device assignments.  'statusInfo' may have additional information. This enum is optional, and useful if the operator wants to communicate partical success.
         * `FAILURE` - The request has been processed but failed. `statusInfo` may provide additional information about the reason for the unavailability.
       enum:
@@ -1215,13 +1222,15 @@ components:
 
     BookingStatusInfo:
       description: |
-        Reason for the new `status`. Currently `statusInfo` is only applicable when `status` is PENDING or FAILURE.
+        This schema provides a detailed status of a booking request
         * `DURATION_EXPIRED` - Session terminated due to requested duration expired
         * `NETWORK_TERMINATED` - Network terminated the QoS Booking for unknown reasons
         * `DELETE_REQUESTED`- User requested the deletion of the QoS Booking
         * 'VALIDATION_PENDING' - The validation is pending. The end user will get a callback with the availability of the booking
         * 'SERVICE_NOT_AVAILABLE' - The requested booking could not be fullfilled because of operator could not support the service area/number of devices/qosProfile in the requested time
         * 'QOS_PROFILE_NOT_SUPPORTED'  - The requested QoS Profile is not supported by the operator
+        * 'BOKING_UNKNOWN_ERROR' - An unknown error happend while booking
+        * 'BOOKING_COMPLETED' - The requested booking is commpleted successfully. 
         * 'BOOKING_INVALID'  -  The given bookingId is invalid, malformed, or not available in the system
         * 'BOOKING_CANCELLED'-  The given bookingId was cancelled by the user and is no more valid. 
         * 'BOOKING_EXPIRED'  -  The given bookingId is expired and is no more valid
@@ -1234,16 +1243,20 @@ components:
         - VALIDATION_PENDING
         - SERVICE_NOT_AVAILABLE
         - QOS_PROFILE_NOT_SUPPORTED
+        - BOOKING_UNKNWON_ERROR
+        - BOOKING_COMPLETED
         - BOOKING_INVALID
         - BOOKING_CANCELLED
         - BOOKING_EXPIRED
 
     AssignmentStatusInfo:
       description: |
-        If the status = PENDING, PARTIAL_SUCCESS, FAILURE then this status info enums have additional information for assignment related operations
+       This schema provides a detailed status of an assignment request
         * `DEVICE_NOT_FOUND` - One or some of the device are not found to validate and associate to booking. 
-        * 'QUOTA_EXCEEDED' - The number of devices requested to assign to a booking is more than the allocated totoal for the booking
+        * 'DEVICE_UNKNOWN_ERROR' - One, or more, or all of devices are not assigned becasue of unknown error. 
+        * 'QUOTA_EXCEEDED' - The number of devices requested to assign to a booking is more than the allocated totoal for the booking. Only remaining devices are assigned
         * 'VALIDATION_PENDING' - The device assignment request is pending for validation and verification
+        * 'ASSIGNMENT_COMPLETED' - The request assignment of devices is successfully completed
         * 'BOOKING_INVALID' - The user requests to release a device from booking, but the booking is invalid
         * 'BOOKING_CANCELLED' - The user requests to release a device from booking, but the booking is cancelled
         * 'BOOKING_EXPIRED' - The user requests to release a device from booking, but the booking is expiered and no more active
@@ -1252,8 +1265,10 @@ components:
       type: string
       enum:
         - DEVICE_NOT_FOUND
+        - DEVICE_UNKNOWN_ERROR
         - QUOTA_EXCEEDED
         - VALIDATION_PENDING
+        - ASSIGNMENT_COMPLETED
         - BOOKING_INVALID
         - BOOKING_CANCELLED
         - BOOKING_EXPIRED
