@@ -13,23 +13,16 @@ The below sections record the changes for each API version in each release as fo
 * for subsequent release-candidate(s), only the delta to the previous release-candidate
 * for a public release, the consolidated changes since the previous public release
 
-<!--Repeat the below release section (header 1 and subsections) at the top of this file for each new (pre-)release-->
-
 # r1.1
 
 ## Release Notes
 
 This release contains the definition and documentation of
 * qos-booking v0.1.0-rc.1
-<!--* API-name2 vx.y.z - unchanged-->
-<!--In case the repository (and hence its release) contains multiple APIs, list them all here. Also mention if an API in the repository is unchanged. Note: There shall be no "wip" API version in the repository at the time of release.-->
 
-<!--For any API version, if known, and for public API versions, include the link to the related Commonalities and ICM releases:-->
 The API definition(s) are based on
 * Commonalities r3.2
 * Identity and Consent Management r3.2
-
-<!--In case the repository contains multiple APIs, for each API version that changed in this release, create additional sections by copying and filling the below template (level 2 and 3 sections), replacing the API-name and API-version vx.y.z with actual API name and version.-->
 
 ## qos-booking v0.1.0-rc.1
 
@@ -42,9 +35,3 @@ The API definition(s) are based on
 
 ### Added
 * Initial contribution of the QoS Booking API
-
-### Changed
-
-### Fixed
-
-### Removed
