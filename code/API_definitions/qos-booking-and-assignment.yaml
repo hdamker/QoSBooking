@@ -97,7 +97,7 @@ tags:
     description: Manage the assignment of devices for a given QoS Booking
 
 paths:
-  /qos-booking:
+  /qos-bookings:
     post:
       tags:
         - QoS Booking
