@@ -384,7 +384,7 @@ paths:
         - $ref: "#/components/parameters/BookingId"
         - $ref: "#/components/parameters/x-correlator"
       responses:
-        "201":
+        "200":
           description: At least one device is assigned to the booking. The developer can call this endpoint mulitple times with appropriate information
           headers:
             x-correlator:
