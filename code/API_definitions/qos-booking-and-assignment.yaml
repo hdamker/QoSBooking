@@ -191,7 +191,7 @@ paths:
         - openId:
             - "qos-booking-and-assignment:book-qos:create"
 
-  /qos-booking/{bookingId}:
+  /qos-bookings/{bookingId}:
     get:
       tags:
         - QoS Booking
