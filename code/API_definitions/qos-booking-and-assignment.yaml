@@ -283,7 +283,7 @@ paths:
         - openId:
             - "qos-booking-and-assignment:existing-qos-booking:delete"
 
-  /devices/{bookingId}/assign:
+  /qos-bookings/{bookingId}/devices/assign:
     post:
       tags:
         - Device Assignment
