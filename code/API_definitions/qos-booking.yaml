@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: QoS Booking API
+  title: QoS Booking
   description: |
     The QoS (Quality of Service) Booking API provides programmable interface for developers and other users (capabilities consumers) to request in advance certain network conditions to be provided by Telco networks, without the necessity to have an in-depth knowledge of the underlying network complexity (e.g. the 4G/5G system in case of a mobile network).
 
