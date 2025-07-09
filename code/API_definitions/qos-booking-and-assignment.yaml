@@ -45,7 +45,7 @@ info:
     # Identifying the device from the access token
 
     This API requires the API consumer to identify a device as the subject of the API as follows:
-    - When the API is invoked using a two-legged access token, the subject will be identified from the optional `device` object, which therefore MUST be provided.
+    - When the API is invoked using a two-legged access token, the subject will be identified from the optional `device` or `devices` object, which therefore MUST be provided.
 
     - When a three-legged access token is used however, this optional identifier MUST NOT be provided, as the subject will be uniquely identified from the access token. In this case, only one device can be provided at a time.
 
