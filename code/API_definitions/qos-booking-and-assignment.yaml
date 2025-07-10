@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: QoS Booking and Assignment2
+  title: QoS Booking and Assignment
   description: |
     This API enables API consumers to request, in advance, certain network performance to be provided by Telco networks, without having in-depth knowledge of the underlying network complexities (e.g. the 4G/5G system in case of a mobile network) for a number of devices, at a given location, for a period of time.
 
