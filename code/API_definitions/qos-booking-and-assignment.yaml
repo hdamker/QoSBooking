@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: QoS Booking and Assignment
+  title: QoS Booking and Assignment2
   description: |
     This API enables API consumers to request, in advance, certain network performance to be provided by Telco networks, without having in-depth knowledge of the underlying network complexities (e.g. the 4G/5G system in case of a mobile network) for a number of devices, at a given location, for a period of time.
 
@@ -283,7 +283,7 @@ paths:
         - openId:
             - "qos-booking-and-assignment:existing-qos-booking:delete"
 
-  /qos-bookings/{bookingId}/devices/assign:
+  /devices/{bookingId}/assign:
     post:
       tags:
         - Device Assignment
@@ -385,7 +385,7 @@ paths:
         - $ref: "#/components/parameters/x-correlator"
       responses:
         "200":
-          description: At least one device is assigned to the booking. The developer can call this endpoint mulitple times with appropriate information
+          description: List of all devices assigned to the booking is returned. 
           headers:
             x-correlator:
               $ref: "#/components/headers/x-correlator"
@@ -417,7 +417,7 @@ paths:
         - Device Assignment
       summary: Release one or more devices from the given QoS Booking
       description: Release one or more already assigned devices. This is a synchronous call. 
-      operationId: deleteQoS
+      operationId: releaseDevices
       parameters:
         - $ref: "#/components/parameters/BookingId"
         - $ref: "#/components/parameters/x-correlator"
@@ -460,7 +460,7 @@ paths:
           $ref: "#/components/responses/Generic429"
       security:
         - openId:
-            - "qos-booking-and-assignment:assign-devices-to-booking:delete"
+            - "qos-booking-and-assignment:release-devices-from-booking:delete"
 
   /devices/retrieve:
     post:
