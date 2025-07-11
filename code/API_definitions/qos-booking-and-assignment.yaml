@@ -369,7 +369,7 @@ paths:
           $ref: "#/components/responses/Generic429"
       security:
         - openId:
-            - "qos-booking-and-assignment:assign-devices-to-booking:create"
+            - "qos-booking-and-assignment:qos-bookings:devices:create"
 
   /qos-bookings/{bookingId}/devices:
     get:
