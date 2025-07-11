@@ -19,7 +19,7 @@ Feature: CAMARA QoS Booking and Assignment - v0.1rc1
         And the request body property "$.qosProfile" is set to a valid QoS Profile as returned by QoS Profiles API
         And the request body property "$.startTime" is set to a valid time
         And the request body property "$.duration" is set to a valid duration for the selected QoS profile
-        And the request body property "$.serviceArea" is set to a valid service area complaint with schema at "/components/schemas/Area"
+        And the request body property "$.serviceArea" is set to a valid service area compliant with schema at "/components/schemas/Area"
         And the request body property "$.sink" is set to a valid notification URL
         And the request body property "$.sinkCredential.credentialType" is set to a value complaint with schema at "/components/schemas/SinkCredential"
         When the request "createBooking" is sent
