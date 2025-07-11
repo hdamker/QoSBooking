@@ -79,7 +79,7 @@ Feature: CAMARA QoS Booking and Assignment - v0.1rc1
         And the response body complies with the OAS schema at "/components/schemas/BookingOutput"
         And the response body property "$.bookingId" exists and is a valid UUID
         And the response body property "$.totalDevicesinBooking" has the same value "$.numDevices" as in the request body
-        And the response body property "$.remainingDevicesInBooking"  is set to a valid number greater than or equal to 0 and should be less than or equal to ".totalDevicesinBooking"
+        And the response body property "$.remainingDevicesInBooking"  is set to a valid number greater than or equal to 0 and should be less than or equal to "$.totalDevicesInBooking"
         And the response body property "$.qosProfile" has the same value as in the request body
         And the response body property "$.startTime" has the same value as in the request body
         And the response body property "$.duration" has the same value as in the request body
