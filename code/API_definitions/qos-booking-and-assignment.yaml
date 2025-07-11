@@ -19,7 +19,7 @@ info:
     API consumers may provide a callback URL (`sink`) on which notifications about all status change events (e.g. duration expiration) can be received from the API provider. This is an optional parameter. The notification will be sent as a CloudEvent compliant message. If `sink` is included, it is RECOMMENDED for the client to provide as well the `sinkCredential` property to protect the notification endpoint. In the current version,`sinkCredential.credentialType` MUST be set to `ACCESSTOKEN` if provided.
 
     # Resources and Operations overview
-    The API defines six major operations in two groups:
+    The API defines seven major operations in two groups:
     
     Booking:
 
@@ -107,7 +107,7 @@ paths:
         - If the booking is completed synchronously, the response will be 201 with `status` = `SUCCESSFUL`.
         - If the booking request is accepted but not yet completed, the response will be 201 with `status` = `PENDING`. 
         - If the operator determines synchronously that the booking request cannot be fulfilled, the response will be 201 with `status` = `FAILURE`.
-        - If operator is not able to determin the booking availablility immediately and the request includes a notification callback, the client will receive a `status-changed` event with the outcome of the process. 
+        - If the operator is not able to determine the booking availability immediately and the request includes a notification callback, the client will receive a `status-changed` event with the outcome of the process. 
         - The operator determines immediately:
           - SUCCESSFUL or FAILURE
         - If the operator needs more time to determine the availability
@@ -200,7 +200,7 @@ paths:
         This endpoint gets booking information for the given bookingId.  
         - A booking request may be failed (Status = FAILURE). 'statusInfo' contains additional information (ex: INVALID, EXPIRED, or CANCELLED).
         - Based on the status of the booking, an appropriate error message will be returned.
-        - If a booking is available (status = SUCCESSFUL and booking is active) then this endpoint will return the booking information along with device information for the devices, if any, assigned to the booking.
+        - If a booking is available (status = SUCCESSFUL and booking is active) then this endpoint will return the booking information along with number of devices still can be assigned to the booking.
         - 'statusInfo' contains additional information under certain conditions. 
 
       operationId: getBookingById
@@ -241,10 +241,10 @@ paths:
         - SUCCESSFUL and FAILURE condition of deleting a booking is based on the implementation of the operator. 
         - Operator SHOULD properly document their 'delete' behavior.  Following are some guidelines:
      
-        - If booking is made, and no devices are assigned -- SUCCESSFUL - Return message will contain only booking info.
-        - If booking is made, and devices are assigned, but session is not active - SUCCESSFUL. Return message will contain information related to booking as well as assigned devices
-        - If booking is made, and devices are not assigned, but session is active - SUCCESSFUL - Return message will contain only booking info
-        - If booking is made, and devices are assigned, and session is active - SUCCESSFUL / FAILURE is determined by the operator. Operator may terminate the session, release the devices and release the booking.
+        - If a booking is made, and no devices are assigned -- SUCCESSFUL - Return message will contain only booking info.
+        - If a booking is made, and devices are assigned, but session is not active - SUCCESSFUL. Return message will contain information related to booking.
+        - If a booking is made, and devices are not assigned, but session is active - SUCCESSFUL - Return message will contain only booking info
+        - If a booking is made, and devices are assigned, and the session is active - SUCCESSFUL / FAILURE is determined by the operator. The Operator may terminate the session, release the devices, and release the booking.
 
       operationId: deleteBooking
       parameters:
@@ -283,18 +283,20 @@ paths:
         - openId:
             - "qos-booking-and-assignment:existing-qos-booking:delete"
 
-  /devices/{bookingId}/assign:
+  /qos-bookings/{bookingId}/devices/assign:
     post:
       tags:
         - Device Assignment
-      summary: Assign one or more devices to an existing QoS Booking
+      summary: Assign one or more devices to an existing QoS Booking identified by 'bookingId'
       description: |
-        This end-point allows the enduser to assign one or more devices to the exisitng QoS Booking. 
+        This endpoint allows the end user to assign one or more devices to the existing QoS Booking. 
         - status = 'SUCCESSFUL' if the assignment is successful for all the devices, and the network is available for the said devices to connect and use them at the requested time 
         - status = 'FAILURE'  if the assignment is unsuccessful and the 'statusInfo' will have more information.
-        - This is an asynchronus call,  and status = PENDING if the network is still working on your request. A callback will come with appropriate status. 
-        - 'statusInfo' contains additional information under certain conditions. 
-        - If the network could not assign all the requested devices then status = 'PARTIAL SUCCESS' and the statusInfo will have additional information.
+        - This is an asynchronous call,  and status = PENDING if the network is still working on your request. A callback will come with appropriate status. 
+        - If the network could not assign all the requested devices, then status = 'PARTIAL SUCCESS' and the statusInfo will have additional information.
+        - If a 2-legged access token is used, then the device details SHOULD BE provided as part of the input, and the output will return the array of actually assigned devices. 
+        - If a 3-legged access token is used, then the device information are identified from the access token, so only one device is implicitly assigned, and the return value may not contain the assigned device information
+
         
       operationId: assignDevices
       parameters:
@@ -369,15 +371,19 @@ paths:
         - openId:
             - "qos-booking-and-assignment:assign-devices-to-booking:create"
 
-  /devices/{bookingId}:
+  /qos-bookings/{bookingId}/devices:
     get:
       tags:
         - Device Assignment
       summary: Get the list of devices assigned to an existing QoS Booking
       description: |
-        This end-point allows the enduser to retrieve the list of devices assigned to the exisitng QoS Booking. 
+        This endpoint allows the end user to retrieve the list of devices assigned to the existing QoS Booking. 
         - status = 'SUCCESSFUL' if the operation is successful 
-        - status = 'FAILURE'  if the operation is unsuccessful and the 'statusInfo' will have more information.
+        - status = 'FAILURE'  if the operation is unsuccessful then the 'statusInfo' will have more information.
+        - GET may not return the identifying details of all the devices assigned to the booking. There are certain situations, identifying details of certain devices can't be disclosed because of privacy laws, jurisdiction restrictions, and some legal requirements. 
+          In such a situation the operator SHOULD properly communicate this to the API consumer that device identifiers of certain devices are not disclosed. 'statusInfo = DEVICE_DISCLOSURE_ERROR'
+        - The API consumer can determine; how many devices are actually in the booking from 'bookingDetails'; but may not know the identifying details of all those devices. 
+        - A classic example is: Some of the devices are assigned using a 3-legged access token; Or a booking is made in one jurisdiction and the actual usage is happening in another jurisdiction which has several privacy restrictions.
         
       operationId: getDevicesByBookingId
       parameters:
@@ -411,12 +417,17 @@ paths:
         - openId:
             - "qos-booking-and-assignment:get-devices-for-a-booking:get"
 
-  /devices/{bookingId}/release:
+  /qos-bookings/{bookingId}/devices/release:
     post:
       tags:
         - Device Assignment
       summary: Release one or more devices from the given QoS Booking
-      description: Release one or more already assigned devices. This is a synchronous call. 
+      description: | 
+        Release one or more already assigned devices. This is a synchronous call. 
+        - This call will release one or more of the devices that are identifiable and part of the booking. 
+        - If the device is assigned using 3-legged access token:
+          - If the device is active, then release can happen in the same way.
+          - If the device has failed for some reason, and the device information is not known, then the device can't be released from booking.
       operationId: releaseDevices
       parameters:
         - $ref: "#/components/parameters/BookingId"
@@ -462,7 +473,7 @@ paths:
         - openId:
             - "qos-booking-and-assignment:release-devices-from-booking:delete"
 
-  /devices/retrieve:
+  /qos-bookings/retrieve:
     post:
       tags:
         - Device Assignment
@@ -642,10 +653,10 @@ components:
     
     BookingOutput: 
       description: |
-        - If the booking endpoint returns synchronously, BookingOut will be part of the return message body. For async success a follow-up 'get' call will retrun the details of the actual booking.
+        - If the booking endpoint returns synchronously, 'BookingOutput' will be part of the return message body. For async success a follow-up 'get' call will retrun the details of the actual booking.
         - It returns original number of devices that are requested as well as the remaining number of devices in the booking that can be assigned
         'remainingDevicesInBooking' >= 0 and <= 'totalDevicesInBooking'
-        - Once a device is successfully assigned to the booking, remainingNumDevices will be reduced by 1, and once the device is released then it will be incremented by 1
+        - Once a device is successfully assigned to the booking, 'remainingNumDevices' will be reduced by 1, and once the device is released then it will be incremented by 1
         - Booking Information is also returned as part of the message body when the devices are successfully assigned to the booking. 
         
       allOf:
@@ -682,7 +693,12 @@ components:
             - status
   
     DeviceAssignmentInput:
-      description: Array of devices that needs to be assigned to a booking. The size of the array should be less than or equal to the devices that are remaining in the original booking 
+      description: | 
+        Array of devices that needs to be assigned to a booking. 
+        - The size of the array should be less than or equal to the devices that are remaining in the original booking. 
+        - At least one device identifier is required when a 2-legged access token is used.  
+        - In a 3-legged situation, only one device can be assigned at a time, and the device details are automatically generated from the access token
+        - In such a situation, 'Devices' array SHOULD NOT be provided.  
       type: object
       properties:
         devices:
@@ -697,7 +713,14 @@ components:
   
     DeviceAssignmentOutput :
       description: |
-        Once the provision endpoint succcessful this output will be returend. It will have the BookingId along with all the originally requested information.
+         This schema is used to return device information associated with the booking as an output.
+         - It will have the BookingId along with all the originally requested information.
+         - In some situations (ex: assignments using 3-legged access token) the device details should not be disclosed as per the privacy and other legal requirements. 
+         - For example:  
+           - If there are 10 devices assigned in a booking; but the GET operation returns only 7; It means 3 devices can't be disclosed
+           - The source of truth is in the following properties in the booking details: "totalDevicesInBooking" and "remainingDevicesInBooking".        
+           - In such a situation the operator can set  'statusInfo' as 'DEVICE_DISCLOSURE_ERROR' to clearly communicate the fact that some devices are not disclosed.
+   
       allOf:
         - type: object
           properties:
@@ -1103,7 +1126,12 @@ components:
       default: 86400
 
     Devices:
-      description: Array of devices to be assigned to the booking and provisioned.  At least one device is required
+      description: | 
+        INPUT DEVICES: Array of devices to be assigned to the booking and provisioned.  At least one device is required. 
+        Not to be provided when a 3-legged access token already identifies a device. 
+        OUTPUT DEVICES: List of devices successfully assigned to the booking. Note that this list includes only devices provided explicitly as input devices in the request body. 
+        If some device was assigned with an operation that identified the device by means of a 3-legged access token, the device details are not disclosed in this case. 
+        This implies that the number of devices in this list can be lower than the actual number of devices assigned to the booking
       type: array
       minItems: 1
       items:
@@ -1252,8 +1280,9 @@ components:
     AssignmentStatusInfo:
       description: |
        This schema provides a detailed status of an assignment request
-        * `DEVICE_NOT_FOUND` - One or some of the device are not found to validate and associate to booking. 
-        * 'DEVICE_UNKNOWN_ERROR' - One, or more, or all of devices are not assigned becasue of unknown error. 
+        * `DEVICE_NOT_FOUND` - One or some of the devices are not found to validate and associate to booking. 
+        * 'DEVICE_UNKNOWN_ERROR' - One, or more, or all of devices are not assigned or not released because of unknown error.
+        * 'DEVICE_DISCLOSURE_ERROR' - Some or all of the devices are not disclosed because of privacy, or legal requirements, or for unknown reasons.
         * 'QUOTA_EXCEEDED' - The number of devices requested to assign to a booking is more than the allocated totoal for the booking. Only remaining devices are assigned
         * 'VALIDATION_PENDING' - The device assignment request is pending for validation and verification
         * 'ASSIGNMENT_COMPLETED' - The request assignment of devices is successfully completed
@@ -1266,6 +1295,7 @@ components:
       enum:
         - DEVICE_NOT_FOUND
         - DEVICE_UNKNOWN_ERROR
+        - DEVICE_DISCLOSURE_ERROR
         - QUOTA_EXCEEDED
         - VALIDATION_PENDING
         - ASSIGNMENT_COMPLETED
