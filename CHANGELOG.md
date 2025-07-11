@@ -19,6 +19,7 @@ The below sections record the changes for each API version in each release as fo
 
 This release contains the definition and documentation of
 * qos-booking v0.1.0-rc.1
+* qos-booking-and-assignment v0.1.0-rc.1
 
 The API definition(s) are based on
 * Commonalities r3.2
@@ -34,4 +35,14 @@ The API definition(s) are based on
   - OpenAPI [YAML spec file](https://github.com/camaraproject/QoSBooking/blob/r1.1/code/API_definitions/qos-booking.yaml)
 
 ### Added
-* Initial contribution of the QoS Booking API
+* Initial contribution of the QoS Booking and Assignment API
+
+**qos-booking-and-assignment v0.1.0-rc.1 is the first release-candidate version for v0.1.0 of QoS Booking And Assignment API.**
+
+- API definition **with inline documentation**:
+  - [View it on ReDoc](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/camaraproject/QoSBooking/r1.1/code/API_definitions/qos-booking-and-assignment.yaml&nocors)
+  - [View it on Swagger Editor](https://editor.swagger.io/?url=https://raw.githubusercontent.com/camaraproject/QoSBooking/r1.1/code/API_definitions/qos-booking-and-assignment.yaml)
+  - OpenAPI [YAML spec file](https://github.com/camaraproject/QoSBooking/blob/r1.1/code/API_definitions/qos-booking-and-assignment.yaml)
+
+### Added
+* Initial contribution of the QoS Booking and Assignment API
