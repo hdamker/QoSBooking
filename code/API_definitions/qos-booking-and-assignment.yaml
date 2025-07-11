@@ -523,7 +523,7 @@ paths:
           $ref: "#/components/responses/Generic429"
       security:
         - openId:
-            - "qos-booking-and-assignment:retrieve-bookings-of-a-device:read"
+            - "qos-booking-and-assignment:qos-bookings:retrieve-by-device"
 
 components:
   securitySchemes:
