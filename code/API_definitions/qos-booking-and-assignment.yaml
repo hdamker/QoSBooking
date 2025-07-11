@@ -381,7 +381,7 @@ paths:
         - status = 'SUCCESSFUL' if the operation is successful 
         - status = 'FAILURE'  if the operation is unsuccessful then the 'statusInfo' will have more information.
         - GET may not return the identifying details of all the devices assigned to the booking. There are certain situations, identifying details of certain devices can't be disclosed because of privacy laws, jurisdiction restrictions, and some legal requirements. 
-          In such a situation the operator SHOULD properly communicate this to the API consumer that device identifiers of certain devices are not disclosed. 'statusInfo = DEVICE_DISCLOSURE_ERROR'
+          In such a situation the operator SHOULD properly communicate this to the API consumer that device identifiers of certain devices are not disclosed. 'statusInfo = DEVICE_DISCLOSURE_POLICY_APPLIED'
         - The API consumer can determine; how many devices are actually in the booking from 'bookingDetails'; but may not know the identifying details of all those devices. 
         - A classic example is: Some of the devices are assigned using a 3-legged access token; Or a booking is made in one jurisdiction and the actual usage is happening in another jurisdiction which has several privacy restrictions.
         
@@ -415,7 +415,7 @@ paths:
           $ref: "#/components/responses/Generic429"
       security:
         - openId:
-            - "qos-booking-and-assignment:get-devices-for-a-booking:read"
+            - "qos-booking-and-assignment:qos-bookings:devices:read"
 
   /qos-bookings/{bookingId}/devices/release:
     post:
@@ -428,6 +428,7 @@ paths:
         - If the device is assigned using 3-legged access token:
           - If the device is active, then release can happen in the same way.
           - If the device has failed for some reason, and the device information is not known, then the device can't be released from booking.
+        - This call uses the POST method to comply with the CAMARA Commonalities guidelines for sending sensitive or complex data in API calls. Since the device field may contain personally identifiable information, it should not be sent via DELETE.
       operationId: releaseDevices
       parameters:
         - $ref: "#/components/parameters/BookingId"
@@ -487,7 +488,7 @@ paths:
           - If a 2-legged access token is used, the device parameter must be provided and identify a device.
         - The QoS Booking must have been created by the same API client given in the access token.
         - If no QoS booking is found for the requested device, an empty array is returned.
-        - This call uses the POST method instead of GET to comply with the CAMARA Commonalities guidelines for sending sensitive or complex data in API calls. Since the device field may contain personally identifiable information, it should not be sent via GET.
+        - This call uses the POST method to comply with the CAMARA Commonalities guidelines for sending sensitive or complex data in API calls. Since the device field may contain personally identifiable information, it should not be sent via GET.
 
       operationId: retrieveBookingByDevice
       parameters:
@@ -680,8 +681,6 @@ components:
               $ref: "#/components/schemas/Status"
             statusInfo:
               $ref: "#/components/schemas/BookingStatusInfo"
-            statusSource:
-              $ref: "#/components/schemas/StatusSource"
           required:
             - bookingId
             - totalDevicesInBooking
@@ -719,7 +718,7 @@ components:
          - For example:  
            - If there are 10 devices assigned in a booking; but the GET operation returns only 7; It means 3 devices can't be disclosed
            - The source of truth is in the following properties in the booking details: "totalDevicesInBooking" and "remainingDevicesInBooking".        
-           - In such a situation the operator can set  'statusInfo' as 'DEVICE_DISCLOSURE_ERROR' to clearly communicate the fact that some devices are not disclosed.
+           - In such a situation the operator SHOULD set  'statusInfo' as 'DEVICE_DISCLOSURE_POLICY_APPLIED' to clearly communicate the fact that some devices are not disclosed.
    
       allOf:
         - type: object
@@ -732,8 +731,6 @@ components:
               $ref: "#/components/schemas/Status"
             statusInfo:
               $ref: "#/components/schemas/AssignmentStatusInfo"
-            statusSource:
-              $ref: "#/components/schemas/StatusSource"
           required:
             - status
 
@@ -1282,7 +1279,7 @@ components:
        This schema provides a detailed status of an assignment request
         * `DEVICE_NOT_FOUND` - One or some of the devices are not found to validate and associate to booking. 
         * 'DEVICE_UNKNOWN_ERROR' - One, or more, or all of devices are not assigned or not released because of unknown error.
-        * 'DEVICE_DISCLOSURE_ERROR' - Some or all of the devices are not disclosed because of privacy, or legal requirements, or for unknown reasons.
+        * 'DEVICE_DISCLOSURE_POLICY_APPLIED' - Some or all of the devices are not disclosed because of privacy, or legal requirements, or for unknown reasons.
         * 'QUOTA_EXCEEDED' - The number of devices requested to assign to a booking is more than the allocated totoal for the booking. Only remaining devices are assigned
         * 'VALIDATION_PENDING' - The device assignment request is pending for validation and verification
         * 'ASSIGNMENT_COMPLETED' - The request assignment of devices is successfully completed
@@ -1295,7 +1292,7 @@ components:
       enum:
         - DEVICE_NOT_FOUND
         - DEVICE_UNKNOWN_ERROR
-        - DEVICE_DISCLOSURE_ERROR
+        - DEVICE_DISCLOSURE_POLICY_APPLIED
         - QUOTA_EXCEEDED
         - VALIDATION_PENDING
         - ASSIGNMENT_COMPLETED
@@ -1303,18 +1300,6 @@ components:
         - BOOKING_CANCELLED
         - BOOKING_EXPIRED
         - BOOKING_TERMINATED
-
-    StatusSource:
-      description: |
-        Very useful information when a callback is called with full message body
-      type: string
-      enum:
-        - BOOKING_REQUEST
-        - BOOKING_CANCELATION
-        - BOOKING_RETRIVAL_FROM_ID
-        - BOOKING_RETRIVAL_FROM_DEVICE
-        - DEVICE_ASSIGNMENT
-        - DEVICE_RELEASE
 
     ErrorInfo:
       description: Common schema for errors
