@@ -281,7 +281,7 @@ paths:
           $ref: "#/components/responses/Generic429"
       security:
         - openId:
-            - "qos-booking-and-assignment:existing-qos-booking:delete"
+            - "qos-booking-and-assignment:qos-bookings:delete"
 
   /qos-bookings/{bookingId}/devices/assign:
     post:
