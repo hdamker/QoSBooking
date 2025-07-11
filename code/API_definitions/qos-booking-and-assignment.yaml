@@ -229,7 +229,7 @@ paths:
           $ref: "#/components/responses/Generic429"
       security:
         - openId:
-            - "qos-booking-and-assignment:existing-qos-booking:read"
+            - "qos-booking-and-assignment:qos-bookings:read"
 
     delete:
       tags:
