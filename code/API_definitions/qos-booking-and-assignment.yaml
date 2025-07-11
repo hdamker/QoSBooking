@@ -189,7 +189,7 @@ paths:
           $ref: "#/components/responses/Generic429"
       security:
         - openId:
-            - "qos-booking-and-assignment:book-qos:create"
+            - "qos-booking-and-assignment:qos-bookings:create"
 
   /qos-bookings/{bookingId}:
     get:
