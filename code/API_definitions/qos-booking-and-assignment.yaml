@@ -133,7 +133,6 @@ paths:
               description: |
                 Important: this endpoint is to be implemented by the API consumer.
                 The API provider will call this endpoint whenever any QoS Booking change related event occurs.
-                Currently only `BOOKING_STATUS_CHANGED` event is defined.
               operationId: postBookingNotification
               parameters:
                 - $ref: "#/components/parameters/x-correlator"
@@ -143,9 +142,6 @@ paths:
                   application/cloudevents+json:
                     schema:
                       $ref: "#/components/schemas/CloudEvent"
-                    examples:
-                      BOOKING_STATUS_CHANGED_EXAMPLE:
-                        $ref: "#/components/examples/BOOKING_STATUS_CHANGED_EXAMPLE"
               responses:
                 "204":
                   description: Successful notification
@@ -441,7 +437,7 @@ paths:
               $ref: "#/components/schemas/DeviceAssignmentInput"
         required: true
       responses:
-        "201":
+        "200":
           description: | 
             At least one of the requested devices is successfully released from the booking.
             Example: 
@@ -567,30 +563,6 @@ components:
       type: string
       format: uuid
     
-    BookingProfile: 
-      description: |
-        Booking Profile contains all the key properties of any booking.  This includes:
-        - `qosProfile`  - This is the operator defined profile for the quality of service. This is generally advertised by the operator via their portal and/or documentation
-        - `startTime`   - Date and Time the booking is needed
-        - `duration`   - The number of seconds the booking is needed
-        - `serviceArea` - It is the location in which the service is needed
-      allOf:
-        - type: object
-          properties:              
-            qosProfile:
-              $ref: "#/components/schemas/QosProfileName"
-            startTime:
-              $ref: "#/components/schemas/Time"
-            duration:
-              $ref: "#/components/schemas/Duration"
-            serviceArea:
-              $ref: "#/components/schemas/Area"            
-          required:
-            - qosProfile
-            - startTime
-            - duration
-            - serviceArea
-
     BookingInput: 
       description: |
         Basic input that are required for to book QoS in advance.  
@@ -848,39 +820,6 @@ components:
       minimum: 0
       maximum: 65535
 
-    PortsSpec:
-      description: Specification of several TCP or UDP ports
-      type: object
-      minProperties: 1
-      properties:
-        ranges:
-          description: Range of TCP or UDP ports
-          type: array
-          minItems: 1
-          items:
-            type: object
-            required:
-              - from
-              - to
-            properties:
-              from:
-                $ref: "#/components/schemas/Port"
-              to:
-                $ref: "#/components/schemas/Port"
-        ports:
-          description: Array of TCP or UDP ports
-          type: array
-          minItems: 1
-          items:
-            $ref: "#/components/schemas/Port"
-      example:
-        ranges:
-          - from: 5010
-            to: 5020
-        ports:
-          - 5060
-          - 5070
-
     QosProfileName:
       description: |
         A unique name for identifying a specific QoS profile.
@@ -1109,7 +1048,7 @@ components:
         Recommended format is yyyy-MM-dd'T'HH:mm:ss.SSSZ (i.e. which allows 2023-07-03T14:27:08.312+02:00 or 2023-07-03T12:27:08.312Z)
       type: string
       format: date-time
-      example: "2024-06-01T12:00:00Z"
+      example: "2024-06-01T12:00:312Z"
 
     Duration:
       description: |
@@ -1134,42 +1073,6 @@ components:
       items:
         $ref: "#/components/schemas/Device"
 
-    ApplicationServer:
-      description: |
-        A server hosting backend applications to deliver some business logic to clients.
-
-        The developer can choose to provide the below specified device identifiers:
-
-        * `ipv4Address`
-        * `ipv6Address`
-      type: object
-      properties:
-        ipv4Address:
-          $ref: "#/components/schemas/ApplicationServerIpv4Address"
-        ipv6Address:
-          $ref: "#/components/schemas/ApplicationServerIpv6Address"
-      minProperties: 1
-
-    ApplicationServerIpv4Address:
-      type: string
-      example: "198.51.100.0/24"
-      description: |
-        IPv4 address may be specified in form <address/mask> as:
-          - address - an IPv4 number in dotted-quad form 1.2.3.4. Only this exact IP number will match the flow control rule.
-          - address/mask - an IP number as above with a mask width of the form 1.2.3.4/24.
-            In this case, all IP numbers from 1.2.3.0 to 1.2.3.255 will match. The bit width MUST be valid for the IP version.
-
-    ApplicationServerIpv6Address:
-      type: string
-      example: "2001:db8:85a3:8d3:1319:8a2e:370:7344"
-      description: |
-        IPv6 address may be specified in form <address/mask> as:
-          - address - The /128 subnet is optional for single addresses:
-            - 2001:db8:85a3:8d3:1319:8a2e:370:7344
-            - 2001:db8:85a3:8d3:1319:8a2e:370:7344/128
-          - address/mask - an IP v6 number with a mask:
-            - 2001:db8:85a3:8d3::0/64
-            - 2001:db8:85a3:8d3::/64
 
     NetworkAccessIdentifier:
       description: A public identifier addressing a subscription in a mobile network. In 3GPP terminology, it corresponds to the GPSI formatted with the External Identifier ({Local Identifier}@{Domain Identifier}). Unlike the telephone number, the network access identifier is not subjected to portability ruling in force, and is individually managed by each operator.
@@ -1251,14 +1154,15 @@ components:
         * `DURATION_EXPIRED` - Session terminated due to requested duration expired
         * `NETWORK_TERMINATED` - Network terminated the QoS Booking for unknown reasons
         * `DELETE_REQUESTED`- User requested the deletion of the QoS Booking
-        * 'VALIDATION_PENDING' - The validation is pending. The end user will get a callback with the availability of the booking
-        * 'SERVICE_NOT_AVAILABLE' - The requested booking could not be fulfilled because of operator could not support the service area/number of devices/qosProfile in the requested time
-        * 'QOS_PROFILE_NOT_SUPPORTED'  - The requested QoS Profile is not supported by the operator
+        * `VALIDATION_PENDING` - The validation is pending. The end user will get a callback with the availability of the booking
+        * `SERVICE_NOT_AVAILABLE` - The requested booking could not be fulfilled because of operator could not support the service area/number of devices/qosProfile in the requested time
+        * `QOS_PROFILE_NOT_SUPPORTED`  - The requested QoS Profile is not supported by the operator
         * `BOOKING_UNKNOWN_ERROR` - An unknown error happened while booking
-        * 'BOOKING_COMPLETED' - The requested booking is completed successfully. 
-        * 'BOOKING_INVALID'  -  The given bookingId is invalid, malformed, or not available in the system
-        * 'BOOKING_CANCELLED'-  The given bookingId was cancelled by the user and is no more valid. 
-        * 'BOOKING_EXPIRED'  -  The given bookingId is expired and is no more valid
+        * `BOOKING_ACCEPTED` - The requested booking is completed successfully. 
+        * `BOOKING_CANCELLED`-  The given bookingId was cancelled by the user and is no more valid. 
+        * `BOOKING_EXPIRED`  -  Booking schedule ended, and the given bookingId is expired and is no more valid
+        * `BOOKING_ACTIVATED`  - Booking schedule started and the booking is activated.
+ 
 
       type: string
       enum:
@@ -1269,24 +1173,25 @@ components:
         - SERVICE_NOT_AVAILABLE
         - QOS_PROFILE_NOT_SUPPORTED
         - BOOKING_UNKNOWN_ERROR
-        - BOOKING_COMPLETED
-        - BOOKING_INVALID
+        - BOOKING_ACCEPTED
         - BOOKING_CANCELLED
         - BOOKING_EXPIRED
+        - BOOKING_ACTIVATED
+   
 
     AssignmentStatusInfo:
       description: |
        This schema provides a detailed status of an assignment request
         * `DEVICE_NOT_FOUND` - One or some of the devices are not found to validate and associate to booking. 
-        * 'DEVICE_UNKNOWN_ERROR' - One, or more, or all of devices are not assigned or not released because of unknown error.
-        * 'DEVICE_DISCLOSURE_POLICY_APPLIED' - Some or all of the devices are not disclosed because of privacy, or legal requirements, or for unknown reasons.
-        * 'QUOTA_EXCEEDED' - The number of devices requested to assign to a booking is more than the allocated totoal for the booking. Only remaining devices are assigned
-        * 'VALIDATION_PENDING' - The device assignment request is pending for validation and verification
-        * 'ASSIGNMENT_COMPLETED' - The request assignment of devices is successfully completed
-        * 'BOOKING_INVALID' - The user requests to release a device from booking, but the booking is invalid
-        * 'BOOKING_CANCELLED' - The user requests to release a device from booking, but the booking is cancelled
-        * 'BOOKING_EXPIRED' - The user requests to release a device from booking, but the booking is expiered and no more active
-        * 'BOOKING_TERMINATED' - For unknown reasons booking is terminated by the operator. A booking callback may be issued. 
+        * `DEVICE_UNKNOWN_ERROR` - One, or more, or all of devices are not assigned or not released because of unknown error.
+        * `DEVICE_DISCLOSURE_POLICY_APPLIED` - Some or all of the devices are not disclosed because of privacy, or legal requirements, or for unknown reasons.
+        * `QUOTA_EXCEEDED` - The number of devices requested to assign to a booking is more than the allocated totoal for the booking. Only remaining devices are assigned
+        * `VALIDATION_PENDING` - The device assignment request is pending for validation and verification
+        * `ASSIGNMENT_COMPLETED` - The request assignment of devices is successfully completed
+        * `BOOKING_INVALID` - The user requests to release a device from booking, but the booking is invalid
+        * `BOOKING_CANCELLED` - The user requests to release a device from booking, but the booking is cancelled
+        * `BOOKING_EXPIRED` - The user requests to release a device from booking, but the booking is expiered and no more active
+        * `BOOKING_TERMINATED` - For unknown reasons booking is terminated by the operator. A booking callback may be issued. 
 
       type: string
       enum:
@@ -1656,86 +1561,3 @@ components:
                 status: 429
                 code: TOO_MANY_REQUESTS
                 message: Rate limit reached.
-
-  examples:
-    BOOKING_AVAILABLE:
-      summary: QoS booking status is available
-      description: QoS booking info when status is available
-      value:
-        bookingId: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-        duration: 3600
-        device:
-          ipv4Address:
-            publicAddress: "203.0.113.0"
-            publicPort: 59765
-        qosProfile: "QOS_L"
-        sink: "https://application-server.com/notifications"
-        startTime: "2024-06-01T12:00:00Z"
-        startedAt: "2024-06-01T12:00:00Z"
-        status: "SUCCESSFUL"
-        serviceArea:
-          areaType: "CIRCLE"
-          center:
-            latitude: 50.735851
-            longitude: 7.10066
-          radius: 100
-
-    BOOKING_UNAVAILABLE:
-      summary: QoS booking is unavailable
-      description: QoS booking info when status is unavailable due to network termination
-      value:
-        bookingId: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-        duration: 2428
-        qosProfile: "Acme2"
-        sink: "https://application-server.com/notifications"
-        startTime: "2024-06-01T12:00:00Z"
-        startedAt: "2024-06-01T12:00:00Z"
-        status: "FAILURE"
-        serviceArea:
-          areaType: "CIRCLE"
-          center:
-            latitude: 50.735851
-            longitude: 7.10066
-          radius: 100
-        statusInfo: "NETWORK_TERMINATED"
-
-    BOOKING_STATUS_CHANGED_EXAMPLE:
-      summary: Booking status changed
-      description: Cloud event example for status change to FAILURE due to DURATION_EXPIRED
-      value:
-        id: "83a0d986-0866-4f38-b8c0-fc65bfcda452"
-        source: "https://api.example.com/qod/v1/sessions/123e4567-e89b-12d3-a456-426614174000"
-        specversion: "1.0"
-        type: "org.camaraproject.qos-booking-and-assignment.v0.status-changed"
-        time: "2024-06-01T13:00:00Z"
-        data:
-          bookingId: "123e4567-e89b-12d3-a456-426614174000"
-          status: "FAILURE"
-          statusInfo: "DURATION_EXPIRED"
-
-    RETRIEVE_BOOKINGS_ONE_ITEM:
-      summary: List of QoS sessions for the device
-      description: A single QoS session for the device is available
-      value:
-        - bookingId: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-          duration: 3600
-          device:
-            phoneNumber: "+123456789"
-          applicationServer:
-            ipv4Address: "0.0.0.0/0"
-          qosProfile: "QOS_L"
-          sink: "https://application-server.com/notifications"
-          startTime: "2024-06-01T12:00:00Z"
-          startedAt: "2024-06-01T12:00:00Z"
-          status: "SUCCESSFUL"
-          serviceArea:
-            areaType: "CIRCLE"
-            center:
-              latitude: 50.735851
-              longitude: 7.10066
-            radius: 100
-
-    RETRIEVE_BOOKINGS_NO_ITEMS:
-      summary: No bookings found for the device
-      description: An empty array is returned when no bookings are found for the device
-      value: []
