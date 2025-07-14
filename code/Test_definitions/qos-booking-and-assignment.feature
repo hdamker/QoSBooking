@@ -126,7 +126,7 @@ Feature: CAMARA QoS Booking and Assignment - v0.1rc1
 
     # Success scenarios for POST qos-bookings/{bookingId}/devices/release
     # This operation releases a set of devices from a booking which are already assigned to the booking
-    @devices_releaseDevices_201_success
+    @devices_releaseDevices_200_success
     Scenario: Release one or more of already assigned devices from a QoS booking
 
         Given the resource "{apiRoot}/qos-booking-and-assignment/v0.1rc1/qos-bookings/{bookingId}/devices/release"
@@ -138,7 +138,7 @@ Feature: CAMARA QoS Booking and Assignment - v0.1rc1
         And the request body property "$.sinkCredential.credentialType" is set to a value compliant with schema at "/components/schemas/SinkCredential"
  
         When the request "releaseDevices" is sent
-        Then the response status code is 201
+        Then the response status code is 200
 
         And the response header "Content-Type" is "application/json"
         And the response header "x-correlator" has the same value as the request header "x-correlator"
