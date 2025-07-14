@@ -1252,7 +1252,7 @@ components:
         * `NETWORK_TERMINATED` - Network terminated the QoS Booking for unknown reasons
         * `DELETE_REQUESTED`- User requested the deletion of the QoS Booking
         * 'VALIDATION_PENDING' - The validation is pending. The end user will get a callback with the availability of the booking
-        * 'SERVICE_NOT_AVAILABLE' - The requested booking could not be fullfilled because of operator could not support the service area/number of devices/qosProfile in the requested time
+        * 'SERVICE_NOT_AVAILABLE' - The requested booking could not be fulfilled because of operator could not support the service area/number of devices/qosProfile in the requested time
         * 'QOS_PROFILE_NOT_SUPPORTED'  - The requested QoS Profile is not supported by the operator
         * `BOOKING_UNKNOWN_ERROR` - An unknown error happened while booking
         * 'BOOKING_COMPLETED' - The requested booking is completed successfully. 
