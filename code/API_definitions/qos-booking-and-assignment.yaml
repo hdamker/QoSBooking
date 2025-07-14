@@ -1224,7 +1224,7 @@ components:
     Status:
       description: |
         The current status of the requests in any of the endpoints in Booking or Assignment. The status can be one of the following:
-        * `PENDING` - The request is stil being processed. For booking, booking is requested and for assignements, the request is pending. 'statusInfo' may have additional information.
+        * `PENDING` - The request is still being processed. For booking, booking is requested and for assignments, the request is pending. 'statusInfo' may have additional information.
         * `SUCCESSFUL` - The request is processed successfully. This may happen immediately.  The state will go to PENDING and then back to SUCCESSFUL in certain conditions.ƒ
         * `PARTIAL_SUCCESS` -  The request is processed with partial success - applicable to device assignments.  'statusInfo' may have additional information. This enum is optional, and useful if the operator wants to communicate partial success.
         * `FAILURE` - The request has been processed but failed. `statusInfo` may provide additional information about the reason for the unavailability.
