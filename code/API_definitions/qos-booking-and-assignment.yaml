@@ -345,7 +345,7 @@ paths:
                 - notificationsBearerAuth: []
       responses:
         "201":
-          description: At least one device is assigned to the booking. The developer can call this endpoint mulitple times with appropriate information
+          description: At least one device is assigned to the booking. The developer can call this endpoint multiple times with appropriate information
           headers:
             x-correlator:
               $ref: "#/components/headers/x-correlator"
