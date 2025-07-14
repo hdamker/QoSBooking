@@ -1255,7 +1255,7 @@ components:
         * 'SERVICE_NOT_AVAILABLE' - The requested booking could not be fullfilled because of operator could not support the service area/number of devices/qosProfile in the requested time
         * 'QOS_PROFILE_NOT_SUPPORTED'  - The requested QoS Profile is not supported by the operator
         * `BOOKING_UNKNOWN_ERROR` - An unknown error happened while booking
-        * 'BOOKING_COMPLETED' - The requested booking is commpleted successfully. 
+        * 'BOOKING_COMPLETED' - The requested booking is completed successfully. 
         * 'BOOKING_INVALID'  -  The given bookingId is invalid, malformed, or not available in the system
         * 'BOOKING_CANCELLED'-  The given bookingId was cancelled by the user and is no more valid. 
         * 'BOOKING_EXPIRED'  -  The given bookingId is expired and is no more valid
