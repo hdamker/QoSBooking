@@ -570,7 +570,7 @@ components:
     BookingProfile: 
       description: |
         Booking Profile contains all the key properties of any booking.  This includes:
-        - `qosProfile`  - This is the operator defined profile for the quality of service. This is generally advertised by the oeprator via their portal and/or documentation
+        - `qosProfile`  - This is the operator defined profile for the quality of service. This is generally advertised by the operator via their portal and/or documentation
         - `startTime`   - Date and Time the booking is needed
         - `duration`   - The number of seconds the booking is needed
         - `serviceArea` - It is the location in which the service is needed
