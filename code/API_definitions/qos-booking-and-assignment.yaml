@@ -654,7 +654,7 @@ components:
     
     BookingOutput: 
       description: |
-        - If the booking endpoint returns synchronously, 'BookingOutput' will be part of the return message body. For async success a follow-up 'get' call will retrun the details of the actual booking.
+        - If the booking endpoint returns synchronously, 'BookingOutput' will be part of the return message body. For async success a follow-up 'get' call will return the details of the actual booking.
         - It returns original number of devices that are requested as well as the remaining number of devices in the booking that can be assigned
         'remainingDevicesInBooking' >= 0 and <= 'totalDevicesInBooking'
         - Once a device is successfully assigned to the booking, 'remainingNumDevices' will be reduced by 1, and once the device is released then it will be incremented by 1
