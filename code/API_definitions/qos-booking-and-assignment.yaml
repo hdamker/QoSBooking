@@ -580,7 +580,7 @@ components:
             duration:
               $ref: "#/components/schemas/Duration"
             serviceArea:
-              $ref: "#/components/schemas/Area"   
+              $ref: "#/components/schemas/Area"
             sink:
               type: string
               format: uri
@@ -1185,12 +1185,12 @@ components:
         * `DEVICE_NOT_FOUND` - One or some of the devices are not found to validate and associate to booking. 
         * `DEVICE_UNKNOWN_ERROR` - One, or more, or all of devices are not assigned or not released because of unknown error.
         * `DEVICE_DISCLOSURE_POLICY_APPLIED` - Some or all of the devices are not disclosed because of privacy, or legal requirements, or for unknown reasons.
-        * `QUOTA_EXCEEDED` - The number of devices requested to assign to a booking is more than the allocated totoal for the booking. Only remaining devices are assigned
+        * `QUOTA_EXCEEDED` - The number of devices requested to assign to a booking is more than the allocated total for the booking. Only remaining devices are assigned
         * `VALIDATION_PENDING` - The device assignment request is pending for validation and verification
         * `ASSIGNMENT_COMPLETED` - The request assignment of devices is successfully completed
         * `BOOKING_INVALID` - The user requests to release a device from booking, but the booking is invalid
         * `BOOKING_CANCELLED` - The user requests to release a device from booking, but the booking is cancelled
-        * `BOOKING_EXPIRED` - The user requests to release a device from booking, but the booking is expiered and no more active
+        * `BOOKING_EXPIRED` - The user requests to release a device from booking, but the booking is expired and no more active
         * `BOOKING_TERMINATED` - For unknown reasons booking is terminated by the operator. A booking callback may be issued. 
 
       type: string

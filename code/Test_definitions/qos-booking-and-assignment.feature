@@ -44,7 +44,7 @@ Feature: CAMARA QoS Booking and Assignment, v0.1.0-rc.1
 
 
     # Success scenarios for GET /qos-bookings/{bookingId}
-    # Given a bookingID, this GET operation gets the details of the orignal booking
+    # Given a bookingID, this GET operation gets the details of the original booking
     @qos_bookings_getBookingById_200_success
     Scenario: Get an existing QoS booking by bookingId
         Given the resource "{apiRoot}/qos-booking-and-assignment/v0.1rc1/qos-bookings"
