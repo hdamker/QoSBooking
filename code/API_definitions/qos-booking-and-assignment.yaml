@@ -565,7 +565,7 @@ components:
     
     BookingInput: 
       description: |
-        Basic input that are required for to book QoS in advance.  
+        Basic input that are required to book QoS in advance.  
         - 'numDevices' is optional and it is defaulted to 1.  
         - 'numDevices' represents the maximum number of devices the enduser wants the operator to reserve
       allOf:
