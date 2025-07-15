@@ -35,7 +35,7 @@ The API definition(s) are based on
   - OpenAPI [YAML spec file](https://github.com/camaraproject/QoSBooking/blob/r1.1/code/API_definitions/qos-booking.yaml)
 
 ### Added
-* Initial contribution of the QoS Booking and Assignment API
+* Initial contribution of the QoS Booking API 
 
 **qos-booking-and-assignment v0.1.0-rc.1 is the first release-candidate version for v0.1.0 of QoS Booking And Assignment API.**
 
