@@ -34,11 +34,12 @@ The repository has no releases yet, work in progress is within the main branch.
 
 * Note: Please be aware that the project will have updates to the main branch. There are no compatibility guarantees associated with code in any branch, including main, until a new release is created. For example, changes may be reverted before a release is created. For best results, use the latest available release.
 
-* **The latest pre-release of CAMARA QoS Booking is [r1.1](https://github.com/camaraproject/QoSBooking/releases/tag/r1.1)**. The Release Tag is [r1.1](https://github.com/camaraproject/QoSBooking/releases/tag/r1.1).
+* **The first pre-release of CAMARA QoS Booking is [r1.1](https://github.com/camaraproject/QoSBooking/releases/tag/r1.1)**. The Release Tag is [r1.1](https://github.com/camaraproject/QoSBooking/releases/tag/r1.1).
 
   - Contains the following API definitions **with inline documentation**:
 
-    - [YAML spec file](https://github.com/camaraproject/QoSBooking/blob/r1.1/code/API_definitions/qos-booking.yaml) | [View it on ReDoc](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/camaraproject/QoSBooking/r1.1/code/API_definitions/qos-booking.yaml&nocors) | [View it on Swagger Editor](https://camaraproject.github.io/swagger-ui/?url=https://raw.githubusercontent.com/camaraproject/QoSBooking/r1.1/code/API_definitions/qos-booking.yaml&nocors)
+    - qos-booking 0.1.0-rc.1 (booking QoS for a single device for a certain time and area)<br>[YAML spec file](https://github.com/camaraproject/QoSBooking/blob/r1.1/code/API_definitions/qos-booking.yaml) | [View it on ReDoc](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/camaraproject/QoSBooking/r1.1/code/API_definitions/qos-booking.yaml&nocors) | [View it on Swagger Editor](https://camaraproject.github.io/swagger-ui/?url=https://raw.githubusercontent.com/camaraproject/QoSBooking/r1.1/code/API_definitions/qos-booking.yaml&nocors)
+    - qos-booking-and-assignment 0.1.0-rc.1 (booking QoS for multiple devices for a certain time and area, the devices can be assigned at a later time to the booking)<br>[YAML spec file](https://github.com/camaraproject/QoSBooking/blob/r1.1/code/API_definitions/qos-booking-and-assignment.yaml) | [View it on ReDoc](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/camaraproject/QoSBooking/r1.1/code/API_definitions/qos-booking-and-assignment.yaml&nocors) | [View it on Swagger Editor](https://camaraproject.github.io/swagger-ui/?url=https://raw.githubusercontent.com/camaraproject/QoSBooking/r1.1/code/API_definitions/qos-booking-and-assignment.yaml&nocors)
 
 ## Contributing
 * Meetings are held virtually 
