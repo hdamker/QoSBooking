@@ -37,6 +37,8 @@ The API definition(s) are based on
 ### Added
 * Initial contribution of the QoS Booking API 
 
+## qos-booking-and-assignment v0.1.0-rc.1
+
 **qos-booking-and-assignment v0.1.0-rc.1 is the first release-candidate version for v0.1.0 of QoS Booking And Assignment API.**
 
 - API definition **with inline documentation**:
