@@ -42,7 +42,6 @@ Feature: CAMARA QoS Booking and Assignment, v0.1.0-rc.1
         And the response body property "$.status" is set to a value "SUCCESSFUL"
         And the response body property "$.statusInfo" is optional, if present, is set to a value compliant with "/components/schemas/BookingStatusInfo"
 
-
     # Success scenarios for GET /qos-bookings/{bookingId}
     # Given a bookingID, this GET operation gets the details of the original booking
     @qos_bookings_getBookingById_200_success
@@ -68,7 +67,6 @@ Feature: CAMARA QoS Booking and Assignment, v0.1.0-rc.1
         And the response body property "$.status" is set to a value compliant with schema at "/components/schemas/Status"
         And the response body property "$.status" is set to a value "SUCCESSFUL"
         And the response body property "$.statusInfo" is optional, if present, is set to a value compliant with "/components/schemas/BookingStatusInfo"
-
 
     # Success scenarios for DELETE /qos-bookings/{bookingId}
     # This operation deletes a booking identified by bookingID. 
@@ -96,7 +94,6 @@ Feature: CAMARA QoS Booking and Assignment, v0.1.0-rc.1
         And the response body property "$.status" is set to a value "SUCCESSFUL"
         And the response body property "$.statusInfo" is optional if present is set to a value compliant with "/components/schemas/BookingStatusInfo"
 
-
     # Success scenarios for POST /qos-bookings/{bookingId}/devices/assign
     # This operation assigns set of devices to a booking. 
     @devices_assignDevices_201_success
@@ -122,7 +119,6 @@ Feature: CAMARA QoS Booking and Assignment, v0.1.0-rc.1
         And the response body property "$.status" is set to a value compliant with schema at "/components/schemas/Status"
         And the response body property "$.status" is set to a value "SUCCESSFUL"
         And the response body property "$.statusInfo" is optional, if present, is set to a value compliant with "/components/schemas/AssignmentStatusInfo"
-
 
     # Success scenarios for POST qos-bookings/{bookingId}/devices/release
     # This operation releases a set of devices from a booking which are already assigned to the booking
@@ -150,7 +146,6 @@ Feature: CAMARA QoS Booking and Assignment, v0.1.0-rc.1
         And the response body property "$.status" is set to a value "SUCCESSFUL"
         And the response body property "$.statusInfo" is optional, if present, is set to a value compliant with "/components/schemas/AssignmentStatusInfo"
 
-
     # Success scenarios for GET /qos-bookings/{bookingId}/devices
     # This operation gets the list of devices assigned to a booking  
     @devices_getDevicesByBookingId_200_success
@@ -173,7 +168,6 @@ Feature: CAMARA QoS Booking and Assignment, v0.1.0-rc.1
         And the response body property "$.status" is set to a value "SUCCESSFUL"
         And the response body property "$.statusInfo" is optional, if present, is set to a value compliant with "/components/schemas/AssignmentStatusInfo"
    
-
     # Success scenarios for POST /qos-bookings/retrieve"
     @devices_retrieveBooking_200_success
     Scenario: Get QoS Booking resource information details for a device
