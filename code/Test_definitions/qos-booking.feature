@@ -74,7 +74,7 @@ Feature: CAMARA QoS Booking API, v0.1.0-rc.1 - API Operations
     Scenario: Delete a QoS booking
         Given that implementation deletes QoS booking synchronously
         And an existing QoS booking created by operation createBooking
-        And the resource "/device-qos-bookings/{bookingId}"
+        And the resource "/qos-booking/v0.1rc1/device-qos-bookings/{bookingId}"
         And the path parameter "bookingId" is set to the value for that QoS booking
         When the request "deleteBooking" is sent
         Then the response status code is 204
@@ -85,7 +85,7 @@ Feature: CAMARA QoS Booking API, v0.1.0-rc.1 - API Operations
     @qos_booking_retrieveBooking_01_success
     Scenario: Get QoS Booking resource information details for a device
         Given a valid testing device with an existing QoS Booking, identified by the token or provided in the request body
-        And the resource "/retrieve-device-qos-bookings"
+        And the resource "/qos-booking/v0.1rc1/retrieve-device-qos-bookings"
         When the request "retrieveBookingByDevice" is sent
         Then the response status code is 200
         And the response header "Content-Type" is "application/json"
