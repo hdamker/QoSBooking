@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: QoS Booking API
+  title: QoS Booking
   description: |
     The QoS (Quality of Service) Booking API provides programmable interface for developers and other users (capabilities consumers) to request in advance certain network conditions to be provided by Telco networks, without the necessity to have an in-depth knowledge of the underlying network complexity (e.g. the 4G/5G system in case of a mobile network).
 
@@ -69,28 +69,28 @@ info:
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
-  version: wip
-  x-camara-commonalities: 0.5
+  version: 0.1.0-rc.1
+  x-camara-commonalities: 0.6
 
 externalDocs:
   description: Project documentation at CAMARA
   url: https://github.com/camaraproject/QoSBooking
 
 servers:
-  - url: "{apiRoot}/qos-booking/vwip"
+  - url: "{apiRoot}/qos-booking/v0.1rc1"
     variables:
       apiRoot:
         default: http://localhost:9091
         description: API root, defined by the service provider, e.g. `api.example.com` or `api.example.com/somepath`
 tags:
-  - name: QoS Booking
+  - name: Device QoS Booking
     description: Manage the booking of QoS
 
 paths:
   /device-qos-bookings:
     post:
       tags:
-        - QoS Booking
+        - Device QoS Booking
       summary: Sets a new booking of QoS for a device
       description: |
         Triggers a new booking to assign certain QoS Profile to certain device.
@@ -193,7 +193,7 @@ paths:
   /device-qos-bookings/{bookingId}:
     get:
       tags:
-        - QoS Booking
+        - Device QoS Booking
       summary: Get QoS Booking information
       description: |
         Querying for QoS Booking information details
@@ -238,7 +238,7 @@ paths:
 
     delete:
       tags:
-        - QoS Booking
+        - Device QoS Booking
       summary: Deletes a QoS Booking
       description: |
         Release resources related to a QoS Booking.
@@ -288,7 +288,7 @@ paths:
   /retrieve-device-qos-bookings:
     post:
       tags:
-        - QoS Booking
+        - Device QoS Booking
       summary: Gets the QoS Booking for a device
       description: |
         Querying for QoS Booking resource information details for a device.
