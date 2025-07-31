@@ -1977,8 +1977,7 @@ components:
       summary: Retrieve successful 
       description: Successfully retrieved assigned bookings for a given device. The device is part of only one booking.
       value:
-        bookingDetails:
-          bookingId: "8e2f6f30-0a1c-4c6b-92e1-1bd05aef1c58"
+        - bookingId: "8e2f6f30-0a1c-4c6b-92e1-1bd05aef1c58"
           totalDevicesInBooking: 15
           remainingDevicesInBooking: 13
           qosProfile: "QOS_MEDIA_BROADCAST"
