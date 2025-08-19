@@ -418,9 +418,9 @@ components:
         - type: object
           properties:
             device:
-              $ref: "#/components/schemas/DeviceResponse"            
+              $ref: "#/components/schemas/DeviceResponse"
             startTime:
-              description: Date and time when QoS profile is scheduled to become available. Format must follow RFC 3339 and must indicate time zone (UTC or local).
+              description: Date and time when QoS profile is scheduled to become available. It must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone.
               type: string
               format: date-time
             duration:
@@ -437,7 +437,7 @@ components:
             bookingId:
               $ref: "#/components/schemas/BookingId"
             startedAt:
-              description: Date and time when the Booking became "AVAILABLE". Not to be returned when `status` is "REQUESTED" or "SCHEDULED". Format must follow RFC 3339 and must indicate time zone (UTC or local).
+              description: Date and time when the Booking became "AVAILABLE". Not to be returned when `status` is "REQUESTED" or "SCHEDULED". It must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone.
               type: string
               format: date-time
             status:
@@ -460,7 +460,7 @@ components:
             device:
               $ref: "#/components/schemas/Device"
             startTime:
-              description: Date and time when the API consumer requests the QoS profile to become available. Format must follow RFC 3339 and must indicate time zone (UTC or local).
+              description: Date and time when the API consumer requests the QoS profile to become available. It must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone.
               type: string
               format: date-time
             duration:
@@ -475,7 +475,7 @@ components:
             - startTime
             - duration
             - serviceArea
-            
+
     RetrieveBookingByDevice:
       description: Attributes to look for QoS Booking
       type: object
@@ -540,7 +540,12 @@ components:
             accessTokenExpiresUtc:
               type: string
               format: date-time
-              description: REQUIRED. An absolute UTC instant at which the token shall be considered expired.
+              description: |
+                REQUIRED. An absolute (UTC) timestamp at which the token shall be considered expired.
+                In the case of an ACCESS_TOKEN_EXPIRED termination reason, implementation should notify the client before the expiration date.
+                If the access token is a JWT and registered "exp" (Expiration Time) claim is present, the two expiry times should match.
+                It must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone.
+              example: "2023-07-03T12:27:08.312Z"
             accessTokenType:
               description: REQUIRED. Type of the access token (See [OAuth 2.0](https://tools.ietf.org/html/rfc6749#section-7.1)).
               type: string
@@ -564,7 +569,12 @@ components:
             accessTokenExpiresUtc:
               type: string
               format: date-time
-              description: REQUIRED. An absolute UTC instant at which the token shall be considered expired.
+              description: |
+                REQUIRED. An absolute (UTC) timestamp at which the token shall be considered expired.
+                In the case of an ACCESS_TOKEN_EXPIRED termination reason, implementation should notify the client before the expiration date.
+                If the access token is a JWT and registered "exp" (Expiration Time) claim is present, the two expiry times should match.
+                It must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone.
+              example: "2023-07-03T12:27:08.312Z"
             accessTokenType:
               description: REQUIRED. Type of the access token (See [OAuth 2.0](https://tools.ietf.org/html/rfc6749#section-7.1)).
               type: string
@@ -675,7 +685,7 @@ components:
           type: object
         time:
           description: |
-            Timestamp of when the occurrence happened. It must follow RFC 3339
+            Timestamp of when the occurrence happened. It must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone.
           type: string
           format: date-time
       discriminator:
@@ -971,13 +981,13 @@ components:
       properties:
         status:
           type: integer
-          description: HTTP status code returned along with this error response
+          description: HTTP response status code
         code:
           type: string
-          description: Code given to this error
+          description: A human-readable code to describe the error
         message:
           type: string
-          description: Detailed error description
+          description: A human-readable description of what the event represents
       required:
         - status
         - code
@@ -987,7 +997,7 @@ components:
       type: string
       pattern: ^[a-zA-Z0-9-_:;.\/<>{}]{0,256}$
       example: "b4333c46-49c0-4f62-80d7-f0ef930f1c46"
-      
+
   responses:
     Generic400:
       description: Bad Request
@@ -1351,7 +1361,7 @@ components:
                 status: 422
                 code: QOS_BOOKING.INVALID_AREA
                 message: "The requested area is too small"
-                
+
     Generic429:
       description: Too Many Requests
       headers:
