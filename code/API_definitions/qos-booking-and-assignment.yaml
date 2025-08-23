@@ -125,10 +125,10 @@ paths:
             schema:
               $ref: "#/components/schemas/BookingInput"
             examples:
-              BOOKING_INPUT-1:
-               $ref: "#/components/examples/BOOKING_INPUT-1"
-              BOOKING_INPUT-2:
-               $ref: "#/components/examples/BOOKING_INPUT-2"
+              BOOKING_INPUT_1:
+               $ref: "#/components/examples/BOOKING_INPUT_1"
+              BOOKING_INPUT_2:
+               $ref: "#/components/examples/BOOKING_INPUT_2"
         required: true
       callbacks:
         notifications:
@@ -227,7 +227,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/BookingOutput"
               examples:
-                BOOKING_SUCCESSFUL:
+                BOOKING_RETRIEVED:
                   $ref: "#/components/examples/BOOKING_RETRIEVED"
         "400":
           $ref: "#/components/responses/Generic400"
@@ -327,10 +327,10 @@ paths:
             schema:
               $ref: "#/components/schemas/DeviceAssignmentInput"
             examples:
-              ASSIGNMENT_INPUT-1: 
-                $ref: "#/components/examples/ASSIGNMENT_INPUT-1"
-              ASSIGNMENT_INPUT-2: 
-                $ref: "#/components/examples/ASSIGNMENT_INPUT-2"
+              ASSIGNMENT_INPUT_1: 
+                $ref: "#/components/examples/ASSIGNMENT_INPUT_1"
+              ASSIGNMENT_INPUT_2: 
+                $ref: "#/components/examples/ASSIGNMENT_INPUT_2"
         required: true
       callbacks:
         notifications:
@@ -381,10 +381,10 @@ paths:
                   $ref: "#/components/examples/ASSIGNMENT_SUCCESSFUL"
                 ASSIGNMENT_PARTIAL_SUCCESS:
                   $ref: "#/components/examples/ASSIGNMENT_PARTIAL_SUCCESS"
-                ASSIGNMENT_FAILURE-1:
-                  $ref: "#/components/examples/ASSIGNMENT_FAILURE-1"
-                ASSIGNMENT_FAILURE-2:
-                  $ref: "#/components/examples/ASSIGNMENT_FAILURE-2"
+                ASSIGNMENT_FAILURE_1:
+                  $ref: "#/components/examples/ASSIGNMENT_FAILURE_1"
+                ASSIGNMENT_FAILURE_2:
+                  $ref: "#/components/examples/ASSIGNMENT_FAILURE_2"
                 ASSIGNMENT_PENDING:
                   $ref: "#/components/examples/ASSIGNMENT_PENDING"       
         "400":
@@ -434,10 +434,10 @@ paths:
               schema:
                 $ref: "#/components/schemas/DeviceAssignmentOutput"
               examples:
-                ASSIGNMENT_RETRIEVED-1: 
-                  $ref: "#/components/examples/ASSIGNMENT_RETRIEVED-1"
-                ASSIGNMENT_RETRIEVED-2: 
-                  $ref: "#/components/examples/ASSIGNMENT_RETRIEVED-2"
+                ASSIGNMENT_RETRIEVED_1: 
+                  $ref: "#/components/examples/ASSIGNMENT_RETRIEVED_1"
+                ASSIGNMENT_RETRIEVED_2: 
+                  $ref: "#/components/examples/ASSIGNMENT_RETRIEVED_2"
 
         "400":
           $ref: "#/components/responses/CreateBooking400"
@@ -1620,7 +1620,7 @@ components:
                 message: Rate limit reached.
               
   examples:
-    BOOKING_INPUT-1:
+    BOOKING_INPUT_1:
       summary:  Booking Request Example-1
       description: This is an example of a booking request.
       value:
@@ -1637,7 +1637,7 @@ components:
         sink: "https://application-server.com/notifications"
         sinkCredential: {}
 
-    BOOKING_INPUT-2:
+    BOOKING_INPUT_2:
       summary:  Booking Request Example-2
       description: This is an example of a booking request.
       value:
@@ -1770,7 +1770,7 @@ components:
         status: "PENDING"
         statusInfo: "DELETE_REQUESTED"
     
-    ASSIGNMENT_INPUT-1:
+    ASSIGNMENT_INPUT_1:
       summary: Assingment Input - All Identifiers
       description: Assignment Input example. To demonstrate, four devices are used, each with a different type of device identifiers.
       value:
@@ -1784,7 +1784,7 @@ components:
         sink: "https://application-server.com/notifications"
         sinkCredential: {}
     
-    ASSIGNMENT_INPUT-2:
+    ASSIGNMENT_INPUT_2:
       summary: Assingment Input - Phone Number only
       description: Assignment Input example. To demonstrate, two devices are used, each device is identified with a phone number.
       value:
@@ -1866,7 +1866,7 @@ components:
         status: "PENDING"
         statusInfo: "VALIDATION_PENDING"
 
-    ASSIGNMENT_FAILURE-1:
+    ASSIGNMENT_FAILURE_1:
       summary: Assingment Failed
       description: Assignment request failed. Booking is still vallid. 
       value:
@@ -1886,7 +1886,7 @@ components:
         status: "FAILURE"
         statusInfo: "QUOTA_EXCEEDED"
     
-    ASSIGNMENT_FAILURE-2:
+    ASSIGNMENT_FAILURE_2:
       summary: Assingment Failed for unknown booking information
       description: Assignment request failed. Provided `bookingId` is correctly formed but not available. In such a situation, value contains only `status` and `statusInfo`.
       value:
@@ -1923,7 +1923,7 @@ components:
         status: "SUCCESSFUL"
         statusInfo: "ASSIGNMENT_COMPLETED"
 
-    ASSIGNMENT_RETRIEVED-1:
+    ASSIGNMENT_RETRIEVED_1:
       summary: Retrieve successful
       description: Successfully retrieved assigned devices. All devices are visible in this particular case.
       value:
@@ -1946,7 +1946,7 @@ components:
         status: "SUCCESS"
         statusInfo: "ASSIGNMENT_COMPLETED"
 
-    ASSIGNMENT_RETRIEVED-2:
+    ASSIGNMENT_RETRIEVED_2:
       summary: Retrieve successful - No device details
       description: Successfully retrieved assigned devices.  Device details are not visible because of policy restrictions.
       value:
