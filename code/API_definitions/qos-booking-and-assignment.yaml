@@ -124,6 +124,11 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/BookingInput"
+            examples:
+              BOOKING_INPUT_1:
+               $ref: "#/components/examples/BOOKING_INPUT_1"
+              BOOKING_INPUT_2:
+               $ref: "#/components/examples/BOOKING_INPUT_2"
         required: true
       callbacks:
         notifications:
@@ -169,6 +174,14 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/BookingOutput"
+              examples:
+                BOOKING_SUCCESSFUL:
+                  $ref: "#/components/examples/BOOKING_SUCCESSFUL"
+                BOOKING_FAILURE:
+                  $ref: "#/components/examples/BOOKING_FAILURE"
+                BOOKING_PENDING:
+                  $ref: "#/components/examples/BOOKING_PENDING"                
+                
         "400":
           $ref: "#/components/responses/CreateBooking400"
         "401":
@@ -191,13 +204,13 @@ paths:
     get:
       tags:
         - QoS Booking
-      summary: Get the Booking information for an existing QoS Booking.
+      summary: Get the Booking information for a given QoS Booking identified by `bookingId`.
       description: |
         This endpoint gets booking information for the given bookingId.  
-        - A booking request may be failed (Status = FAILURE). 'statusInfo' contains additional information (ex: INVALID, EXPIRED, or CANCELLED).
+        - A booking request may be failed ('status` = FAILURE). `statusInfo` contains additional information (ex: BOOKING_INVALID).
         - Based on the status of the booking, an appropriate error message will be returned.
-        - If a booking is available (status = SUCCESSFUL and booking is active) then this endpoint will return the booking information along with number of devices still can be assigned to the booking.
-        - 'statusInfo' contains additional information under certain conditions. 
+        - If a booking is available (`status` = SUCCESSFUL and booking is active) then this endpoint will return the booking information along with number of devices still can be assigned to the booking.
+        - `statusInfo` contains additional information under certain conditions. 
 
       operationId: getBookingById
       parameters:
@@ -213,6 +226,9 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/BookingOutput"
+              examples:
+                BOOKING_RETRIEVED:
+                  $ref: "#/components/examples/BOOKING_RETRIEVED"
         "400":
           $ref: "#/components/responses/Generic400"
         "401":
@@ -256,6 +272,9 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/BookingOutput"
+              examples:
+                BOOKING_CANCELLED:
+                  $ref: "#/components/examples/BOOKING_CANCELLED"
         "202":
           description: Deletion request accepted to be processed. It applies for an async deletion process. `status` in the response will be `SCHEDULED` 
           headers:
@@ -265,6 +284,9 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/BookingOutput"
+              examples:
+                CANCELLATION_PENDING:
+                  $ref: "#/components/examples/CANCELLATION_PENDING"
         "400":
           $ref: "#/components/responses/Generic400"
         "401":
@@ -304,6 +326,11 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/DeviceAssignmentInput"
+            examples:
+              ASSIGNMENT_INPUT_1: 
+                $ref: "#/components/examples/ASSIGNMENT_INPUT_1"
+              ASSIGNMENT_INPUT_2: 
+                $ref: "#/components/examples/ASSIGNMENT_INPUT_2"
         required: true
       callbacks:
         notifications:
@@ -349,6 +376,17 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/DeviceAssignmentOutput"
+              examples:
+                ASSIGNMENT_SUCCESSFUL: 
+                  $ref: "#/components/examples/ASSIGNMENT_SUCCESSFUL"
+                ASSIGNMENT_PARTIAL_SUCCESS:
+                  $ref: "#/components/examples/ASSIGNMENT_PARTIAL_SUCCESS"
+                ASSIGNMENT_FAILURE_1:
+                  $ref: "#/components/examples/ASSIGNMENT_FAILURE_1"
+                ASSIGNMENT_FAILURE_2:
+                  $ref: "#/components/examples/ASSIGNMENT_FAILURE_2"
+                ASSIGNMENT_PENDING:
+                  $ref: "#/components/examples/ASSIGNMENT_PENDING"       
         "400":
           $ref: "#/components/responses/CreateBooking400"
         "401":
@@ -395,6 +433,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/DeviceAssignmentOutput"
+              examples:
+                ASSIGNMENT_RETRIEVED_1: 
+                  $ref: "#/components/examples/ASSIGNMENT_RETRIEVED_1"
+                ASSIGNMENT_RETRIEVED_2: 
+                  $ref: "#/components/examples/ASSIGNMENT_RETRIEVED_2"
+
         "400":
           $ref: "#/components/responses/CreateBooking400"
         "401":
@@ -435,6 +479,9 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/DeviceAssignmentInput"
+            examples:
+              ASSIGNMENT_RELEASE_INPUT: 
+                $ref: "#/components/examples/ASSIGNMENT_RELEASE_INPUT"
         required: true
       responses:
         "200":
@@ -452,6 +499,9 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/DeviceAssignmentOutput"
+              examples:
+                ASSIGNMENT_RELEASED: 
+                  $ref: "#/components/examples/ASSIGNMENT_RELEASED"
         "400":
           $ref: "#/components/responses/CreateBooking400"
         "401":
@@ -495,6 +545,9 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/RetrieveBookingByDevice"
+            examples:
+              RETRIEVE_BOOKINGS_INPUT:
+               $ref: "#/components/examples/RETRIEVE_BOOKINGS_INPUT"
         required: true
       responses:
         "200":
@@ -506,6 +559,11 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/RetrieveBookingsOutput"
+              examples:
+                RETRIEVE_BOOKINGS_ONE_ITEM:
+                  $ref: "#/components/examples/RETRIEVE_BOOKINGS_ONE_ITEM"
+                RETRIEVE_BOOKINGS_NO_ITEMS:
+                  $ref: "#/components/examples/RETRIEVE_BOOKINGS_NO_ITEMS"
         "400":
           $ref: "#/components/responses/Generic400"
         "401":
@@ -549,7 +607,6 @@ components:
       description: Correlation id for the different services
       schema:
         $ref: "#/components/schemas/XCorrelator"
-
 
   headers:
     x-correlator:
@@ -1048,7 +1105,7 @@ components:
         Recommended format is yyyy-MM-dd'T'HH:mm:ss.SSSZ (i.e. which allows 2023-07-03T14:27:08.312+02:00 or 2023-07-03T12:27:08.312Z)
       type: string
       format: date-time
-      example: "2024-06-01T12:00:312Z"
+      example: "2024-06-01T12:00:00.312Z"
 
     Duration:
       description: |
@@ -1561,3 +1618,382 @@ components:
                 status: 429
                 code: TOO_MANY_REQUESTS
                 message: Rate limit reached.
+              
+  examples:
+    BOOKING_INPUT_1:
+      summary:  Booking Request Example-1
+      description: This is an example of a booking request.
+      value:
+        numDevices: 15
+        qosProfile: "QOS_MEDIA_BROADCAST"
+        startTime: "2025-10-27T15:00:00.000Z"
+        duration: 3600
+        serviceArea:
+          areaType: "CIRCLE"
+          center:
+            latitude: 37.735851
+            longitude: -127.10066
+          radius: 100
+        sink: "https://application-server.com/notifications"
+        sinkCredential: {}
+
+    BOOKING_INPUT_2:
+      summary:  Booking Request Example-2
+      description: This is an example of a booking request.
+      value:
+        numDevices: 27
+        qosProfile: "QOS_MEDIA_BROADCAST"
+        startTime: "2025-10-27T15:00:00.000Z"
+        duration: 3600
+        serviceArea:
+          areaType: "POLYGON"
+          boundary:
+            [
+              [ -122.406558, 37.789172 ],
+              [ -122.396558, 37.789172 ],
+              [ -122.396558, 37.779172 ],
+              [ -122.406558, 37.779172 ]
+            ]
+        sink: "https://application-server.com/notifications"
+        sinkCredential: {}
+
+
+    BOOKING_SUCCESSFUL:
+      summary: Booking Successful
+      description: QoS Booking is successful and valid `bookingId` is returned along with other input parameters.
+      value:
+        bookingId: "8e2f6f30-0a1c-4c6b-92e1-1bd05aef1c58"
+        totalDevicesInBooking: 15
+        remainingDevicesInBooking: 15
+        qosProfile: "QOS_MEDIA_BROADCAST"
+        startTime: "2025-10-27T15:00:00.000Z"
+        duration: 3600
+        serviceArea:
+          areaType: "CIRCLE"
+          center:
+            latitude: 37.735851
+            longitude: -127.10066
+          radius: 100
+        status: "SUCCESSFUL"
+        statusInfo: "BOOKING_ACCEPTED"
+
+    BOOKING_FAILURE:
+      summary: Booking Failed
+      description: QoS Booking failed, `statusInfo` has additional info. No `bookingId` will be returned.
+      value:
+        totalDevicesInBooking: 0
+        remainingDevicesInBooking: 0
+        qosProfile: "QOS_MEDIA_BROADCAST"
+        startTime: "2025-10-27T15:00:00.000Z"
+        duration: 3600
+        serviceArea:
+          areaType: "CIRCLE"
+          center:
+            latitude: 37.735851
+            longitude: -127.10066
+          radius: 100
+        status: "FAILURE"
+        statusInfo: "SERVICE_NOT_AVAILABLE"
+        
+    BOOKING_PENDING:
+      summary: Booking Pending
+      description: QoS Booking request is pending, `statusInfo` has additional info. No `bookingId` will be returned.
+      value:
+        totalDevicesInBooking: 0
+        remainingDevicesInBooking: 0
+        qosProfile: "QOS_MEDIA_BROADCAST"
+        startTime: "2025-10-27T15:00:00.000Z"
+        duration: 3600
+        serviceArea:
+          areaType: "CIRCLE"
+          center:
+            latitude: 37.735851
+            longitude: -127.10066
+          radius: 100
+        status: "PENDING"
+        statusInfo: "VALIDATION_PENDING"
+
+    BOOKING_RETRIEVED:
+      summary: Retrieve Booking
+      description: Retrieve booking information from its 'bookingId'. 'statusInfo' will provide the current status of the booking.
+      value:
+        bookingId: "8e2f6f30-0a1c-4c6b-92e1-1bd05aef1c58"
+        totalDevicesInBooking: 15
+        remainingDevicesInBooking: 15
+        qosProfile: "QOS_MEDIA_BROADCAST"
+        startTime: "2025-10-27T15:00:00.000Z"
+        duration: 3600
+        serviceArea:
+          areaType: "CIRCLE"
+          center:
+            latitude: 37.735851
+            longitude: -127.10066
+          radius: 100
+        status: "SUCCESSFUL"
+        statusInfo: "BOOKING_ACTIVATED"
+
+    BOOKING_CANCELLED:
+      summary: Cancel an existing booking
+      description: Delete a booking using a  valid `bookingId`.  Delete operation is successful.
+      value:
+        bookingId: "8e2f6f30-0a1c-4c6b-92e1-1bd05aef1c58"
+        totalDevicesInBooking: 15
+        remainingDevicesInBooking: 15
+        qosProfile: "QOS_MEDIA_BROADCAST"
+        startTime: "2025-10-27T15:00:00.000Z"
+        duration: 3600
+        serviceArea:
+          areaType: "CIRCLE"
+          center:
+            latitude: 37.735851
+            longitude: -127.10066
+          radius: 100
+        status: "SUCCESSFUL"
+        statusInfo: "BOOKING_CANCELLED"
+  
+    CANCELLATION_PENDING:
+      summary: Cancellation is Requested
+      description: Delete a booking using a  valid `bookingId`.  Delete operation is pending as operator may need more time to process the request.
+      value:
+        bookingId: "8e2f6f30-0a1c-4c6b-92e1-1bd05aef1c58"
+        totalDevicesInBooking: 15
+        remainingDevicesInBooking: 7
+        qosProfile: "QOS_MEDIA_BROADCAST"
+        startTime: "2025-10-27T15:00:00.000Z"
+        duration: 3600
+        serviceArea:
+          areaType: "CIRCLE"
+          center:
+            latitude: 37.735851
+            longitude: -127.10066
+          radius: 100
+        status: "PENDING"
+        statusInfo: "DELETE_REQUESTED"
+    
+    ASSIGNMENT_INPUT_1:
+      summary: Assingment Input - All Identifiers
+      description: Assignment Input example. To demonstrate, four devices are used, each with a different type of device identifiers.
+      value:
+        devices:
+          - phoneNumber: "+14145550101"
+          - networkAccessIdentifier: "+123456789@domain.com"
+          - ipv4Address:          
+              publicAddress: "203.0.113.0"
+              publicPort: 59765
+          - ipv6Address: "2001:db8:85a3:8d3:1319:8a2e:370:7344"
+        sink: "https://application-server.com/notifications"
+        sinkCredential: {}
+    
+    ASSIGNMENT_INPUT_2:
+      summary: Assingment Input - Phone Number only
+      description: Assignment Input example. To demonstrate, two devices are used, each device is identified with a phone number.
+      value:
+        devices:
+          - phoneNumber: "+14145550101"
+          - phoneNumber: "+14145550202"
+        sink: "https://application-server.com/notifications"
+        sinkCredential: {}
+
+    ASSIGNMENT_SUCCESSFUL:
+      summary: Assingment Successful
+      description: Assignment is successful and all requested devices were successfully assigned to the given booking.
+      value:
+        bookingDetails:
+          bookingId: "8e2f6f30-0a1c-4c6b-92e1-1bd05aef1c58"
+          totalDevicesInBooking: 15
+          remainingDevicesInBooking: 11
+          qosProfile: "QOS_MEDIA_BROADCAST"
+          startTime: "2025-10-27T15:00:00.000Z"
+          duration: 3600
+          serviceArea:
+            areaType: "CIRCLE"
+            center:
+              latitude: 37.735851
+              longitude: -127.10066
+            radius: 100
+        devices:
+          - phoneNumber: "+14145550101"
+          - networkAccessIdentifier: "+123456789@domain.com"
+          - ipv4Address:          
+              publicAddress: "203.0.113.0"
+              publicPort: 59765
+          - ipv6Address: "2001:db8:85a3:8d3:1319:8a2e:370:7344"
+        status: "SUCCESSFUL"
+        statusInfo: "ASSIGNMENT_COMPLETED"
+
+    ASSIGNMENT_PARTIAL_SUCCESS:
+      summary: Assingment Partially Successful
+      description: Assignment is successful and some but not all of the requested devices are assigned.
+      value:
+        bookingDetails:
+          bookingId: "8e2f6f30-0a1c-4c6b-92e1-1bd05aef1c58"
+          totalDevicesInBooking: 15
+          remainingDevicesInBooking: 13
+          qosProfile: "QOS_MEDIA_BROADCAST"
+          startTime: "2025-10-27T15:00:00.000Z"
+          duration: 3600
+          serviceArea:
+            areaType: "CIRCLE"
+            center:
+              latitude: 37.735851
+              longitude: -127.10066
+            radius: 100
+        devices:
+          - phoneNumber: "+14145550101"
+          - ipv4Address:          
+              publicAddress: "203.0.113.0"
+              publicPort: 59765
+        status: "PARTIAL_SUCCESS"
+        statusInfo: "ASSIGNMENT_COMPLETED"
+
+    ASSIGNMENT_PENDING:
+      summary: Assingment Pending
+      description: Assignment request is still being processed. None of the requested devices are assigned.
+      value:
+        bookingDetails:
+          bookingId: "8e2f6f30-0a1c-4c6b-92e1-1bd05aef1c58"
+          totalDevicesInBooking: 15
+          remainingDevicesInBooking: 15
+          qosProfile: "QOS_MEDIA_BROADCAST"
+          startTime: "2025-10-27T15:00:00.000Z"
+          duration: 3600
+          serviceArea:
+            areaType: "CIRCLE"
+            center:
+              latitude: 37.735851
+              longitude: -127.10066
+            radius: 100
+        status: "PENDING"
+        statusInfo: "VALIDATION_PENDING"
+
+    ASSIGNMENT_FAILURE_1:
+      summary: Assingment Failed
+      description: Assignment request failed. Booking is still vallid. 
+      value:
+        bookingDetails:
+          bookingId: "8e2f6f30-0a1c-4c6b-92e1-1bd05aef1c58"
+          totalDevicesInBooking: 15
+          remainingDevicesInBooking: 15
+          qosProfile: "QOS_MEDIA_BROADCAST"
+          startTime: "2025-10-27T15:00:00.000Z"
+          duration: 3600
+          serviceArea:
+            areaType: "CIRCLE"
+            center:
+              latitude: 37.735851
+              longitude: -127.10066
+            radius: 100
+        status: "FAILURE"
+        statusInfo: "QUOTA_EXCEEDED"
+    
+    ASSIGNMENT_FAILURE_2:
+      summary: Assingment Failed for unknown booking information
+      description: Assignment request failed. Provided `bookingId` is correctly formed but not available. In such a situation, value contains only `status` and `statusInfo`.
+      value:
+        status: "FAILURE"
+        statusInfo: "BOOKING_INVALID"
+
+    ASSIGNMENT_RELEASE_INPUT:
+      summary: Assingment Release Input
+      description: This is an example of a device that needs to be released from the given booking. 
+      value:
+        devices:
+          - phoneNumber: "+14145550101"
+
+
+    ASSIGNMENT_RELEASED:
+      summary: Assingment released successfully
+      description: Assignment is cancelled successfully and the requested devices are released from booking.
+      value:
+        bookingDetails:
+          bookingId: "8e2f6f30-0a1c-4c6b-92e1-1bd05aef1c58"
+          totalDevicesInBooking: 15
+          remainingDevicesInBooking: 14
+          qosProfile: "QOS_MEDIA_BROADCAST"
+          startTime: "2025-10-27T15:00:00.000Z"
+          duration: 3600
+          serviceArea:
+            areaType: "CIRCLE"
+            center:
+              latitude: 37.735851
+              longitude: -127.10066
+            radius: 100
+        devices:
+          - phoneNumber: "+14145550101"
+        status: "SUCCESSFUL"
+        statusInfo: "ASSIGNMENT_COMPLETED"
+
+    ASSIGNMENT_RETRIEVED_1:
+      summary: Retrieve successful
+      description: Successfully retrieved assigned devices. All devices are visible in this particular case.
+      value:
+        bookingDetails:
+          bookingId: "8e2f6f30-0a1c-4c6b-92e1-1bd05aef1c58"
+          totalDevicesInBooking: 15
+          remainingDevicesInBooking: 13
+          qosProfile: "QOS_MEDIA_BROADCAST"
+          startTime: "2025-10-27T15:00:00.000Z"
+          duration: 3600
+          serviceArea:
+            areaType: "CIRCLE"
+            center:
+              latitude: 37.735851
+              longitude: -127.10066
+            radius: 100
+        devices:
+          - phoneNumber: "+14145550101"
+          - phoneNumber: "+14145550202"
+        status: "SUCCESS"
+        statusInfo: "ASSIGNMENT_COMPLETED"
+
+    ASSIGNMENT_RETRIEVED_2:
+      summary: Retrieve successful - No device details
+      description: Successfully retrieved assigned devices.  Device details are not visible because of policy restrictions.
+      value:
+        bookingDetails:
+          bookingId: "8e2f6f30-0a1c-4c6b-92e1-1bd05aef1c58"
+          totalDevicesInBooking: 15
+          remainingDevicesInBooking: 13
+          qosProfile: "QOS_MEDIA_BROADCAST"
+          startTime: "2025-10-27T15:00:00.000Z"
+          duration: 3600
+          serviceArea:
+            areaType: "CIRCLE"
+            center:
+              latitude: 37.735851
+              longitude: -127.10066
+            radius: 100
+        status: "FAILURE"
+        statusInfo: "DEVICE_DISCLOSURE_POLICY_APPLIED"
+
+    RETRIEVE_BOOKINGS_INPUT:
+      summary: Input to Retrieve Bookings
+      description: This is an example of a device that is given as input to Retrieve Bookings 
+      value:
+        device:
+          phoneNumber: "+14145550101"
+
+    RETRIEVE_BOOKINGS_ONE_ITEM:
+      summary: Retrieve successful 
+      description: Successfully retrieved assigned bookings for a given device. The device is part of only one booking.
+      value:
+        - bookingId: "8e2f6f30-0a1c-4c6b-92e1-1bd05aef1c58"
+          totalDevicesInBooking: 15
+          remainingDevicesInBooking: 13
+          qosProfile: "QOS_MEDIA_BROADCAST"
+          startTime: "2025-10-27T15:00:00.000Z"
+          duration: 3600
+          serviceArea:
+            areaType: "CIRCLE"
+            center:
+              latitude: 37.735851
+              longitude: -127.10066
+            radius: 100
+          status: "SUCCESSFUL"
+          statusInfo: "BOOKING_ACCEPTED"
+
+    RETRIEVE_BOOKINGS_NO_ITEMS:
+      summary: No bookings found for the device
+      description: No bookings are found for the device, value contains only empty array
+      value: []
+ 
