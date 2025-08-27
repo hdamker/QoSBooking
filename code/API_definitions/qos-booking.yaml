@@ -401,6 +401,7 @@ components:
         sink:
           type: string
           format: uri
+          pattern: "^https:\/\/.+$"
           description: The address to which events shall be delivered, using the HTTP protocol.
           example: "https://endpoint.example.com/sink"
         sinkCredential:
@@ -957,6 +958,7 @@ components:
         * `SCHEDULED` - QoS booking has been granted for a future start time.
         * `AVAILABLE` - The requested QoS profile has been activated for the device.
         * `UNAVAILABLE` - The QoS booking request has been processed but is not scheduled or active. `statusInfo` may provide additional information about the reason for the unavailability.
+      type: string
       enum:
         - REQUESTED
         - SCHEDULED
@@ -1054,6 +1056,7 @@ components:
                       - QOS_BOOKING.DURATION_OUT_OF_RANGE
                       - INVALID_CREDENTIAL
                       - INVALID_TOKEN
+                      - INVALID_SINK
           examples:
             GENERIC_400_INVALID_ARGUMENT:
               description: Invalid Argument. Generic Syntax Exception
@@ -1083,6 +1086,12 @@ components:
                 status: 400
                 code: INVALID_TOKEN
                 message: Only bearer token is supported
+            GENERIC_400_INVALID_SINK:
+              description: Invalid sink value
+              value:
+                status: 400
+                code: INVALID_SINK
+                message: sink not valid for the specified protocol
 
     Generic401:
       description: Unauthorized

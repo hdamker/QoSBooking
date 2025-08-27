@@ -584,6 +584,7 @@ components:
             sink:
               type: string
               format: uri
+              pattern: "^https:\/\/.+$"
               description: The address to which events shall be delivered, using the HTTP protocol.
               example: "https://endpoint.example.com/sink"
             sinkCredential:
@@ -1057,7 +1058,7 @@ components:
         It must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone.
       type: string
       format: date-time
-      example: "2024-06-01T12:00:312Z"
+      example: "2024-06-01T12:00:31Z"
 
     Duration:
       description: |
@@ -1068,7 +1069,6 @@ components:
       format: int32
       minimum: 1
       example: 3600
-      default: 86400
 
     Devices:
       description: | 
@@ -1140,6 +1140,7 @@ components:
         * `SUCCESSFUL` - The request is processed successfully. This may happen immediately.  The state will go to PENDING and then back to SUCCESSFUL in certain conditions.ƒ
         * `PARTIAL_SUCCESS` -  The request is processed with partial success - applicable to device assignments.  'statusInfo' may have additional information. This enum is optional, and useful if the operator wants to communicate partial success.
         * `FAILURE` - The request has been processed but failed. `statusInfo` may provide additional information about the reason for the unavailability.
+      type: string
       enum:
         - PENDING
         - SUCCESSFUL
@@ -1301,6 +1302,7 @@ components:
                       - QOS_BOOKING.DURATION_OUT_OF_RANGE
                       - INVALID_CREDENTIAL
                       - INVALID_TOKEN
+                      - INVALID_SINK
           examples:
             GENERIC_400_INVALID_ARGUMENT:
               description: Invalid Argument. Generic Syntax Exception
@@ -1330,6 +1332,12 @@ components:
                 status: 400
                 code: INVALID_TOKEN
                 message: Only bearer token is supported
+            GENERIC_400_INVALID_SINK:
+              description: Invalid sink value
+              value:
+                status: 400
+                code: INVALID_SINK
+                message: sink not valid for the specified protocol
 
     Generic401:
       description: Unauthorized
