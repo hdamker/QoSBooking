@@ -591,6 +591,7 @@ components:
           required:
             - qosProfile
             - startTime
+            - duration
             - serviceArea
 
     BookingDetails: 
@@ -620,6 +621,7 @@ components:
             - remainingDevicesInBooking
             - qosProfile
             - startTime
+            - duration
             - serviceArea
     
     BookingOutput: 
@@ -657,6 +659,7 @@ components:
             - remainingDevicesInBooking
             - qosProfile
             - startTime
+            - duration
             - serviceArea
             - status
   
@@ -1056,7 +1059,6 @@ components:
       format: int32
       minimum: 1
       example: 3600
-      default: 86400
 
     Devices:
       description: | 
@@ -1559,4 +1561,5 @@ components:
                 status: 429
                 code: TOO_MANY_REQUESTS
                 message: Rate limit reached.
+
 
