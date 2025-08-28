@@ -622,9 +622,7 @@ components:
     
     BookingInput: 
       description: |
-        Basic input that are required to book QoS in advance.  
-        - 'numDevices' is optional and it is defaulted to 1.  
-        - 'numDevices' represents the maximum number of devices the enduser wants the operator to reserve
+        Basic input that are required to book QoS in advance. 'numDevices' represents the maximum number of devices the enduser wants the operator to reserve
       allOf:
         - type: object
           properties:
@@ -646,6 +644,7 @@ components:
             sinkCredential:
               $ref: "#/components/schemas/SinkCredential"              
           required:
+            - numDevices
             - qosProfile
             - startTime
             - duration
@@ -663,7 +662,7 @@ components:
             totalDevicesInBooking:
               $ref: "#/components/schemas/DeviceCount"     
             remainingDevicesInBooking:
-              $ref: "#/components/schemas/DeviceCount"                             
+              $ref: "#/components/schemas/RemainingDeviceCount"                             
             qosProfile:
               $ref: "#/components/schemas/QosProfileName"
             startTime:
@@ -697,7 +696,7 @@ components:
             totalDevicesInBooking:
               $ref: "#/components/schemas/DeviceCount"     
             remainingDevicesInBooking:
-              $ref: "#/components/schemas/DeviceCount"                             
+              $ref: "#/components/schemas/RemainingDeviceCount"                             
             qosProfile:
               $ref: "#/components/schemas/QosProfileName"
             startTime:
@@ -1283,10 +1282,15 @@ components:
         
     DeviceCount:
       description: | 
-        Number of devices that may be assigned to booking. The default value is 1.
+        Number of devices that may be assigned to the booking. 
       type: integer
       minimum: 1
-      default: 1
+
+    RemainingDeviceCount:
+      description: | 
+        Number of devices that are remaining in the current booking. 
+      type: integer
+      minimum: 0
 
     XCorrelator:
       type: string
@@ -1997,3 +2001,4 @@ components:
       description: No bookings are found for the device, value contains only empty array
       value: []
  
+
