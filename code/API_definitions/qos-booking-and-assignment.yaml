@@ -689,6 +689,7 @@ components:
         'remainingDevicesInBooking' >= 0 and <= 'totalDevicesInBooking'
         - Once a device is successfully assigned to the booking, 'remainingNumDevices' will be reduced by 1, and once the device is released then it will be incremented by 1
         - Booking Information is also returned as part of the message body when the devices are successfully assigned to the booking.
+        - `bookingId` may not be present if the booking was not successful
 
       allOf:
         - type: object
@@ -712,7 +713,6 @@ components:
             statusInfo:
               $ref: "#/components/schemas/BookingStatusInfo"
           required:
-            - bookingId
             - totalDevicesInBooking
             - remainingDevicesInBooking
             - qosProfile
@@ -1652,7 +1652,11 @@ components:
             longitude: -127.10066
           radius: 100
         sink: "https://application-server.com/notifications"
-        sinkCredential: {}
+        sinkCredential:
+          credentialType: ACCESSTOKEN
+          accessToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+          accessTokenExpiresUtc: "2025-12-31T23:59:59Z"
+          accessTokenType: bearer
 
     BOOKING_INPUT_2:
       summary:  Booking Request Example-2
@@ -1672,7 +1676,11 @@ components:
               [ -122.406558, 37.779172 ]
             ]
         sink: "https://application-server.com/notifications"
-        sinkCredential: {}
+        sinkCredential:
+          credentialType: ACCESSTOKEN
+          accessToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+          accessTokenExpiresUtc: "2025-12-31T23:59:59Z"
+          accessTokenType: bearer
 
 
     BOOKING_SUCCESSFUL:
@@ -1788,7 +1796,7 @@ components:
         statusInfo: "DELETE_REQUESTED"
     
     ASSIGNMENT_INPUT_1:
-      summary: Assingment Input - All Identifiers
+      summary: Assignment Input - All Identifiers
       description: Assignment Input example. To demonstrate, four devices are used, each with a different type of device identifiers.
       value:
         devices:
@@ -1799,20 +1807,28 @@ components:
               publicPort: 59765
           - ipv6Address: "2001:db8:85a3:8d3:1319:8a2e:370:7344"
         sink: "https://application-server.com/notifications"
-        sinkCredential: {}
+        sinkCredential:
+          credentialType: ACCESSTOKEN
+          accessToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+          accessTokenExpiresUtc: "2025-12-31T23:59:59Z"
+          accessTokenType: bearer
     
     ASSIGNMENT_INPUT_2:
-      summary: Assingment Input - Phone Number only
+      summary: Assignment Input - Phone Number only
       description: Assignment Input example. To demonstrate, two devices are used, each device is identified with a phone number.
       value:
         devices:
           - phoneNumber: "+14145550101"
           - phoneNumber: "+14145550202"
         sink: "https://application-server.com/notifications"
-        sinkCredential: {}
+        sinkCredential:
+          credentialType: ACCESSTOKEN
+          accessToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+          accessTokenExpiresUtc: "2025-12-31T23:59:59Z"
+          accessTokenType: bearer
 
     ASSIGNMENT_SUCCESSFUL:
-      summary: Assingment Successful
+      summary: Assignment Successful
       description: Assignment is successful and all requested devices were successfully assigned to the given booking.
       value:
         bookingDetails:
@@ -1839,7 +1855,7 @@ components:
         statusInfo: "ASSIGNMENT_COMPLETED"
 
     ASSIGNMENT_PARTIAL_SUCCESS:
-      summary: Assingment Partially Successful
+      summary: Assignment Partially Successful
       description: Assignment is successful and some but not all of the requested devices are assigned.
       value:
         bookingDetails:
@@ -1864,7 +1880,7 @@ components:
         statusInfo: "ASSIGNMENT_COMPLETED"
 
     ASSIGNMENT_PENDING:
-      summary: Assingment Pending
+      summary: Assignment Pending
       description: Assignment request is still being processed. None of the requested devices are assigned.
       value:
         bookingDetails:
@@ -1884,7 +1900,7 @@ components:
         statusInfo: "VALIDATION_PENDING"
 
     ASSIGNMENT_FAILURE_1:
-      summary: Assingment Failed
+      summary: Assignment Failed
       description: Assignment request failed. Booking is still vallid. 
       value:
         bookingDetails:
@@ -1904,14 +1920,14 @@ components:
         statusInfo: "QUOTA_EXCEEDED"
     
     ASSIGNMENT_FAILURE_2:
-      summary: Assingment Failed for unknown booking information
+      summary: Assignment Failed for unknown booking information
       description: Assignment request failed. Provided `bookingId` is correctly formed but not available. In such a situation, value contains only `status` and `statusInfo`.
       value:
         status: "FAILURE"
         statusInfo: "BOOKING_INVALID"
 
     ASSIGNMENT_RELEASE_INPUT:
-      summary: Assingment Release Input
+      summary: Assignment Release Input
       description: This is an example of a device that needs to be released from the given booking. 
       value:
         devices:
@@ -1919,7 +1935,7 @@ components:
 
 
     ASSIGNMENT_RELEASED:
-      summary: Assingment released successfully
+      summary: Assignment released successfully
       description: Assignment is cancelled successfully and the requested devices are released from booking.
       value:
         bookingDetails:
@@ -1960,7 +1976,7 @@ components:
         devices:
           - phoneNumber: "+14145550101"
           - phoneNumber: "+14145550202"
-        status: "SUCCESS"
+        status: "SUCCESSFUL"
         statusInfo: "ASSIGNMENT_COMPLETED"
 
     ASSIGNMENT_RETRIEVED_2:
