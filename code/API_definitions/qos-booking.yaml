@@ -418,7 +418,7 @@ components:
         - type: object
           properties:
             device:
-              $ref: "#/components/schemas/DeviceResponse"            
+              $ref: "#/components/schemas/DeviceResponse"
             startTime:
               description: Date and time when QoS profile is scheduled to become available. Format must follow RFC 3339 and must indicate time zone (UTC or local).
               type: string
@@ -475,7 +475,7 @@ components:
             - startTime
             - duration
             - serviceArea
-            
+
     RetrieveBookingByDevice:
       description: Attributes to look for QoS Booking
       type: object
@@ -987,7 +987,7 @@ components:
       type: string
       pattern: ^[a-zA-Z0-9-_:;.\/<>{}]{0,256}$
       example: "b4333c46-49c0-4f62-80d7-f0ef930f1c46"
-      
+
   responses:
     Generic400:
       description: Bad Request
@@ -1351,7 +1351,7 @@ components:
                 status: 422
                 code: QOS_BOOKING.INVALID_AREA
                 message: "The requested area is too small"
-                
+
     Generic429:
       description: Too Many Requests
       headers:
@@ -1467,3 +1467,4 @@ components:
       summary: No bookings found for the device
       description: An empty array is returned when no bookings are found for the device
       value: []
+
