@@ -20,7 +20,7 @@ info:
 
     # Resources and Operations overview
     The API defines seven major operations in two groups:
-    
+
     Booking:
 
     - An operation to setup a new QoS Booking for one or more devices.
@@ -105,15 +105,15 @@ paths:
       description: |
         Triggers a new booking in advance and assign this reserved booking profile to one or more devices when the devices are ready.
         - If the booking is completed synchronously, the response will be 201 with `status` = `SUCCESSFUL`.
-        - If the booking request is accepted but not yet completed, the response will be 201 with `status` = `PENDING`. 
+        - If the booking request is accepted but not yet completed, the response will be 201 with `status` = `PENDING`.
         - If the operator determines synchronously that the booking request cannot be fulfilled, the response will be 201 with `status` = `FAILURE`.
-        - If the operator is not able to determine the booking availability immediately and the request includes a notification callback, the client will receive a `status-changed` event with the outcome of the process. 
+        - If the operator is not able to determine the booking availability immediately and the request includes a notification callback, the client will receive a `status-changed` event with the outcome of the process.
         - The operator determines immediately:
           - SUCCESSFUL or FAILURE
         - If the operator needs more time to determine the availability
           - PENDING
         - The devices can be assigned anytime from the time booking is successful (status = SUCCESSFUL) and before the scheduled duration ends.
-        - Respective 'statusInfo' contains additional information under certain conditions. 
+        - Respective 'statusInfo' contains additional information under certain conditions.
 
       operationId: createBooking
       parameters:
@@ -206,11 +206,11 @@ paths:
         - QoS Booking
       summary: Get the Booking information for a given QoS Booking identified by `bookingId`.
       description: |
-        This endpoint gets booking information for the given bookingId.  
-        - A booking request may be failed ('status` = FAILURE). `statusInfo` contains additional information (ex: BOOKING_INVALID).
+        This endpoint gets booking information for the given bookingId.
+        - A booking request may be failed (`status` = FAILURE). `statusInfo` contains additional information.
         - Based on the status of the booking, an appropriate error message will be returned.
         - If a booking is available (`status` = SUCCESSFUL and booking is active) then this endpoint will return the booking information along with number of devices still can be assigned to the booking.
-        - `statusInfo` contains additional information under certain conditions. 
+        - `statusInfo` contains additional information under certain conditions.
 
       operationId: getBookingById
       parameters:
@@ -250,9 +250,9 @@ paths:
       description: |
         Cancel an existing booking and release resources related to that booking.
         - The QoS Booking must have been created by the same API client given in the access token.
-        - SUCCESSFUL and FAILURE condition of deleting a booking is based on the implementation of the operator. 
+        - SUCCESSFUL and FAILURE condition of deleting a booking is based on the implementation of the operator.
         - Operator SHOULD properly document their 'delete' behavior.  Following are some guidelines:
-     
+
         - If a booking is made, and no devices are assigned -- SUCCESSFUL - Return message will contain only booking info.
         - If a booking is made, and devices are assigned, but session is not active - SUCCESSFUL. Return message will contain information related to booking.
         - If a booking is made, and devices are not assigned, but session is active - SUCCESSFUL - Return message will contain only booking info
@@ -276,7 +276,7 @@ paths:
                 BOOKING_CANCELLED:
                   $ref: "#/components/examples/BOOKING_CANCELLED"
         "202":
-          description: Deletion request accepted to be processed. It applies for an async deletion process. `status` in the response will be `SCHEDULED` 
+          description: Deletion request accepted to be processed. It applies for an async deletion process. `status` in the response will be `SCHEDULED`
           headers:
             x-correlator:
               $ref: "#/components/headers/x-correlator"
@@ -307,15 +307,15 @@ paths:
         - Device Assignment
       summary: Assign one or more devices to an existing QoS Booking identified by 'bookingId'
       description: |
-        This endpoint allows the end user to assign one or more devices to the existing QoS Booking. 
-        - status = 'SUCCESSFUL' if the assignment is successful for all the devices, and the network is available for the said devices to connect and use them at the requested time 
+        This endpoint allows the end user to assign one or more devices to the existing QoS Booking.
+        - status = 'SUCCESSFUL' if the assignment is successful for all the devices, and the network is available for the said devices to connect and use them at the requested time
         - status = 'FAILURE'  if the assignment is unsuccessful and the 'statusInfo' will have more information.
-        - This is an asynchronous call,  and status = PENDING if the network is still working on your request. A callback will come with appropriate status. 
+        - This is an asynchronous call,  and status = PENDING if the network is still working on your request. A callback will come with appropriate status.
         - If the network could not assign all the requested devices, then status = 'PARTIAL SUCCESS' and the statusInfo will have additional information.
-        - If a 2-legged access token is used, then the device details SHOULD BE provided as part of the input, and the output will return the array of actually assigned devices. 
+        - If a 2-legged access token is used, then the device details SHOULD BE provided as part of the input, and the output will return the array of actually assigned devices.
         - If a 3-legged access token is used, then the device information are identified from the access token, so only one device is implicitly assigned, and the return value may not contain the assigned device information
 
-        
+
       operationId: assignDevices
       parameters:
         - $ref: "#/components/parameters/BookingId"
@@ -411,21 +411,21 @@ paths:
         - Device Assignment
       summary: Get the list of devices assigned to an existing QoS Booking
       description: |
-        This endpoint allows the end user to retrieve the list of devices assigned to the existing QoS Booking. 
-        - status = 'SUCCESSFUL' if the operation is successful 
+        This endpoint allows the end user to retrieve the list of devices assigned to the existing QoS Booking.
+        - status = 'SUCCESSFUL' if the operation is successful
         - status = 'FAILURE'  if the operation is unsuccessful then the 'statusInfo' will have more information.
-        - GET may not return the identifying details of all the devices assigned to the booking. There are certain situations, identifying details of certain devices can't be disclosed because of privacy laws, jurisdiction restrictions, and some legal requirements. 
+        - GET may not return the identifying details of all the devices assigned to the booking. There are certain situations, identifying details of certain devices can't be disclosed because of privacy laws, jurisdiction restrictions, and some legal requirements.
           In such a situation the operator SHOULD properly communicate this to the API consumer that device identifiers of certain devices are not disclosed. 'statusInfo = DEVICE_DISCLOSURE_POLICY_APPLIED'
-        - The API consumer can determine; how many devices are actually in the booking from 'bookingDetails'; but may not know the identifying details of all those devices. 
+        - The API consumer can determine; how many devices are actually in the booking from 'bookingDetails'; but may not know the identifying details of all those devices.
         - A classic example is: Some of the devices are assigned using a 3-legged access token; Or a booking is made in one jurisdiction and the actual usage is happening in another jurisdiction which has several privacy restrictions.
-        
+
       operationId: getDevicesByBookingId
       parameters:
         - $ref: "#/components/parameters/BookingId"
         - $ref: "#/components/parameters/x-correlator"
       responses:
         "200":
-          description: List of all devices assigned to the booking is returned. 
+          description: List of all devices assigned to the booking is returned.
           headers:
             x-correlator:
               $ref: "#/components/headers/x-correlator"
@@ -462,9 +462,9 @@ paths:
       tags:
         - Device Assignment
       summary: Release one or more devices from the given QoS Booking
-      description: | 
-        Release one or more already assigned devices. This is a synchronous call. 
-        - This call will release one or more of the devices that are identifiable and part of the booking. 
+      description: |
+        Release one or more already assigned devices. This is a synchronous call.
+        - This call will release one or more of the devices that are identifiable and part of the booking.
         - If the device is assigned using 3-legged access token:
           - If the device is active, then release can happen in the same way.
           - If the device has failed for some reason, and the device information is not known, then the device can't be released from booking.
@@ -485,10 +485,10 @@ paths:
         required: true
       responses:
         "200":
-          description: | 
+          description: |
             At least one of the requested devices is successfully released from the booking.
-            Example: 
-              If the enduser asks to release 2 devices and the network can release only one device 
+            Example:
+              If the enduser asks to release 2 devices and the network can release only one device
                 'status = PARTIAL_SUCCESS' and statusInfo will have additional details
               In addition, the returned message body will contain the list of actual devices that are released.
 
@@ -619,15 +619,15 @@ components:
       description: Booking Identifier in UUID format
       type: string
       format: uuid
-    
-    BookingInput: 
+
+    BookingInput:
       description: |
         Basic input that are required to book QoS in advance. 'numDevices' represents the maximum number of devices the enduser wants the operator to reserve
       allOf:
         - type: object
           properties:
             numDevices:
-              $ref: "#/components/schemas/DeviceCount"                   
+              $ref: "#/components/schemas/DeviceCount"
             qosProfile:
               $ref: "#/components/schemas/QosProfileName"
             startTime:
@@ -639,29 +639,30 @@ components:
             sink:
               type: string
               format: uri
+              pattern: "^https:\/\/.+$"
               description: The address to which events shall be delivered, using the HTTP protocol.
               example: "https://endpoint.example.com/sink"
             sinkCredential:
-              $ref: "#/components/schemas/SinkCredential"              
+              $ref: "#/components/schemas/SinkCredential"
           required:
             - qosProfile
             - startTime
             - duration
             - serviceArea
 
-    BookingDetails: 
+    BookingDetails:
       description: |
         -  The details of booking.  This schema can be used in any place booking details need to be returned.
-        
+
       allOf:
         - type: object
           properties:
             bookingId:
               $ref: "#/components/schemas/BookingId"
             totalDevices:
-              $ref: "#/components/schemas/DeviceCount"     
+              $ref: "#/components/schemas/DeviceCount"
             remainingDevices:
-              $ref: "#/components/schemas/RemainingDeviceCount"                             
+              $ref: "#/components/schemas/RemainingDeviceCount"
             qosProfile:
               $ref: "#/components/schemas/QosProfileName"
             startTime:
@@ -669,7 +670,7 @@ components:
             duration:
               $ref: "#/components/schemas/Duration"
             serviceArea:
-              $ref: "#/components/schemas/Area"   
+              $ref: "#/components/schemas/Area"
           required:
             - bookingId
             - remainingDevices
@@ -677,24 +678,25 @@ components:
             - startTime
             - duration
             - serviceArea
-    
-    BookingOutput: 
+
+    BookingOutput:
       description: |
         - If the booking endpoint returns synchronously, 'BookingOutput' will be part of the return message body. For async success a follow-up 'get' call will return the details of the actual booking.
         - It returns original number of devices that are requested as well as the remaining number of devices in the booking that can be assigned
         'remainingDevices' >= 0 and <= 'totalDevices'
         - Once a device is successfully assigned to the booking, 'remainingNumDevices' will be reduced by 1, and once the device is released then it will be incremented by 1
-        - Booking Information is also returned as part of the message body when the devices are successfully assigned to the booking. 
-        
+        - Booking Information is also returned as part of the message body when the devices are successfully assigned to the booking.
+        - `bookingId` may not be present if the booking was not successful
+
       allOf:
         - type: object
           properties:
             bookingId:
               $ref: "#/components/schemas/BookingId"
             totalDevices:
-              $ref: "#/components/schemas/DeviceCount"     
+              $ref: "#/components/schemas/DeviceCount"
             remainingDevices:
-              $ref: "#/components/schemas/RemainingDeviceCount"                             
+              $ref: "#/components/schemas/RemainingDeviceCount"
             qosProfile:
               $ref: "#/components/schemas/QosProfileName"
             startTime:
@@ -702,7 +704,7 @@ components:
             duration:
               $ref: "#/components/schemas/Duration"
             serviceArea:
-              $ref: "#/components/schemas/Area"   
+              $ref: "#/components/schemas/Area"
             status:
               $ref: "#/components/schemas/Status"
             statusInfo:
@@ -715,14 +717,14 @@ components:
             - duration
             - serviceArea
             - status
-  
+
     DeviceAssignmentInput:
-      description: | 
+      description: |
         Array of devices that needs to be assigned to a booking. 
-        - The size of the array should be less than or equal to the devices that are remaining in the original booking. 
-        - At least one device identifier is required when a 2-legged access token is used.  
+        - The size of the array should be less than or equal to the devices that are remaining in the original booking.
+        - At least one device identifier is required when a 2-legged access token is used.
         - In a 3-legged situation, only one device can be assigned at a time, and the device details are automatically generated from the access token
-        - In such a situation, 'Devices' array SHOULD NOT be provided.  
+        - In such a situation, 'Devices' array SHOULD NOT be provided.
       type: object
       properties:
         devices:
@@ -733,25 +735,25 @@ components:
           description: The address to which events shall be delivered, using the HTTP protocol.
           example: "https://endpoint.example.com/sink"
         sinkCredential:
-          $ref: "#/components/schemas/SinkCredential" 
-  
-    DeviceAssignmentOutput :
+          $ref: "#/components/schemas/SinkCredential"
+
+    DeviceAssignmentOutput:
       description: |
          This schema is used to return device information associated with the booking as an output.
          - It will have the BookingId along with all the originally requested information.
-         - In some situations (ex: assignments using 3-legged access token) the device details should not be disclosed as per the privacy and other legal requirements. 
-         - For example:  
+         - In some situations (ex: assignments using 3-legged access token) the device details should not be disclosed as per the privacy and other legal requirements.
+         - For example:
            - If there are 10 devices assigned in a booking; but the GET operation returns only 7; It means 3 devices can't be disclosed
-           - The source of truth is in the following properties in the booking details: "totalDevices" and "remainingDevices".        
+           - The source of truth is in the following properties in the booking details: "totalDevices" and "remainingDevices".
            - In such a situation the operator SHOULD set  'statusInfo' as 'DEVICE_DISCLOSURE_POLICY_APPLIED' to clearly communicate the fact that some devices are not disclosed.
-   
+
       allOf:
         - type: object
           properties:
             bookingDetails:
               $ref: "#/components/schemas/BookingDetails"
             devices:
-              $ref: "#/components/schemas/DeviceResponseArray"         
+              $ref: "#/components/schemas/DeviceResponseArray"
             status:
               $ref: "#/components/schemas/Status"
             statusInfo:
@@ -823,7 +825,12 @@ components:
             accessTokenExpiresUtc:
               type: string
               format: date-time
-              description: REQUIRED. An absolute UTC instant at which the token shall be considered expired.
+              description: |
+                REQUIRED. An absolute (UTC) timestamp at which the token shall be considered expired.
+                In the case of an ACCESS_TOKEN_EXPIRED termination reason, implementation should notify the client before the expiration date.
+                If the access token is a JWT and registered "exp" (Expiration Time) claim is present, the two expiry times should match.
+                It must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone.
+              example: "2023-07-03T12:27:08.312Z"
             accessTokenType:
               description: REQUIRED. Type of the access token (See [OAuth 2.0](https://tools.ietf.org/html/rfc6749#section-7.1)).
               type: string
@@ -847,7 +854,12 @@ components:
             accessTokenExpiresUtc:
               type: string
               format: date-time
-              description: REQUIRED. An absolute UTC instant at which the token shall be considered expired.
+              description: |
+                REQUIRED. An absolute (UTC) timestamp at which the token shall be considered expired.
+                In the case of an ACCESS_TOKEN_EXPIRED termination reason, implementation should notify the client before the expiration date.
+                If the access token is a JWT and registered "exp" (Expiration Time) claim is present, the two expiry times should match.
+                It must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone.
+              example: "2023-07-03T12:27:08.312Z"
             accessTokenType:
               description: REQUIRED. Type of the access token (See [OAuth 2.0](https://tools.ietf.org/html/rfc6749#section-7.1)).
               type: string
@@ -926,15 +938,15 @@ components:
           type: object
         time:
           description: |
-            Timestamp of when the occurrence happened. It must follow RFC 3339
+            Timestamp of when the occurrence happened. It must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone.
           type: string
           format: date-time
       discriminator:
         propertyName: "type"
         mapping:
           org.camaraproject.qos-booking-and-assignment.v0.status-changed: "#/components/schemas/EventBookingStatusChanged"
-          org.camaraproject.qos-booking-and-assignment.v0.assignment-status-changed: "#/components/schemas/EventAssignmentStatusChanged"      
-          
+          org.camaraproject.qos-booking-and-assignment.v0.assignment-status-changed: "#/components/schemas/EventAssignmentStatusChanged"
+
 
     EventBookingStatusChanged:
       description: Event to notify a QoS Booking status change
@@ -950,7 +962,7 @@ components:
                 - status
               properties:
                 bookingDetails:
-                  $ref: "#/components/schemas/BookingOutput"       
+                  $ref: "#/components/schemas/BookingOutput"
                 status:
                   $ref: "#/components/schemas/StatusChanged"
                 statusInfo:
@@ -972,7 +984,7 @@ components:
                 - deviceDetails
               properties:
                 deviceDetails:
-                  $ref: "#/components/schemas/DeviceAssignmentOutput"                
+                  $ref: "#/components/schemas/DeviceAssignmentOutput"
                 status:
                   $ref: "#/components/schemas/StatusChanged"
                 statusInfo:
@@ -1103,13 +1115,12 @@ components:
         - maxProperties: 1
 
     Time:
-      description: | 
+      description: |
         Date and time when the API consumer requests the QoS profile to become available. 
-        It must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone. 
-        Recommended format is yyyy-MM-dd'T'HH:mm:ss.SSSZ (i.e. which allows 2023-07-03T14:27:08.312+02:00 or 2023-07-03T12:27:08.312Z)
+        It must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone.
       type: string
       format: date-time
-      example: "2024-06-01T12:00:00.312Z"
+      example: "2024-06-01T12:00:31Z"
 
     Duration:
       description: |
@@ -1122,9 +1133,9 @@ components:
       example: 3600
 
     Devices:
-      description: | 
-        Array of devices to be assigned to the booking and provisioned.  At least one device is required. 
-        Not to be provided when a 3-legged access token already identifies a device. 
+      description: |
+        Array of devices to be assigned to the booking and provisioned.  At least one device is required.
+        Not to be provided when a 3-legged access token already identifies a device.
       type: array
       minItems: 1
       items:
@@ -1136,8 +1147,6 @@ components:
       minItems: 1
       items:
         $ref: "#/components/schemas/DeviceResponse"
-
-
 
     NetworkAccessIdentifier:
       description: A public identifier addressing a subscription in a mobile network. In 3GPP terminology, it corresponds to the GPSI formatted with the External Identifier ({Local Identifier}@{Domain Identifier}). Unlike the telephone number, the network access identifier is not subjected to portability ruling in force, and is individually managed by each operator.
@@ -1222,12 +1231,12 @@ components:
         * `DELETE_REQUESTED`- User requested the deletion of the QoS Booking
         * `VALIDATION_PENDING` - The validation is pending. The end user will get a callback with the availability of the booking
         * `SERVICE_NOT_AVAILABLE` - The requested booking could not be fulfilled because of operator could not support the service area/number of devices/qosProfile in the requested time
-        * `QOS_PROFILE_NOT_SUPPORTED`  - The requested QoS Profile is not supported by the operator
+        * `QOS_PROFILE_NOT_SUPPORTED` - The requested QoS Profile is not supported by the operator
         * `BOOKING_UNKNOWN_ERROR` - An unknown error happened while booking
         * `BOOKING_ACCEPTED` - The requested booking is completed successfully. 
-        * `BOOKING_CANCELLED`-  The given bookingId was cancelled by the user and is no more valid. 
-        * `BOOKING_EXPIRED`  -  Booking schedule ended, and the given bookingId is expired and is no more valid
-        * `BOOKING_ACTIVATED`  - Booking schedule started and the booking is activated.
+        * `BOOKING_CANCELLED` - The given bookingId was cancelled by the user and is no more valid.
+        * `BOOKING_EXPIRED` - Booking schedule ended, and the given bookingId is expired and is no more valid
+        * `BOOKING_ACTIVATED` - Booking schedule started and the booking is activated.
  
 
       type: string
@@ -1257,7 +1266,7 @@ components:
         * `BOOKING_INVALID` - The user requests to release a device from booking, but the booking is invalid
         * `BOOKING_CANCELLED` - The user requests to release a device from booking, but the booking is cancelled
         * `BOOKING_EXPIRED` - The user requests to release a device from booking, but the booking is expired and no more active
-        * `BOOKING_TERMINATED` - For unknown reasons booking is terminated by the operator. A booking callback may be issued. 
+        * `BOOKING_TERMINATED` - For unknown reasons booking is terminated by the operator. A booking callback may be issued.
 
       type: string
       enum:
@@ -1278,20 +1287,20 @@ components:
       properties:
         status:
           type: integer
-          description: HTTP status code returned along with this error response
+          description: HTTP response status code
         code:
           type: string
-          description: Code given to this error
+          description: A human-readable code to describe the error
         message:
           type: string
-          description: Detailed error description
+          description: A human-readable description of what the event represents
       required:
         - status
         - code
         - message
-        
+
     DeviceCount:
-      description: | 
+      description: |
         Number of devices that may be assigned to the booking. 
       type: integer
       minimum: 1
@@ -1364,6 +1373,7 @@ components:
                       - QOS_BOOKING.DURATION_OUT_OF_RANGE
                       - INVALID_CREDENTIAL
                       - INVALID_TOKEN
+                      - INVALID_SINK
           examples:
             GENERIC_400_INVALID_ARGUMENT:
               description: Invalid Argument. Generic Syntax Exception
@@ -1393,6 +1403,12 @@ components:
                 status: 400
                 code: INVALID_TOKEN
                 message: Only bearer token is supported
+            GENERIC_400_INVALID_SINK:
+              description: Invalid sink value
+              value:
+                status: 400
+                code: INVALID_SINK
+                message: sink not valid for the specified protocol
 
     Generic401:
       description: Unauthorized
@@ -1650,7 +1666,11 @@ components:
             longitude: -127.10066
           radius: 100
         sink: "https://application-server.com/notifications"
-        sinkCredential: {}
+        sinkCredential:
+          credentialType: ACCESSTOKEN
+          accessToken: "<access_token>"
+          accessTokenExpiresUtc: "2025-12-31T23:59:59Z"
+          accessTokenType: bearer
 
     BOOKING_INPUT_2:
       summary:  Booking Request Example-2
@@ -1670,7 +1690,11 @@ components:
               [ -122.406558, 37.779172 ]
             ]
         sink: "https://application-server.com/notifications"
-        sinkCredential: {}
+        sinkCredential:
+          credentialType: ACCESSTOKEN
+          accessToken: "<access_token>"
+          accessTokenExpiresUtc: "2025-12-31T23:59:59Z"
+          accessTokenType: bearer
 
 
     BOOKING_SUCCESSFUL:
@@ -1786,7 +1810,7 @@ components:
         statusInfo: "DELETE_REQUESTED"
     
     ASSIGNMENT_INPUT_1:
-      summary: Assingment Input - All Identifiers
+      summary: Assignment Input - All Identifiers
       description: Assignment Input example. To demonstrate, four devices are used, each with a different type of device identifiers.
       value:
         devices:
@@ -1797,20 +1821,28 @@ components:
               publicPort: 59765
           - ipv6Address: "2001:db8:85a3:8d3:1319:8a2e:370:7344"
         sink: "https://application-server.com/notifications"
-        sinkCredential: {}
+        sinkCredential:
+          credentialType: ACCESSTOKEN
+          accessToken: "<access_token>"
+          accessTokenExpiresUtc: "2025-12-31T23:59:59Z"
+          accessTokenType: bearer
     
     ASSIGNMENT_INPUT_2:
-      summary: Assingment Input - Phone Number only
+      summary: Assignment Input - Phone Number only
       description: Assignment Input example. To demonstrate, two devices are used, each device is identified with a phone number.
       value:
         devices:
           - phoneNumber: "+14145550101"
           - phoneNumber: "+14145550202"
         sink: "https://application-server.com/notifications"
-        sinkCredential: {}
+        sinkCredential:
+          credentialType: ACCESSTOKEN
+          accessToken: "<access_token>"
+          accessTokenExpiresUtc: "2025-12-31T23:59:59Z"
+          accessTokenType: bearer
 
     ASSIGNMENT_SUCCESSFUL:
-      summary: Assingment Successful
+      summary: Assignment Successful
       description: Assignment is successful and all requested devices were successfully assigned to the given booking.
       value:
         bookingDetails:
@@ -1837,7 +1869,7 @@ components:
         statusInfo: "ASSIGNMENT_COMPLETED"
 
     ASSIGNMENT_PARTIAL_SUCCESS:
-      summary: Assingment Partially Successful
+      summary: Assignment Partially Successful
       description: Assignment is successful and some but not all of the requested devices are assigned.
       value:
         bookingDetails:
@@ -1862,7 +1894,7 @@ components:
         statusInfo: "ASSIGNMENT_COMPLETED"
 
     ASSIGNMENT_PENDING:
-      summary: Assingment Pending
+      summary: Assignment Pending
       description: Assignment request is still being processed. None of the requested devices are assigned.
       value:
         bookingDetails:
@@ -1882,7 +1914,7 @@ components:
         statusInfo: "VALIDATION_PENDING"
 
     ASSIGNMENT_FAILURE_1:
-      summary: Assingment Failed
+      summary: Assignment Failed
       description: Assignment request failed. Booking is still vallid. 
       value:
         bookingDetails:
@@ -1902,14 +1934,14 @@ components:
         statusInfo: "QUOTA_EXCEEDED"
     
     ASSIGNMENT_FAILURE_2:
-      summary: Assingment Failed for unknown booking information
+      summary: Assignment Failed for unknown booking information
       description: Assignment request failed. Provided `bookingId` is correctly formed but not available. In such a situation, value contains only `status` and `statusInfo`.
       value:
         status: "FAILURE"
         statusInfo: "BOOKING_INVALID"
 
     ASSIGNMENT_RELEASE_INPUT:
-      summary: Assingment Release Input
+      summary: Assignment Release Input
       description: This is an example of a device that needs to be released from the given booking. 
       value:
         devices:
@@ -1917,7 +1949,7 @@ components:
 
 
     ASSIGNMENT_RELEASED:
-      summary: Assingment released successfully
+      summary: Assignment released successfully
       description: Assignment is cancelled successfully and the requested devices are released from booking.
       value:
         bookingDetails:
@@ -1958,7 +1990,7 @@ components:
         devices:
           - phoneNumber: "+14145550101"
           - phoneNumber: "+14145550202"
-        status: "SUCCESS"
+        status: "SUCCESSFUL"
         statusInfo: "ASSIGNMENT_COMPLETED"
 
     ASSIGNMENT_RETRIEVED_2:
@@ -2011,3 +2043,4 @@ components:
       summary: No bookings found for the device
       description: No bookings are found for the device, value contains only empty array
       value: []
+
