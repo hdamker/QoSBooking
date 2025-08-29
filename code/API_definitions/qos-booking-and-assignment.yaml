@@ -1300,7 +1300,6 @@ components:
       description: |
         Number of devices that may be assigned to the booking.
       type: integer
-      minimum: 1
       default: 1
 
     RemainingDeviceCount:
@@ -2039,3 +2038,4 @@ components:
       summary: No bookings found for the device
       description: No bookings are found for the device, value contains only empty array
       value: []
+
