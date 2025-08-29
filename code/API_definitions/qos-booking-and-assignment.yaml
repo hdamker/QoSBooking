@@ -710,7 +710,6 @@ components:
             statusInfo:
               $ref: "#/components/schemas/BookingStatusInfo"
           required:
-            - bookingId
             - remainingDevices
             - qosProfile
             - startTime
@@ -2043,4 +2042,5 @@ components:
       summary: No bookings found for the device
       description: No bookings are found for the device, value contains only empty array
       value: []
+
 
