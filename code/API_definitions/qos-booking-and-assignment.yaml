@@ -126,9 +126,9 @@ paths:
               $ref: "#/components/schemas/BookingInput"
             examples:
               BOOKING_INPUT_1:
-               $ref: "#/components/examples/BOOKING_INPUT_1"
+                $ref: "#/components/examples/BOOKING_INPUT_1"
               BOOKING_INPUT_2:
-               $ref: "#/components/examples/BOOKING_INPUT_2"
+                $ref: "#/components/examples/BOOKING_INPUT_2"
         required: true
       callbacks:
         notifications:
@@ -180,8 +180,8 @@ paths:
                 BOOKING_FAILURE:
                   $ref: "#/components/examples/BOOKING_FAILURE"
                 BOOKING_PENDING:
-                  $ref: "#/components/examples/BOOKING_PENDING"                
-                
+                  $ref: "#/components/examples/BOOKING_PENDING"
+
         "400":
           $ref: "#/components/responses/CreateBooking400"
         "401":
@@ -327,9 +327,9 @@ paths:
             schema:
               $ref: "#/components/schemas/DeviceAssignmentInput"
             examples:
-              ASSIGNMENT_INPUT_1: 
+              ASSIGNMENT_INPUT_1:
                 $ref: "#/components/examples/ASSIGNMENT_INPUT_1"
-              ASSIGNMENT_INPUT_2: 
+              ASSIGNMENT_INPUT_2:
                 $ref: "#/components/examples/ASSIGNMENT_INPUT_2"
         required: true
       callbacks:
@@ -377,7 +377,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/DeviceAssignmentOutput"
               examples:
-                ASSIGNMENT_SUCCESSFUL: 
+                ASSIGNMENT_SUCCESSFUL:
                   $ref: "#/components/examples/ASSIGNMENT_SUCCESSFUL"
                 ASSIGNMENT_PARTIAL_SUCCESS:
                   $ref: "#/components/examples/ASSIGNMENT_PARTIAL_SUCCESS"
@@ -386,7 +386,7 @@ paths:
                 ASSIGNMENT_FAILURE_2:
                   $ref: "#/components/examples/ASSIGNMENT_FAILURE_2"
                 ASSIGNMENT_PENDING:
-                  $ref: "#/components/examples/ASSIGNMENT_PENDING"       
+                  $ref: "#/components/examples/ASSIGNMENT_PENDING"
         "400":
           $ref: "#/components/responses/CreateBooking400"
         "401":
@@ -434,9 +434,9 @@ paths:
               schema:
                 $ref: "#/components/schemas/DeviceAssignmentOutput"
               examples:
-                ASSIGNMENT_RETRIEVED_1: 
+                ASSIGNMENT_RETRIEVED_1:
                   $ref: "#/components/examples/ASSIGNMENT_RETRIEVED_1"
-                ASSIGNMENT_RETRIEVED_2: 
+                ASSIGNMENT_RETRIEVED_2:
                   $ref: "#/components/examples/ASSIGNMENT_RETRIEVED_2"
 
         "400":
@@ -480,7 +480,7 @@ paths:
             schema:
               $ref: "#/components/schemas/DeviceAssignmentInput"
             examples:
-              ASSIGNMENT_RELEASE_INPUT: 
+              ASSIGNMENT_RELEASE_INPUT:
                 $ref: "#/components/examples/ASSIGNMENT_RELEASE_INPUT"
         required: true
       responses:
@@ -500,7 +500,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/DeviceAssignmentOutput"
               examples:
-                ASSIGNMENT_RELEASED: 
+                ASSIGNMENT_RELEASED:
                   $ref: "#/components/examples/ASSIGNMENT_RELEASED"
         "400":
           $ref: "#/components/responses/CreateBooking400"
@@ -547,7 +547,7 @@ paths:
               $ref: "#/components/schemas/RetrieveBookingByDevice"
             examples:
               RETRIEVE_BOOKINGS_INPUT:
-               $ref: "#/components/examples/RETRIEVE_BOOKINGS_INPUT"
+                $ref: "#/components/examples/RETRIEVE_BOOKINGS_INPUT"
         required: true
       responses:
         "200":
@@ -710,7 +710,6 @@ components:
             statusInfo:
               $ref: "#/components/schemas/BookingStatusInfo"
           required:
-            - bookingId
             - remainingDevices
             - qosProfile
             - startTime
@@ -720,7 +719,7 @@ components:
 
     DeviceAssignmentInput:
       description: |
-        Array of devices that needs to be assigned to a booking. 
+        Array of devices that needs to be assigned to a booking.
         - The size of the array should be less than or equal to the devices that are remaining in the original booking.
         - At least one device identifier is required when a 2-legged access token is used.
         - In a 3-legged situation, only one device can be assigned at a time, and the device details are automatically generated from the access token
@@ -1116,7 +1115,7 @@ components:
 
     Time:
       description: |
-        Date and time when the API consumer requests the QoS profile to become available. 
+        Date and time when the API consumer requests the QoS profile to become available.
         It must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone.
       type: string
       format: date-time
@@ -1124,7 +1123,7 @@ components:
 
     Duration:
       description: |
-        Requested session duration in seconds.  Value may be explicitly limited for the QoS profile, as specified in the Qos Profile (see qos-profile API). 
+        Requested session duration in seconds.  Value may be explicitly limited for the QoS profile, as specified in the Qos Profile (see qos-profile API).
         Implementations can grant the requested session duration or set a different duration from `startTime`, based on network policies or conditions.
         We can make it optional with a default value of 24 hours. Also the user can ask any big number. But the actual value will be limitted by QoS Profile
       type: integer
@@ -1214,7 +1213,7 @@ components:
 
     StatusChanged:
       description: |
-        The current status of PENDING can be changed to SUCCESSFUL or PARTIAL_SUCCESS or FAILURE.  
+        The current status of PENDING can be changed to SUCCESSFUL or PARTIAL_SUCCESS or FAILURE.
         In some situations (rare situations) a SUCCESSFUL booking or a device assignment may turn into a FAILURE because of natural disasters, catastrophic events, or for a unknown reason.
         In such a situations 'statusInfo' may provide additional information about the reason for the unavailability
       type: string
@@ -1233,11 +1232,10 @@ components:
         * `SERVICE_NOT_AVAILABLE` - The requested booking could not be fulfilled because of operator could not support the service area/number of devices/qosProfile in the requested time
         * `QOS_PROFILE_NOT_SUPPORTED` - The requested QoS Profile is not supported by the operator
         * `BOOKING_UNKNOWN_ERROR` - An unknown error happened while booking
-        * `BOOKING_ACCEPTED` - The requested booking is completed successfully. 
+        * `BOOKING_ACCEPTED` - The requested booking is completed successfully.
         * `BOOKING_CANCELLED` - The given bookingId was cancelled by the user and is no more valid.
         * `BOOKING_EXPIRED` - Booking schedule ended, and the given bookingId is expired and is no more valid
         * `BOOKING_ACTIVATED` - Booking schedule started and the booking is activated.
- 
 
       type: string
       enum:
@@ -1252,12 +1250,11 @@ components:
         - BOOKING_CANCELLED
         - BOOKING_EXPIRED
         - BOOKING_ACTIVATED
-   
 
     AssignmentStatusInfo:
       description: |
        This schema provides a detailed status of an assignment request
-        * `DEVICE_NOT_FOUND` - One or some of the devices are not found to validate and associate to booking. 
+        * `DEVICE_NOT_FOUND` - One or some of the devices are not found to validate and associate to booking.
         * `DEVICE_UNKNOWN_ERROR` - One, or more, or all of devices are not assigned or not released because of unknown error.
         * `DEVICE_DISCLOSURE_POLICY_APPLIED` - Some or all of the devices are not disclosed because of privacy, or legal requirements, or for unknown reasons.
         * `QUOTA_EXCEEDED` - The number of devices requested to assign to a booking is more than the allocated total for the booking. Only remaining devices are assigned
@@ -1301,14 +1298,13 @@ components:
 
     DeviceCount:
       description: |
-        Number of devices that may be assigned to the booking. 
+        Number of devices that may be assigned to the booking.
       type: integer
-      minimum: 1
       default: 1
 
     RemainingDeviceCount:
-      description: | 
-        Number of devices that are remaining in the current booking. 
+      description: |
+        Number of devices that are remaining in the current booking.
       type: integer
       minimum: 0
 
@@ -1649,10 +1645,10 @@ components:
                 status: 429
                 code: TOO_MANY_REQUESTS
                 message: Rate limit reached.
-              
+
   examples:
     BOOKING_INPUT_1:
-      summary:  Booking Request Example-1
+      summary: Booking Request Example-1
       description: This is an example of a booking request.
       value:
         numDevices: 15
@@ -1673,7 +1669,7 @@ components:
           accessTokenType: bearer
 
     BOOKING_INPUT_2:
-      summary:  Booking Request Example-2
+      summary: Booking Request Example-2
       description: This is an example of a booking request.
       value:
         numDevices: 27
@@ -1684,10 +1680,10 @@ components:
           areaType: "POLYGON"
           boundary:
             [
-              [ -122.406558, 37.789172 ],
-              [ -122.396558, 37.789172 ],
-              [ -122.396558, 37.779172 ],
-              [ -122.406558, 37.779172 ]
+              [-122.406558, 37.789172],
+              [-122.396558, 37.789172],
+              [-122.396558, 37.779172],
+              [-122.406558, 37.779172]
             ]
         sink: "https://application-server.com/notifications"
         sinkCredential:
@@ -1733,7 +1729,7 @@ components:
           radius: 100
         status: "FAILURE"
         statusInfo: "SERVICE_NOT_AVAILABLE"
-        
+
     BOOKING_PENDING:
       summary: Booking Pending
       description: QoS Booking request is pending, `statusInfo` has additional info. No `bookingId` will be returned.
@@ -1789,7 +1785,7 @@ components:
           radius: 100
         status: "SUCCESSFUL"
         statusInfo: "BOOKING_CANCELLED"
-  
+
     CANCELLATION_PENDING:
       summary: Cancellation is Requested
       description: Delete a booking using a  valid `bookingId`.  Delete operation is pending as operator may need more time to process the request.
@@ -1808,7 +1804,7 @@ components:
           radius: 100
         status: "PENDING"
         statusInfo: "DELETE_REQUESTED"
-    
+
     ASSIGNMENT_INPUT_1:
       summary: Assignment Input - All Identifiers
       description: Assignment Input example. To demonstrate, four devices are used, each with a different type of device identifiers.
@@ -1816,7 +1812,7 @@ components:
         devices:
           - phoneNumber: "+14145550101"
           - networkAccessIdentifier: "+123456789@domain.com"
-          - ipv4Address:          
+          - ipv4Address:
               publicAddress: "203.0.113.0"
               publicPort: 59765
           - ipv6Address: "2001:db8:85a3:8d3:1319:8a2e:370:7344"
@@ -1826,7 +1822,7 @@ components:
           accessToken: "<access_token>"
           accessTokenExpiresUtc: "2025-12-31T23:59:59Z"
           accessTokenType: bearer
-    
+
     ASSIGNMENT_INPUT_2:
       summary: Assignment Input - Phone Number only
       description: Assignment Input example. To demonstrate, two devices are used, each device is identified with a phone number.
@@ -1861,7 +1857,7 @@ components:
         devices:
           - phoneNumber: "+14145550101"
           - networkAccessIdentifier: "+123456789@domain.com"
-          - ipv4Address:          
+          - ipv4Address:
               publicAddress: "203.0.113.0"
               publicPort: 59765
           - ipv6Address: "2001:db8:85a3:8d3:1319:8a2e:370:7344"
@@ -1887,7 +1883,7 @@ components:
             radius: 100
         devices:
           - phoneNumber: "+14145550101"
-          - ipv4Address:          
+          - ipv4Address:
               publicAddress: "203.0.113.0"
               publicPort: 59765
         status: "PARTIAL_SUCCESS"
@@ -1915,7 +1911,7 @@ components:
 
     ASSIGNMENT_FAILURE_1:
       summary: Assignment Failed
-      description: Assignment request failed. Booking is still vallid. 
+      description: Assignment request failed. Booking is still vallid.
       value:
         bookingDetails:
           bookingId: "8e2f6f30-0a1c-4c6b-92e1-1bd05aef1c58"
@@ -1932,7 +1928,7 @@ components:
             radius: 100
         status: "FAILURE"
         statusInfo: "QUOTA_EXCEEDED"
-    
+
     ASSIGNMENT_FAILURE_2:
       summary: Assignment Failed for unknown booking information
       description: Assignment request failed. Provided `bookingId` is correctly formed but not available. In such a situation, value contains only `status` and `statusInfo`.
@@ -1942,11 +1938,10 @@ components:
 
     ASSIGNMENT_RELEASE_INPUT:
       summary: Assignment Release Input
-      description: This is an example of a device that needs to be released from the given booking. 
+      description: This is an example of a device that needs to be released from the given booking.
       value:
         devices:
           - phoneNumber: "+14145550101"
-
 
     ASSIGNMENT_RELEASED:
       summary: Assignment released successfully
@@ -2015,13 +2010,13 @@ components:
 
     RETRIEVE_BOOKINGS_INPUT:
       summary: Input to Retrieve Bookings
-      description: This is an example of a device that is given as input to Retrieve Bookings 
+      description: This is an example of a device that is given as input to Retrieve Bookings
       value:
         device:
           phoneNumber: "+14145550101"
 
     RETRIEVE_BOOKINGS_ONE_ITEM:
-      summary: Retrieve successful 
+      summary: Retrieve successful
       description: Successfully retrieved assigned bookings for a given device. The device is part of only one booking.
       value:
         - bookingId: "8e2f6f30-0a1c-4c6b-92e1-1bd05aef1c58"
@@ -2043,4 +2038,3 @@ components:
       summary: No bookings found for the device
       description: No bookings are found for the device, value contains only empty array
       value: []
-
