@@ -644,7 +644,6 @@ components:
             sinkCredential:
               $ref: "#/components/schemas/SinkCredential"              
           required:
-            - numDevices
             - qosProfile
             - startTime
             - duration
@@ -659,9 +658,9 @@ components:
           properties:
             bookingId:
               $ref: "#/components/schemas/BookingId"
-            totalDevicesInBooking:
+            totalDevices:
               $ref: "#/components/schemas/DeviceCount"     
-            remainingDevicesInBooking:
+            remainingDevices:
               $ref: "#/components/schemas/RemainingDeviceCount"                             
             qosProfile:
               $ref: "#/components/schemas/QosProfileName"
@@ -673,8 +672,7 @@ components:
               $ref: "#/components/schemas/Area"   
           required:
             - bookingId
-            - totalDevicesInBooking
-            - remainingDevicesInBooking
+            - remainingDevices
             - qosProfile
             - startTime
             - duration
@@ -684,7 +682,7 @@ components:
       description: |
         - If the booking endpoint returns synchronously, 'BookingOutput' will be part of the return message body. For async success a follow-up 'get' call will return the details of the actual booking.
         - It returns original number of devices that are requested as well as the remaining number of devices in the booking that can be assigned
-        'remainingDevicesInBooking' >= 0 and <= 'totalDevicesInBooking'
+        'remainingDevices' >= 0 and <= 'totalDevices'
         - Once a device is successfully assigned to the booking, 'remainingNumDevices' will be reduced by 1, and once the device is released then it will be incremented by 1
         - Booking Information is also returned as part of the message body when the devices are successfully assigned to the booking. 
         
@@ -693,9 +691,9 @@ components:
           properties:
             bookingId:
               $ref: "#/components/schemas/BookingId"
-            totalDevicesInBooking:
+            totalDevices:
               $ref: "#/components/schemas/DeviceCount"     
-            remainingDevicesInBooking:
+            remainingDevices:
               $ref: "#/components/schemas/RemainingDeviceCount"                             
             qosProfile:
               $ref: "#/components/schemas/QosProfileName"
@@ -711,8 +709,7 @@ components:
               $ref: "#/components/schemas/BookingStatusInfo"
           required:
             - bookingId
-            - totalDevicesInBooking
-            - remainingDevicesInBooking
+            - remainingDevices
             - qosProfile
             - startTime
             - duration
@@ -745,7 +742,7 @@ components:
          - In some situations (ex: assignments using 3-legged access token) the device details should not be disclosed as per the privacy and other legal requirements. 
          - For example:  
            - If there are 10 devices assigned in a booking; but the GET operation returns only 7; It means 3 devices can't be disclosed
-           - The source of truth is in the following properties in the booking details: "totalDevicesInBooking" and "remainingDevicesInBooking".        
+           - The source of truth is in the following properties in the booking details: "totalDevices" and "remainingDevices".        
            - In such a situation the operator SHOULD set  'statusInfo' as 'DEVICE_DISCLOSURE_POLICY_APPLIED' to clearly communicate the fact that some devices are not disclosed.
    
       allOf:
@@ -1285,6 +1282,7 @@ components:
         Number of devices that may be assigned to the booking. 
       type: integer
       minimum: 1
+      default: 1
 
     RemainingDeviceCount:
       description: | 
@@ -1667,8 +1665,8 @@ components:
       description: QoS Booking is successful and valid `bookingId` is returned along with other input parameters.
       value:
         bookingId: "8e2f6f30-0a1c-4c6b-92e1-1bd05aef1c58"
-        totalDevicesInBooking: 15
-        remainingDevicesInBooking: 15
+        totalDevices: 15
+        remainingDevices: 15
         qosProfile: "QOS_MEDIA_BROADCAST"
         startTime: "2025-10-27T15:00:00.000Z"
         duration: 3600
@@ -1685,8 +1683,8 @@ components:
       summary: Booking Failed
       description: QoS Booking failed, `statusInfo` has additional info. No `bookingId` will be returned.
       value:
-        totalDevicesInBooking: 0
-        remainingDevicesInBooking: 0
+        totalDevices: 0
+        remainingDevices: 0
         qosProfile: "QOS_MEDIA_BROADCAST"
         startTime: "2025-10-27T15:00:00.000Z"
         duration: 3600
@@ -1703,8 +1701,8 @@ components:
       summary: Booking Pending
       description: QoS Booking request is pending, `statusInfo` has additional info. No `bookingId` will be returned.
       value:
-        totalDevicesInBooking: 0
-        remainingDevicesInBooking: 0
+        totalDevices: 0
+        remainingDevices: 0
         qosProfile: "QOS_MEDIA_BROADCAST"
         startTime: "2025-10-27T15:00:00.000Z"
         duration: 3600
@@ -1722,8 +1720,8 @@ components:
       description: Retrieve booking information from its 'bookingId'. 'statusInfo' will provide the current status of the booking.
       value:
         bookingId: "8e2f6f30-0a1c-4c6b-92e1-1bd05aef1c58"
-        totalDevicesInBooking: 15
-        remainingDevicesInBooking: 15
+        totalDevices: 15
+        remainingDevices: 15
         qosProfile: "QOS_MEDIA_BROADCAST"
         startTime: "2025-10-27T15:00:00.000Z"
         duration: 3600
@@ -1741,8 +1739,8 @@ components:
       description: Delete a booking using a  valid `bookingId`.  Delete operation is successful.
       value:
         bookingId: "8e2f6f30-0a1c-4c6b-92e1-1bd05aef1c58"
-        totalDevicesInBooking: 15
-        remainingDevicesInBooking: 15
+        totalDevices: 15
+        remainingDevices: 15
         qosProfile: "QOS_MEDIA_BROADCAST"
         startTime: "2025-10-27T15:00:00.000Z"
         duration: 3600
@@ -1760,8 +1758,8 @@ components:
       description: Delete a booking using a  valid `bookingId`.  Delete operation is pending as operator may need more time to process the request.
       value:
         bookingId: "8e2f6f30-0a1c-4c6b-92e1-1bd05aef1c58"
-        totalDevicesInBooking: 15
-        remainingDevicesInBooking: 7
+        totalDevices: 15
+        remainingDevices: 7
         qosProfile: "QOS_MEDIA_BROADCAST"
         startTime: "2025-10-27T15:00:00.000Z"
         duration: 3600
@@ -1804,8 +1802,8 @@ components:
       value:
         bookingDetails:
           bookingId: "8e2f6f30-0a1c-4c6b-92e1-1bd05aef1c58"
-          totalDevicesInBooking: 15
-          remainingDevicesInBooking: 11
+          totalDevices: 15
+          remainingDevices: 11
           qosProfile: "QOS_MEDIA_BROADCAST"
           startTime: "2025-10-27T15:00:00.000Z"
           duration: 3600
@@ -1831,8 +1829,8 @@ components:
       value:
         bookingDetails:
           bookingId: "8e2f6f30-0a1c-4c6b-92e1-1bd05aef1c58"
-          totalDevicesInBooking: 15
-          remainingDevicesInBooking: 13
+          totalDevices: 15
+          remainingDevices: 13
           qosProfile: "QOS_MEDIA_BROADCAST"
           startTime: "2025-10-27T15:00:00.000Z"
           duration: 3600
@@ -1856,8 +1854,8 @@ components:
       value:
         bookingDetails:
           bookingId: "8e2f6f30-0a1c-4c6b-92e1-1bd05aef1c58"
-          totalDevicesInBooking: 15
-          remainingDevicesInBooking: 15
+          totalDevices: 15
+          remainingDevices: 15
           qosProfile: "QOS_MEDIA_BROADCAST"
           startTime: "2025-10-27T15:00:00.000Z"
           duration: 3600
@@ -1876,8 +1874,8 @@ components:
       value:
         bookingDetails:
           bookingId: "8e2f6f30-0a1c-4c6b-92e1-1bd05aef1c58"
-          totalDevicesInBooking: 15
-          remainingDevicesInBooking: 15
+          totalDevices: 15
+          remainingDevices: 15
           qosProfile: "QOS_MEDIA_BROADCAST"
           startTime: "2025-10-27T15:00:00.000Z"
           duration: 3600
@@ -1911,8 +1909,8 @@ components:
       value:
         bookingDetails:
           bookingId: "8e2f6f30-0a1c-4c6b-92e1-1bd05aef1c58"
-          totalDevicesInBooking: 15
-          remainingDevicesInBooking: 14
+          totalDevices: 15
+          remainingDevices: 14
           qosProfile: "QOS_MEDIA_BROADCAST"
           startTime: "2025-10-27T15:00:00.000Z"
           duration: 3600
@@ -1933,8 +1931,8 @@ components:
       value:
         bookingDetails:
           bookingId: "8e2f6f30-0a1c-4c6b-92e1-1bd05aef1c58"
-          totalDevicesInBooking: 15
-          remainingDevicesInBooking: 13
+          totalDevices: 15
+          remainingDevices: 13
           qosProfile: "QOS_MEDIA_BROADCAST"
           startTime: "2025-10-27T15:00:00.000Z"
           duration: 3600
@@ -1956,8 +1954,8 @@ components:
       value:
         bookingDetails:
           bookingId: "8e2f6f30-0a1c-4c6b-92e1-1bd05aef1c58"
-          totalDevicesInBooking: 15
-          remainingDevicesInBooking: 13
+          totalDevices: 15
+          remainingDevices: 13
           qosProfile: "QOS_MEDIA_BROADCAST"
           startTime: "2025-10-27T15:00:00.000Z"
           duration: 3600
@@ -1982,8 +1980,8 @@ components:
       description: Successfully retrieved assigned bookings for a given device. The device is part of only one booking.
       value:
         - bookingId: "8e2f6f30-0a1c-4c6b-92e1-1bd05aef1c58"
-          totalDevicesInBooking: 15
-          remainingDevicesInBooking: 13
+          totalDevices: 15
+          remainingDevices: 13
           qosProfile: "QOS_MEDIA_BROADCAST"
           startTime: "2025-10-27T15:00:00.000Z"
           duration: 3600
@@ -2000,5 +1998,3 @@ components:
       summary: No bookings found for the device
       description: No bookings are found for the device, value contains only empty array
       value: []
- 
-
