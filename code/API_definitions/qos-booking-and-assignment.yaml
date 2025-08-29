@@ -660,9 +660,9 @@ components:
             bookingId:
               $ref: "#/components/schemas/BookingId"
             totalDevices:
-              $ref: "#/components/schemas/DeviceCount"     
+              $ref: "#/components/schemas/DeviceCount"
             remainingDevices:
-              $ref: "#/components/schemas/RemainingDeviceCount"                             
+              $ref: "#/components/schemas/RemainingDeviceCount"
             qosProfile:
               $ref: "#/components/schemas/QosProfileName"
             startTime:
@@ -694,9 +694,9 @@ components:
             bookingId:
               $ref: "#/components/schemas/BookingId"
             totalDevices:
-              $ref: "#/components/schemas/DeviceCount"     
+              $ref: "#/components/schemas/DeviceCount"
             remainingDevices:
-              $ref: "#/components/schemas/RemainingDeviceCount"                             
+              $ref: "#/components/schemas/RemainingDeviceCount"
             qosProfile:
               $ref: "#/components/schemas/QosProfileName"
             startTime:
@@ -744,7 +744,7 @@ components:
          - In some situations (ex: assignments using 3-legged access token) the device details should not be disclosed as per the privacy and other legal requirements.
          - For example:
            - If there are 10 devices assigned in a booking; but the GET operation returns only 7; It means 3 devices can't be disclosed
-           - The source of truth is in the following properties in the booking details: "totalDevices" and "remainingDevices".        
+           - The source of truth is in the following properties in the booking details: "totalDevices" and "remainingDevices".
            - In such a situation the operator SHOULD set  'statusInfo' as 'DEVICE_DISCLOSURE_POLICY_APPLIED' to clearly communicate the fact that some devices are not disclosed.
 
       allOf:
@@ -1300,7 +1300,7 @@ components:
         - message
 
     DeviceCount:
-      description: | 
+      description: |
         Number of devices that may be assigned to the booking. 
       type: integer
       minimum: 1
@@ -2043,3 +2043,4 @@ components:
       summary: No bookings found for the device
       description: No bookings are found for the device, value contains only empty array
       value: []
+
