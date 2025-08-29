@@ -755,7 +755,7 @@ components:
             bookingDetails:
               $ref: "#/components/schemas/BookingDetails"
             devices:
-              $ref: "#/components/schemas/Devices"         
+              $ref: "#/components/schemas/DeviceResponseArray"         
             status:
               $ref: "#/components/schemas/Status"
             statusInfo:
@@ -1098,6 +1098,14 @@ components:
           $ref: "#/components/schemas/DeviceIpv6Address"
       minProperties: 1
 
+    DeviceResponse:
+      description: |
+        An identifier for the end-user equipment able to connect to the network that the response refers to. This parameter is only returned when the API consumer includes the `device` parameter in their request (i.e. they are using a two-legged access token), and is relevant when more than one device identifier is specified, as only one of those device identifiers is allowed in the response.
+        If the API consumer provides more than one device identifier in their request, the API provider must return a single identifier which is the one they are using to fulfil the request, even if the identifiers do not match the same device. API provider does not perform any logic to validate/correlate that the indicated device identifiers match the same device. No error should be returned if the identifiers are otherwise valid to prevent API consumers correlating different identifiers with a given end user.
+      allOf:
+        - $ref: "#/components/schemas/Device"
+        - maxProperties: 1
+
     Time:
       description: | 
         Date and time when the API consumer requests the QoS profile to become available. 
@@ -1119,15 +1127,20 @@ components:
 
     Devices:
       description: | 
-        INPUT DEVICES: Array of devices to be assigned to the booking and provisioned.  At least one device is required. 
+        Array of devices to be assigned to the booking and provisioned.  At least one device is required. 
         Not to be provided when a 3-legged access token already identifies a device. 
-        OUTPUT DEVICES: List of devices successfully assigned to the booking. Note that this list includes only devices provided explicitly as input devices in the request body. 
-        If some device was assigned with an operation that identified the device by means of a 3-legged access token, the device details are not disclosed in this case. 
-        This implies that the number of devices in this list can be lower than the actual number of devices assigned to the booking
       type: array
       minItems: 1
       items:
         $ref: "#/components/schemas/Device"
+
+    DeviceResponseArray:
+      description: List of device identifiers that have been successfully assigned based on the request.
+      type: array
+      minItems: 1
+      items:
+        $ref: "#/components/schemas/DeviceResponse"
+
 
 
     NetworkAccessIdentifier:
