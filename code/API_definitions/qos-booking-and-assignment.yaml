@@ -207,7 +207,7 @@ paths:
       summary: Get the Booking information for a given QoS Booking identified by `bookingId`.
       description: |
         This endpoint gets booking information for the given bookingId.
-        - A booking request may be failed ('status` = FAILURE). `statusInfo` contains additional information.
+        - A booking request may be failed (`status` = FAILURE). `statusInfo` contains additional information.
         - Based on the status of the booking, an appropriate error message will be returned.
         - If a booking is available (`status` = SUCCESSFUL and booking is active) then this endpoint will return the booking information along with number of devices still can be assigned to the booking.
         - `statusInfo` contains additional information under certain conditions.
@@ -1654,7 +1654,7 @@ components:
         sink: "https://application-server.com/notifications"
         sinkCredential:
           credentialType: ACCESSTOKEN
-          accessToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+          accessToken: "<access_token>"
           accessTokenExpiresUtc: "2025-12-31T23:59:59Z"
           accessTokenType: bearer
 
@@ -1678,7 +1678,7 @@ components:
         sink: "https://application-server.com/notifications"
         sinkCredential:
           credentialType: ACCESSTOKEN
-          accessToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+          accessToken: "<access_token>"
           accessTokenExpiresUtc: "2025-12-31T23:59:59Z"
           accessTokenType: bearer
 
@@ -1809,7 +1809,7 @@ components:
         sink: "https://application-server.com/notifications"
         sinkCredential:
           credentialType: ACCESSTOKEN
-          accessToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+          accessToken: "<access_token>"
           accessTokenExpiresUtc: "2025-12-31T23:59:59Z"
           accessTokenType: bearer
     
@@ -1823,7 +1823,7 @@ components:
         sink: "https://application-server.com/notifications"
         sinkCredential:
           credentialType: ACCESSTOKEN
-          accessToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+          accessToken: "<access_token>"
           accessTokenExpiresUtc: "2025-12-31T23:59:59Z"
           accessTokenType: bearer
 
