@@ -1116,7 +1116,6 @@ components:
       format: int32
       minimum: 1
       example: 3600
-      default: 86400
 
     Devices:
       description: | 
@@ -1188,6 +1187,7 @@ components:
         * `SUCCESSFUL` - The request is processed successfully. This may happen immediately.  The state will go to PENDING and then back to SUCCESSFUL in certain conditions.ƒ
         * `PARTIAL_SUCCESS` -  The request is processed with partial success - applicable to device assignments.  'statusInfo' may have additional information. This enum is optional, and useful if the operator wants to communicate partial success.
         * `FAILURE` - The request has been processed but failed. `statusInfo` may provide additional information about the reason for the unavailability.
+      type: string
       enum:
         - PENDING
         - SUCCESSFUL
@@ -1996,4 +1996,4 @@ components:
       summary: No bookings found for the device
       description: No bookings are found for the device, value contains only empty array
       value: []
- 
+
