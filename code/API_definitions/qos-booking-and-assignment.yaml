@@ -1155,7 +1155,7 @@ components:
     PhoneNumber:
       description: A public identifier addressing a telephone subscription. In mobile networks it corresponds to the MSISDN (Mobile Station International Subscriber Directory Number). In order to be globally unique it has to be formatted in international format, according to E.164 standard, prefixed with '+'.
       type: string
-      pattern: '^\+[1-9][0-9]{4,14}$'
+      pattern: "^\+[1-9][0-9]{4,14}$"
       example: "+123456789"
 
     DeviceIpv4Addr:
@@ -1310,7 +1310,7 @@ components:
 
     XCorrelator:
       type: string
-      pattern: ^[a-zA-Z0-9-_:;.\/<>{}]{0,256}$
+      pattern: "^[a-zA-Z0-9-_:;.\/<>{}]{0,256}$"
       example: "b4333c46-49c0-4f62-80d7-f0ef930f1c46"
 
   responses:
@@ -1521,7 +1521,7 @@ components:
       description: Conflict
       headers:
         x-correlator:
-          $ref: '#/components/headers/x-correlator'
+          $ref: "#/components/headers/x-correlator"
       content:
         application/json:
           schema:
