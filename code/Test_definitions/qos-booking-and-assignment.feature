@@ -58,8 +58,8 @@ Feature: CAMARA QoS Booking and Assignment, vwip
     And the response header "x-correlator" has the same value as the request header "x-correlator"
     And the response body complies with the OAS schema at "/components/schemas/BookingOutput"
     And the response body property "$.bookingId" exists and is a valid UUID
-    And the response body property "$.totalDevicesInBooking" has the same value "$.numDevices" as in the request body
-    And the response body property "$.remainingDevicesInBooking" is set to a valid number greater than or equal to 0 and should be less than or equal to "$.totalDevicesInBooking"
+    And the response body property "$.totalDevices" has the same value "$.numDevices" as in the request body
+    And the response body property "$.remainingDevices" is set to a valid number greater than or equal to 0 and should be less than or equal to "$.totalDevices"
     And the response body property "$.startTime" has the same value as in the request body
     And the response body property "$.serviceArea" has the same value as in the request body
     And the response body property "$.status" is set to a value compliant with schema at "/components/schemas/Status"
@@ -78,8 +78,8 @@ Feature: CAMARA QoS Booking and Assignment, vwip
     And the response header "x-correlator" has the same value as the request header "x-correlator"
     And the response body complies with the OAS schema at "/components/schemas/BookingOutput"
     And the response body property "$.bookingId" exists and is a valid UUID
-    And the response body property "$.totalDevicesInBooking" has the same value "$.numDevices" as in the request body
-    And the response body property "$.remainingDevicesInBooking" is set to a valid number greater than or equal to 0 and should be less than or equal to "$.totalDevicesInBooking"
+    And the response body property "$.totalDevices" has the same value "$.numDevices" as in the request body
+    And the response body property "$.remainingDevices" is set to a valid number greater than or equal to 0 and should be less than or equal to "$.totalDevices"
     And the response body property "$.status" is set to a value "SUCCESSFUL"
 
   # Success scenarios for POST /qos-bookings/{bookingId}/devices/assign
