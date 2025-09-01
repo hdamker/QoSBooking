@@ -2037,4 +2037,3 @@ components:
       summary: No bookings found for the device
       description: No bookings are found for the device, value contains only empty array
       value: []
-
