@@ -730,6 +730,7 @@ components:
         sink:
           type: string
           format: uri
+          pattern: "^https:\/\/.+$"
           description: The address to which events shall be delivered, using the HTTP protocol.
           example: "https://endpoint.example.com/sink"
         sinkCredential:
@@ -2037,3 +2038,4 @@ components:
       summary: No bookings found for the device
       description: No bookings are found for the device, value contains only empty array
       value: []
+
