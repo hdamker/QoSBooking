@@ -73,6 +73,7 @@ The API definition(s) are based on
 ### Removed
 * Remove unnecessary spaces, tabs, lfs in qos-booking-and-assignment.feature file by @RmaTMO in #44
   
+  **Full Changelog**: https://github.com/camaraproject/QoSBooking/commits/r1.2
 # r1.1
 
 ## Release Notes
