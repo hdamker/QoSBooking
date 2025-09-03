@@ -401,7 +401,7 @@ components:
         sink:
           type: string
           format: uri
-          pattern: "^https:\/\/.+$"
+          pattern: ^https:\/\/.+$
           description: The address to which events shall be delivered, using the HTTP protocol.
           example: "https://endpoint.example.com/sink"
         sinkCredential:
