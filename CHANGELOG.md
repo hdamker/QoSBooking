@@ -18,7 +18,7 @@ The below sections record the changes for each API version in each release as fo
 
 ## Release Notes
 
-This release contains the definition and documentation of
+This public release contains the definition and documentation of
 * qos-booking v0.1.0
 * qos-booking-and-assignment v0.1.0
 
