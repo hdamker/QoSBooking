@@ -29,7 +29,7 @@ Feature: CAMARA QoS Booking and Assignment, v0.1.0
 
   @qos_bookings_createBooking_201_success_echo
   Scenario: Create booking echoes selected request fields in response
-    Given the resource "{apiRoot}/qos-booking-and-assignment/v0.1/qos-bookings"
+    Given the resource "/qos-booking-and-assignment/v0.1/qos-bookings"
     And the operationId is "createBooking"
     And the request body is set to a request body compliant with the schema at "/components/schemas/BookingInput"
     And the request body property "$.qosProfile" is set to a valid QoS Profile as returned by QoS Profiles API
