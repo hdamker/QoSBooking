@@ -125,7 +125,7 @@ Feature: CAMARA QoS Booking and Assignment, v0.1.0
   # This operation gets the list of devices assigned to a booking
   @devices_getDevicesByBookingId_200_success
   Scenario: Get a list of devices assigned to a QoS booking
-    Given the resource "{apiRoot}/qos-booking-and-assignment/v0.1/qos-bookings/{bookingId}/devices"
+    Given the resource "/qos-booking-and-assignment/v0.1/qos-bookings/{bookingId}/devices"
     And the "bookingId" is created by operation "createBooking"
     And the operationId is "getDevicesByBookingId"
     When the request "getDevicesByBookingId" is sent
