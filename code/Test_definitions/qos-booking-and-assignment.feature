@@ -141,7 +141,7 @@ Feature: CAMARA QoS Booking and Assignment, v0.1.0
   @devices_retrieveBooking_200_success
   Scenario: Get QoS Booking resource information details for a device
     Given a valid testing device with an existing QoS Booking, identified by the token or provided in the request body
-    And the resource "{apiRoot}/qos-booking-and-assignment/v0.1/qos-bookings/retrieve"
+    And the resource "/qos-booking-and-assignment/v0.1/qos-bookings/retrieve"
     When the request "retrieveBookingByDevice" is sent
     Then the response status code is 200
     And the response header "Content-Type" is "application/json"
