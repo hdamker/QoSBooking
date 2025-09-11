@@ -11,7 +11,7 @@ Feature: CAMARA QoS Booking and Assignment, v0.1.0
   # Reserve a set of devices for a given qos profile, service area, scheduled future time and duration
   @qos_bookings_createBooking_201_success
   Scenario: Create a QoS booking with valid parameters
-    Given the resource "{apiRoot}/qos-booking-and-assignment/v0.1/qos-bookings"
+    Given the resource "/qos-booking-and-assignment/v0.1/qos-bookings"
     And the header "Content-Type" is set to "application/json"
     And the operationId is "createBooking"
     And the request body is set to a request body compliant with the schema at "/components/schemas/BookingInput"
