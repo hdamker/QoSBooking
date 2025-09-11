@@ -49,7 +49,7 @@ Feature: CAMARA QoS Booking and Assignment, v0.1.0
   # Given a bookingID, this GET operation gets the details of the original booking
   @qos_bookings_getBookingById_200_success
   Scenario: Get an existing QoS booking by bookingId
-    Given the resource "{apiRoot}/qos-booking-and-assignment/v0.1/qos-bookings"
+    Given the resource "/qos-booking-and-assignment/v0.1/qos-bookings"
     And an existing QoS booking with "bookingId" is created by the operation "createBooking"
     And the operationId is "getBookingById"
     When the request "getBookingById" is sent
