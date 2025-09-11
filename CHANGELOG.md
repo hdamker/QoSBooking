@@ -28,7 +28,7 @@ The API definition(s) are based on
 
 ## qos-booking v0.1.0
 
-**qos-booking v0.1.0 is the first initial release of this new API.**
+**qos-booking v0.1.0 is the first public release of this new API.**
 
 - API definition **with inline documentation**:
   - [View it on ReDoc](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/camaraproject/QoSBooking/r1.2/code/API_definitions/qos-booking.yaml&nocors)
@@ -40,7 +40,7 @@ The API definition(s) are based on
 
 ## qos-booking-and-assignment v0.1.0
 
-**qos-booking-and-assignment v0.1.0 is the first initial release of this new API.**
+**qos-booking-and-assignment v0.1.0 is the public initial release of this new API.**
 
 - API definition **with inline documentation**:
   - [View it on ReDoc](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/camaraproject/QoSBooking/r1.2/code/API_definitions/qos-booking-and-assignment.yaml&nocors)
