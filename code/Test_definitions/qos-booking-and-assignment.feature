@@ -106,7 +106,7 @@ Feature: CAMARA QoS Booking and Assignment, v0.1.0
   # This operation releases a set of devices from a booking which are already assigned to the booking
   @devices_releaseDevices_200_success
   Scenario: Release one or more of already assigned devices from a QoS booking
-    Given the resource "{apiRoot}/qos-booking-and-assignment/v0.1/qos-bookings/{bookingId}/devices/release"
+    Given the resource "/qos-booking-and-assignment/v0.1/qos-bookings/{bookingId}/devices/release"
     And the "bookingId" is created by operation "createBooking"
     And the operationId is "releaseDevices"
     And the request body complies with the OAS schema at "/components/schemas/DeviceAssignmentInput"
