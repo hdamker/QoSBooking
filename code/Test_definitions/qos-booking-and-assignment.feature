@@ -1,5 +1,8 @@
 Feature: CAMARA QoS Booking and Assignment, v0.1.0
   # Input to be provided by the implementation to the tester
+  #
+  # Implementation indications:
+  # * apiRoot: API root of the server URL
   # References to OAS spec schemas refer to schemas specified in qos-booking-and-assignment.yaml
 
   Background: Common QoS Booking setup
