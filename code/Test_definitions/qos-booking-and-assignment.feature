@@ -69,7 +69,7 @@ Feature: CAMARA QoS Booking and Assignment, v0.1.0
   # This operation deletes a booking identified by bookingID.
   @qos_bookings_deleteBooking_200_success
   Scenario: Delete a QoS booking
-    Given the resource "{apiRoot}/qos-booking-and-assignment/v0.1/qos-bookings"
+    Given the resource "/qos-booking-and-assignment/v0.1/qos-bookings"
     And "bookingId" is created by operation "createBooking"
     And the operationId is "deleteBooking"
     When the request "deleteBooking" is sent
