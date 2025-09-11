@@ -86,7 +86,7 @@ Feature: CAMARA QoS Booking and Assignment, v0.1.0
   # This operation assigns set of devices to a booking.
   @devices_assignDevices_201_success
   Scenario: Assign a set of devices to a QoS booking
-    Given the resource "{apiRoot}/qos-booking-and-assignment/v0.1/qos-bookings/{bookingId}/devices/assign"
+    Given the resource "/qos-booking-and-assignment/v0.1/qos-bookings/{bookingId}/devices/assign"
     And the "bookingId" is created by operation "createBooking"
     And the operationId is "assignDevices"
     And the request body complies with the OAS schema at "/components/schemas/DeviceAssignmentInput"
