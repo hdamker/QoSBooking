@@ -15,6 +15,32 @@ Sandbox API Repository to describe, develop, document, and test the QoSBooking S
 
 ## Scope
 
+<!-- CAMARA:RELEASE-INFO:START -->
+## Release Information
+
+* Note: Please be aware that the project will have frequent updates to the main branch. There are no compatibility guarantees associated with code in any branch, including main, until a new release is created. For example, changes may be reverted before a release is created. **For best results, use the latest available release**.
+
+* **NEW**: The latest public release is [r1.2](https://github.com/camaraproject/QoSBooking/releases/tag/r1.2), with the following API versions:
+
+  * **qos-booking-and-assignment v0.1.0**
+  [[YAML]](https://github.com/camaraproject/QoSBooking/blob/r1.2/code/API_definitions/qos-booking-and-assignment.yaml)
+  [[View it on ReDoc]](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/camaraproject/QoSBooking/r1.2/code/API_definitions/qos-booking-and-assignment.yaml&nocors)
+  [[View it on Swagger UI]](https://camaraproject.github.io/swagger-ui/?url=https://raw.githubusercontent.com/camaraproject/QoSBooking/r1.2/code/API_definitions/qos-booking-and-assignment.yaml)
+
+
+  * **qos-booking v0.1.0**
+  [[YAML]](https://github.com/camaraproject/QoSBooking/blob/r1.2/code/API_definitions/qos-booking.yaml)
+  [[View it on ReDoc]](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/camaraproject/QoSBooking/r1.2/code/API_definitions/qos-booking.yaml&nocors)
+  [[View it on Swagger UI]](https://camaraproject.github.io/swagger-ui/?url=https://raw.githubusercontent.com/camaraproject/QoSBooking/r1.2/code/API_definitions/qos-booking.yaml)
+
+* The latest public release is available here: https://github.com/camaraproject/QoSBooking/releases/latest
+* Other releases of this repository are available in https://github.com/camaraproject/QoSBooking/releases
+* For changes see [CHANGELOG.md](https://github.com/camaraproject/QoSBooking/blob/main/CHANGELOG.md)
+
+<!-- This section is automatically maintained by the CAMARA project-administration tooling: https://github.com/camaraproject/project-administration -->
+<!-- CAMARA:RELEASE-INFO:END -->
+
+
 * Service API(s) “QoSBooking” (see APIBacklog.md) 
 * The API(s) provide(s) the API consumer with the ability to:  
   * book an assignment of a certain QoS Profile to a certain device with some conditions such as start time, duration and location in advance.
