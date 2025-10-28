@@ -45,6 +45,8 @@ Sandbox API Repository to describe, develop, document, and test the QoSBooking S
 * For changes see [CHANGELOG.md](https://github.com/camaraproject/QoSBooking/blob/main/CHANGELOG.md)
 <!-- CAMARA:RELEASE-INFO:END -->
 
+Add some more information
+
 ## Contributing
 * Meetings are held virtually 
     * Schedule: Bi-weekly on Friday at 13:00 UTC
