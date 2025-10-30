@@ -43,6 +43,8 @@ Sandbox API Repository to describe, develop, document, and test the QoSBooking S
 * The latest public release is always available here: https://github.com/camaraproject/QoSBooking/releases/latest
 * Other releases of this repository are available in https://github.com/camaraproject/QoSBooking/releases
 * For changes see [CHANGELOG.md](https://github.com/camaraproject/QoSBooking/blob/main/CHANGELOG.md)
+
+
 <!-- CAMARA:RELEASE-INFO:END -->
 
 ## Contributing
