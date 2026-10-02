@@ -141,6 +141,9 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/CreateBooking"
+            examples:
+              EXAMPLE_CREATION_BODY:
+                $ref: '#/components/examples/EXAMPLE_CREATION_BODY'
         required: true
       callbacks:
         notifications:
@@ -982,6 +985,28 @@ components:
       $ref: '../common/CAMARA_common.yaml#/components/responses/Generic429'
 
   examples:
+    EXAMPLE_CREATION_BODY:
+      summary: Booking creation example
+      description: Example request using a 3-legged access token to identify the device and identifying the application server by IPv4 subnet
+      value:
+        applicationServer:
+          ipv4Address: 198.51.100.0/24
+        qosProfile: "QOS_L"
+        sink: "https://application-server.com/notifications"
+        sinkCredential:
+          credentialType: ACCESSTOKEN
+          accessToken: "eyJhbGciOiJIUzI1NiIsInR..."
+          accessTokenExpiresUtc: "2024-12-01T12:00:00Z"
+          accessTokenType: bearer
+        startTime: "2024-06-01T12:00:00Z"
+        duration: 3600
+        serviceArea:
+          areaType: "CIRCLE"
+          center:
+            latitude: 50.735851
+            longitude: 7.10066
+          radius: 100
+
     BOOKING_ACTIVATED_WITH_DEVICE_RESPONSE:
       summary: QoS booking status is activated, with device included in response
       description: QoS booking info when booking status is activated, and request used a 2-legged access token with multiple device identifiers, or possibly only a single device identifier
