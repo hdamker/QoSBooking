@@ -6,6 +6,8 @@ info:
 
     The API enables API consumers to book the assignment of a predefined QoS profile to a specific device, with some conditions such as the start time, duration and location.
 
+    The lifecycle of a booking is expressed by the `BookingStatus` value and typically follows this pattern: a booking is accepted as `REQUESTED`, then it may become `SCHEDULED` for a future start, then `ACTIVATED` once the start time comes, and it eventually becomes `TERMINATED` when the booking expires, is cancelled or is rejected.
+
     # Relevant terms and definitions
 
     * **QoS profiles**:
@@ -15,7 +17,7 @@ info:
     Duration (in seconds) for which the QoS session (between application client and application server) should be booked. Limits for booked QoS session duration can be set by the implementation for the QoS profile. The user may request a termination before its expiration.
 
     * **Identifier for the device**:
-    At least one identifier for the device (user equipment) out of four options: IPv4 address, IPv6 address, Phone number, or Network Access Identifier assigned by the network operator for the device, at the request time. After the booking request is accepted, the device may get different IP addresses, but the booking will still apply to the device that was identified during the request process. Note: Network Access Identifier is defined for future use and will not be supported with v0.1 of the API.
+    At least one identifier for the device (user equipment) out of four options: IPv4 address, IPv6 address, Phone number, or Network Access Identifier assigned by the network operator for the device, at the request time. After the booking request is accepted, the device may get different IP addresses, but the booking will still apply to the device that was identified during the request process. Note: Network Access Identifier is defined for future use and is not supported in this version of the API.
 
     * **Notification URL and token**:
     API consumers may provide a callback URL (`sink`) on which notifications about all status change events (e.g. duration expiration) can be received from the API provider. This is an optional parameter. The notification will be sent as a CloudEvent compliant message. If `sink` is included, it is RECOMMENDED for the client to provide as well the `sinkCredential` property to protect the notification endpoint. In the current version,`sinkCredential.credentialType` MUST be set to `ACCESSTOKEN` or `PRIVATE_KEY_JWT` if provided.
@@ -29,6 +31,7 @@ info:
     - An operation to terminate a QoS Booking, identified by its `BookingId`.
 
     <!-- CAMARA:MANDATORY:authorization-and-authentication:BEGIN -->
+
     # Authorization and authentication
 
     The "Camara Security and Interoperability Profile" provides details of how an API consumer requests an access token. Please refer to Identity and Consent Management (https://github.com/camaraproject/IdentityAndConsentManagement/) for the released version of the profile.
@@ -39,6 +42,7 @@ info:
     <!-- CAMARA:MANDATORY:authorization-and-authentication:END -->
 
     <!-- CAMARA:MANDATORY:identifying-device-from-access-token:BEGIN -->
+
     # Identifying the device from the access token
 
     This API requires the API consumer to identify a device as the subject of the API as follows:
@@ -55,6 +59,7 @@ info:
     <!-- CAMARA:MANDATORY:identifying-device-from-access-token:END -->
 
     <!-- CAMARA:MANDATORY:additional-error-responses:BEGIN -->
+
     # Additional CAMARA error responses
 
     The list of error codes in this API specification is not exhaustive. Therefore the API specification MAY not document some non-mandatory error statuses as indicated in `CAMARA API Design Guide`.
@@ -82,6 +87,7 @@ info:
     - If the requested `qosProfile` exists but is currently not available for creating a booking, then the server will return an error with the `422 QOS_BOOKING.QOS_PROFILE_NOT_APPLICABLE` error code.
 
     <!-- CAMARA:MANDATORY:request-body-strictness:BEGIN -->
+
     # Request body strictness
 
     This API rejects requests with JSON request bodies that contain properties not declared in this specification, at any nesting level. Unknown properties result in a `400 INVALID_ARGUMENT` response.
@@ -145,13 +151,16 @@ paths:
 
       operationId: createBooking
       parameters:
-        - $ref: "#/components/parameters/x-correlator"
+        - $ref: "../common/CAMARA_common.yaml#/components/parameters/x-correlator"
       requestBody:
         description: Parameters to create a new booking
         content:
           application/json:
             schema:
               $ref: "#/components/schemas/CreateBooking"
+            examples:
+              EXAMPLE_CREATION_BODY:
+                $ref: '#/components/examples/EXAMPLE_CREATION_BODY'
         required: true
       callbacks:
         notifications:
@@ -164,7 +173,7 @@ paths:
                 Currently only `BOOKING_STATUS_CHANGED` event is defined.
               operationId: postBookingNotification
               parameters:
-                - $ref: "#/components/parameters/x-correlator"
+                - $ref: "../common/CAMARA_common.yaml#/components/parameters/x-correlator"
               requestBody:
                 required: true
                 content:
@@ -179,7 +188,7 @@ paths:
                   description: Successful notification
                   headers:
                     x-correlator:
-                      $ref: "#/components/headers/x-correlator"
+                      $ref: "../common/CAMARA_common.yaml#/components/headers/x-correlator"
                 "400":
                   $ref: "#/components/responses/Generic400"
                 "401":
@@ -196,7 +205,7 @@ paths:
           description: Booking created
           headers:
             x-correlator:
-              $ref: "#/components/headers/x-correlator"
+              $ref: "../common/CAMARA_common.yaml#/components/headers/x-correlator"
           content:
             application/json:
               schema:
@@ -238,13 +247,13 @@ paths:
       operationId: getBookingById
       parameters:
         - $ref: "#/components/parameters/BookingId"
-        - $ref: "#/components/parameters/x-correlator"
+        - $ref: "../common/CAMARA_common.yaml#/components/parameters/x-correlator"
       responses:
         "200":
           description: Returns information about certain booking
           headers:
             x-correlator:
-              $ref: "#/components/headers/x-correlator"
+              $ref: "../common/CAMARA_common.yaml#/components/headers/x-correlator"
           content:
             application/json:
               schema:
@@ -287,18 +296,18 @@ paths:
       operationId: deleteBooking
       parameters:
         - $ref: "#/components/parameters/BookingId"
-        - $ref: "#/components/parameters/x-correlator"
+        - $ref: "../common/CAMARA_common.yaml#/components/parameters/x-correlator"
       responses:
         "204":
           description: Booking deleted
           headers:
             x-correlator:
-              $ref: "#/components/headers/x-correlator"
+              $ref: "../common/CAMARA_common.yaml#/components/headers/x-correlator"
         "202":
           description: Deletion request accepted to be processed. It applies for an asynchronous deletion process. Due to asynchronous nature, `bookingStatus` in the response will be `REQUESTED' , `SCHEDULED` or `ACTIVATED` with `statusInfo` set to `DELETE_REQUESTED`.
           headers:
             x-correlator:
-              $ref: "#/components/headers/x-correlator"
+              $ref: "../common/CAMARA_common.yaml#/components/headers/x-correlator"
           content:
             application/json:
               schema:
@@ -335,7 +344,7 @@ paths:
 
       operationId: retrieveBookingByDevice
       parameters:
-        - $ref: "#/components/parameters/x-correlator"
+        - $ref: "../common/CAMARA_common.yaml#/components/parameters/x-correlator"
       requestBody:
         description: Parameters to retrieve a booking by device
         content:
@@ -348,7 +357,7 @@ paths:
           description: Returns the QoS booking information for a given device. A device may have multiple bookings (for several times and locations), thus the response is an array. An empty array is returned if no sessions are found.
           headers:
             x-correlator:
-              $ref: "#/components/headers/x-correlator"
+              $ref: "../common/CAMARA_common.yaml#/components/headers/x-correlator"
           content:
             application/json:
               schema:
@@ -390,13 +399,6 @@ components:
       schema:
         $ref: "#/components/schemas/BookingId"
 
-    x-correlator:
-      $ref: '../common/CAMARA_common.yaml#/components/parameters/x-correlator'
-
-  headers:
-    x-correlator:
-      $ref: '../common/CAMARA_common.yaml#/components/headers/x-correlator'
-
   schemas:
     BookingId:
       description: Booking Identifier in UUID format
@@ -417,7 +419,7 @@ components:
           allOf:
             - $ref: "#/components/schemas/PortsSpec"
         applicationServerPorts:
-          description: A list of single ports or port ranges on the application server
+          description: A list of single ports or port ranges on the application server. If omitted, then all ports are considered to be included (as from 1 to 65536).
           allOf:
             - $ref: "#/components/schemas/PortsSpec"
         sink:
@@ -428,21 +430,21 @@ components:
           description: The address to which events shall be delivered, using the HTTP protocol.
           example: "https://endpoint.example.com/sink"
         sinkCredential:
-          $ref: "#/components/schemas/SinkCredential"
+          $ref: "../common/CAMARA_event_common.yaml#/components/schemas/SinkCredential"
       required:
         - qosProfile
 
     BookingInfo:
       description: |
         Booking related information returned in responses.
-        Optional device object only to be returned if provided in createBooking. If more than one type of device identifier was provided, only one identifier will be returned (at implementation choice and with the original value provided in createBooking).
+        Note that the device object is defined as optional and will only to be returned if provided in createBooking. If more than one type of device identifier was provided, only one identifier will be returned (at implementation choice and with the original value provided in createBooking).
         Please note that IP addresses of devices can change and get reused, so the original values may no longer identify the same device. They identified the device at the time of QoS Booking creation.
       allOf:
         - $ref: "#/components/schemas/BaseBookingInfo"
         - type: object
           properties:
             device:
-              $ref: "#/components/schemas/DeviceResponse"
+              $ref: "../common/CAMARA_common.yaml#/components/schemas/DeviceResponse"
             startTime:
               description: Date and time when QoS profile is scheduled to become available. It must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone.
               type: string
@@ -486,7 +488,7 @@ components:
         - type: object
           properties:
             device:
-              $ref: "#/components/schemas/Device"
+              $ref: "../common/CAMARA_common.yaml#/components/schemas/Device"
             startTime:
               description: Date and time when the API consumer requests the QoS profile to become available. It must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone.
               type: string
@@ -511,7 +513,7 @@ components:
       type: object
       properties:
         device:
-          $ref: "#/components/schemas/Device"
+          $ref: "../common/CAMARA_common.yaml#/components/schemas/Device"
 
     RetrieveBookingsOutput:
       description: QoS bookings for a given device
@@ -520,12 +522,6 @@ components:
         $ref: "#/components/schemas/BookingInfo"
       minItems: 0
       maxItems: 100
-
-    SinkCredential:
-      $ref: '../common/CAMARA_event_common.yaml#/components/schemas/SinkCredential'
-
-    Port:
-      $ref: '../common/CAMARA_common.yaml#/components/schemas/Port'
 
     PortsSpec:
       description: Specification of several TCP or UDP ports
@@ -545,16 +541,16 @@ components:
               - to
             properties:
               from:
-                $ref: "#/components/schemas/Port"
+                $ref: "../common/CAMARA_common.yaml#/components/schemas/Port"
               to:
-                $ref: "#/components/schemas/Port"
+                $ref: "../common/CAMARA_common.yaml#/components/schemas/Port"
         ports:
           description: Array of TCP or UDP ports
           type: array
           minItems: 1
           maxItems: 65536
           items:
-            $ref: "#/components/schemas/Port"
+            $ref: "../common/CAMARA_common.yaml#/components/schemas/Port"
       example:
         ranges:
           - from: 5010
@@ -674,7 +670,7 @@ components:
             - radius
           properties:
             center:
-              $ref: "#/components/schemas/Point"
+              $ref: "../common/CAMARA_common.yaml#/components/schemas/Point"
             radius:
               type: number
               description: Distance from the center in meters
@@ -689,7 +685,7 @@ components:
             - boundary
           properties:
             boundary:
-              $ref: "#/components/schemas/PointList"
+              $ref: "../common/CAMARA_common.yaml#/components/schemas/PointList"
 
     AreaName:
       description: The value of "AreaName" might be predefined and only regional or even an operator-specific in this API version. As a prerequisite, the API Provider may offer API Consumer the "AreaName" values, which API consumer can request, in a preparation phase. And then API Consumers can select from the "AreaNames" as Service Areas.
@@ -703,24 +699,9 @@ components:
               type: string
               maxLength: 256
 
-    PointList:
-      $ref: '../common/CAMARA_common.yaml#/components/schemas/PointList'
-
-    Point:
-      $ref: '../common/CAMARA_common.yaml#/components/schemas/Point'
-
-    Latitude:
-      $ref: '../common/CAMARA_common.yaml#/components/schemas/Latitude'
-
-    Longitude:
-      $ref: '../common/CAMARA_common.yaml#/components/schemas/Longitude'
-
-    Device:
-      $ref: '../common/CAMARA_common.yaml#/components/schemas/Device'
-
     ApplicationServer:
       description: |
-        A server hosting backend applications to deliver some business logic to clients.
+        A server hosting backend applications to deliver some business logic to clients. If omitted, then all destinations from a specified device are assumed (as 0.0.0.0 or 0:0:0:0:0:0:0:0).
 
         The developer can choose to provide the below specified device identifiers:
 
@@ -736,7 +717,8 @@ components:
 
     ApplicationServerIpv4Address:
       type: string
-      maxLength: 15
+      maxLength: 18
+      pattern: '^([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])(\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])){3}(\/(3[0-2]|[12]?[0-9]))?$'
       example: "198.51.100.0/24"
       description: |
         IPv4 address may be specified in form <address/mask> as:
@@ -746,7 +728,8 @@ components:
 
     ApplicationServerIpv6Address:
       type: string
-      maxLength: 45
+      maxLength: 49
+      pattern: '^[0-9a-fA-F:.]+(\/(12[0-8]|1[0-1][0-9]|[1-9]?[0-9]))?$'
       example: "2001:db8:85a3:8d3:1319:8a2e:370:7344"
       description: |
         IPv6 address may be specified in form <address/mask> as:
@@ -756,9 +739,6 @@ components:
           - address/mask - an IP v6 number with a mask:
             - 2001:db8:85a3:8d3::0/64
             - 2001:db8:85a3:8d3::/64
-
-    DeviceResponse:
-      $ref: '../common/CAMARA_common.yaml#/components/schemas/DeviceResponse'
 
     BookingStatus:
       description: |
@@ -784,9 +764,6 @@ components:
         - ACTIVATED
         - TERMINATED
 
-    ErrorInfo:
-      $ref: '../common/CAMARA_common.yaml#/components/schemas/ErrorInfo'
-
   responses:
     Generic400:
       $ref: '../common/CAMARA_common.yaml#/components/responses/Generic400'
@@ -795,12 +772,12 @@ components:
       description: Bad Request when creating a QoS booking.
       headers:
         x-correlator:
-          $ref: "#/components/headers/x-correlator"
+          $ref: "../common/CAMARA_common.yaml#/components/headers/x-correlator"
       content:
         application/json:
           schema:
             allOf:
-              - $ref: "#/components/schemas/ErrorInfo"
+              - $ref: "../common/CAMARA_common.yaml#/components/schemas/ErrorInfo"
               - type: object
                 properties:
                   status:
@@ -858,12 +835,12 @@ components:
       description: Not found
       headers:
         x-correlator:
-          $ref: "#/components/headers/x-correlator"
+          $ref: "../common/CAMARA_common.yaml#/components/headers/x-correlator"
       content:
         application/json:
           schema:
             allOf:
-              - $ref: "#/components/schemas/ErrorInfo"
+              - $ref: "../common/CAMARA_common.yaml#/components/schemas/ErrorInfo"
               - type: object
                 properties:
                   status:
@@ -884,12 +861,12 @@ components:
       description: Trying to create a booking which already exists for this device
       headers:
         x-correlator:
-          $ref: '#/components/headers/x-correlator'
+          $ref: "../common/CAMARA_common.yaml#/components/headers/x-correlator"
       content:
         application/json:
           schema:
             allOf:
-              - $ref: "#/components/schemas/ErrorInfo"
+              - $ref: "../common/CAMARA_common.yaml#/components/schemas/ErrorInfo"
               - type: object
                 properties:
                   status:
@@ -913,12 +890,12 @@ components:
       description: Unprocessable Content
       headers:
         x-correlator:
-          $ref: "#/components/headers/x-correlator"
+          $ref: "../common/CAMARA_common.yaml#/components/headers/x-correlator"
       content:
         application/json:
           schema:
             allOf:
-              - $ref: "#/components/schemas/ErrorInfo"
+              - $ref: "../common/CAMARA_common.yaml#/components/schemas/ErrorInfo"
               - type: object
                 properties:
                   status:
@@ -991,6 +968,28 @@ components:
       $ref: '../common/CAMARA_common.yaml#/components/responses/Generic429'
 
   examples:
+    EXAMPLE_CREATION_BODY:
+      summary: Booking creation example
+      description: Example request using a 3-legged access token to identify the device and identifying the application server by IPv4 subnet
+      value:
+        applicationServer:
+          ipv4Address: 198.51.100.0/24
+        qosProfile: "QOS_L"
+        sink: "https://application-server.com/notifications"
+        sinkCredential:
+          credentialType: ACCESSTOKEN
+          accessToken: "eyJhbGciOiJIUzI1NiIsInR..."
+          accessTokenExpiresUtc: "2024-12-01T12:00:00Z"
+          accessTokenType: bearer
+        startTime: "2024-06-01T12:00:00Z"
+        duration: 3600
+        serviceArea:
+          areaType: "CIRCLE"
+          center:
+            latitude: 50.735851
+            longitude: 7.10066
+          radius: 100
+
     BOOKING_ACTIVATED_WITH_DEVICE_RESPONSE:
       summary: QoS booking status is activated, with device included in response
       description: QoS booking info when booking status is activated, and request used a 2-legged access token with multiple device identifiers, or possibly only a single device identifier
