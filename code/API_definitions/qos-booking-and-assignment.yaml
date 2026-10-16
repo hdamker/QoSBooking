@@ -184,22 +184,28 @@ info:
     | Code | When raised | Operations |
     |---|---|---|
     | `INVALID_ARGUMENT` | Malformed request body, unrecognised field, or invalid field value. | All write operations |
-    | `OUT_OF_RANGE` | A numeric value (e.g. device count) exceeds its declared bounds. | `createBooking`, `assignDevices` |
+    | `OUT_OF_RANGE` | A numeric value (e.g. device count) exceeds its declared bounds. | `createBooking`, `assignDevices`, `releaseDevices` |
     | `QOS_BOOKING_AND_ASSIGNMENT.DURATION_OUT_OF_RANGE` | The requested booking duration exceeds the maximum allowed by the selected QoS profile. | `createBooking` only |
-    | `INVALID_SINK` | The `sink` URL is not a valid callback endpoint or uses an unsupported protocol. | `createBooking` only |
+    | `INVALID_CREDENTIAL` | The `sinkCredential.credentialType` is not supported (only `ACCESSTOKEN` and `PRIVATE_KEY_JWT` are). | `createBooking`, `assignDevices`, `releaseDevices` |
+    | `INVALID_TOKEN` | The `sinkCredential.accessTokenType` is not supported (only `bearer` is). | `createBooking`, `assignDevices`, `releaseDevices` |
+    | `INVALID_SINK` | The `sink` URL is not a valid callback endpoint or uses an unsupported protocol. | `createBooking`, `assignDevices`, `releaseDevices` |
 
     ## API-specific 409 codes
 
     | Code | When raised | Operations |
     |---|---|---|
-    | `INCOMPATIBLE_STATE` | The operation is not valid for the booking's current `bookingStatus`. Examples: assigning devices to a `TERMINATED` booking; `deleteBooking` when devices remain assigned (provider-dependent — see `deleteBooking` description). | `createBooking`, `deleteBooking`, `assignDevices`, `releaseDevices` |
+    | `ALREADY_EXISTS` | A booking with identical parameters already exists for this consumer. | `createBooking` only |
+    | `INCOMPATIBLE_STATE` | The operation is not valid for the booking's current `bookingStatus`. Examples: assigning devices to a `TERMINATED` booking; `deleteBooking` when devices remain assigned (provider-dependent — see `deleteBooking` description). | `deleteBooking`, `assignDevices`, `releaseDevices` |
     | `ABORTED` | A concurrent operation of the same type is already in progress for the same booking. Retry after the in-progress operation resolves. | `assignDevices`, `releaseDevices` |
-    | `ALREADY_EXISTS` | A booking with identical parameters already exists for this consumer. | `createBooking` |
-    | `CONFLICT` | A duplicate resource entry was detected. | `createBooking` |
 
-    > **Note:** `ALREADY_EXISTS` and `CONFLICT` do not apply to read operations or
-    > `deleteBooking` / `releaseDevices`. These codes are included in the shared `Generic409`
-    > definition and will be scoped to individual operations in a future cleanup.
+    ## API-specific 422 codes
+
+    | Code | When raised | Operations |
+    |---|---|---|
+    | `EVENT_NOTIFICATIONS_NOT_SUPPORTED` | A `sink` is provided but the API provider does not support event notification delivery. The request is rejected and no booking or assignment is created; retry without `sink`. | `createBooking`, `assignDevices`, `releaseDevices` |
+    | `QOS_BOOKING_AND_ASSIGNMENT.DEVICE_QUOTA_EXCEEDED` | The number of devices in the request exceeds the remaining device capacity of the booking (`remainingDevices`). | `assignDevices` only |
+
+    The device identification codes (`MISSING_IDENTIFIER`, `UNNECESSARY_IDENTIFIER`, `UNSUPPORTED_IDENTIFIER`, `SERVICE_NOT_APPLICABLE`) apply to `assignDevices`, `releaseDevices` and `retrieveBookingByDevice`, as described in the section "Identifying the device from the access token".
 
     <!-- CAMARA:MANDATORY:additional-error-responses:BEGIN -->
 
@@ -226,7 +232,7 @@ info:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
   version: wip
-  x-camara-commonalities: 0.8.0
+  x-camara-commonalities: 0.9.0
 
 externalDocs:
   description: Product documentation at CAMARA
@@ -261,7 +267,9 @@ paths:
         - `HTTP 201 (bookingStatus: TERMINATED):` The operator determined synchronously that the booking cannot be fulfilled. `statusInfo` provides the reason.
         - `HTTP 201 (bookingStatus: REQUESTED):` The booking resource is created and a `bookingId` is returned, but operator confirmation is still pending. A `booking-status-changed` notification will be sent to the registered `sink` with the final outcome (`SCHEDULED`, `ACTIVATED`, or `TERMINATED`).
         - `HTTP 4xx (Failure Condition):` The request itself was invalid. The response will include specific error codes and descriptions.
+        - `HTTP 422 (EVENT_NOTIFICATIONS_NOT_SUPPORTED):` A `sink` was provided but the API provider does not support event notification delivery. No booking is created; the API consumer can retry without `sink` and poll `getBookingById` instead.
         - `statusInfo` contains additional information under certain conditions.
+        - When a `sink` is provided and event delivery is accepted, `sink` is echoed in the response.
       operationId: createBooking
       parameters:
         - $ref: "#/components/parameters/x-correlator"
@@ -301,15 +309,15 @@ paths:
                     x-correlator:
                       $ref: "#/components/headers/x-correlator"
                 "400":
-                  $ref: "#/components/responses/Generic400"
+                  $ref: "#/components/responses/BadRequest400"
                 "401":
-                  $ref: "#/components/responses/Generic401"
+                  $ref: "#/components/responses/Unauthenticated401"
                 "403":
-                  $ref: "#/components/responses/Generic403"
+                  $ref: "#/components/responses/PermissionDenied403"
                 "410":
-                  $ref: "#/components/responses/Generic410"
+                  $ref: "#/components/responses/SinkGone410"
                 "429":
-                  $ref: "#/components/responses/Generic429"
+                  $ref: "#/components/responses/TooManyRequests429"
               security:
                 - {}
                 - notificationsBearerAuth: []
@@ -339,17 +347,17 @@ paths:
                 BOOKING_PENDING:
                   $ref: "#/components/examples/BOOKING_PENDING"
         "400":
-          $ref: "#/components/responses/CreateBookingOrAssign400"
+          $ref: "#/components/responses/CreateBooking400"
         "401":
-          $ref: "#/components/responses/Generic401"
+          $ref: "#/components/responses/Unauthenticated401"
         "403":
-          $ref: "#/components/responses/Generic403"
+          $ref: "#/components/responses/PermissionDenied403"
         "409":
-          $ref: "#/components/responses/Generic409"
+          $ref: "#/components/responses/AlreadyExists409"
         "422":
-          $ref: "#/components/responses/Generic422"
+          $ref: "#/components/responses/CreateBooking422"
         "429":
-          $ref: "#/components/responses/Generic429"
+          $ref: "#/components/responses/TooManyRequests429"
       security:
         - openId:
             - "qos-booking-and-assignment:qos-bookings:create"
@@ -383,15 +391,15 @@ paths:
                 BOOKING_RETRIEVED:
                   $ref: "#/components/examples/BOOKING_RETRIEVED"
         "400":
-          $ref: "#/components/responses/Generic400"
+          $ref: "#/components/responses/BadRequest400"
         "401":
-          $ref: "#/components/responses/Generic401"
+          $ref: "#/components/responses/Unauthenticated401"
         "403":
-          $ref: "#/components/responses/Generic403"
+          $ref: "#/components/responses/PermissionDenied403"
         "404":
-          $ref: "#/components/responses/Generic404"
+          $ref: "#/components/responses/NotFound404"
         "429":
-          $ref: "#/components/responses/Generic429"
+          $ref: "#/components/responses/TooManyRequests429"
       security:
         - openId:
             - "qos-booking-and-assignment:qos-bookings:read"
@@ -439,17 +447,17 @@ paths:
                 CANCELLATION_PENDING:
                   $ref: "#/components/examples/CANCELLATION_PENDING"
         "400":
-          $ref: "#/components/responses/Generic400"
+          $ref: "#/components/responses/BadRequest400"
         "401":
-          $ref: "#/components/responses/Generic401"
+          $ref: "#/components/responses/Unauthenticated401"
         "403":
-          $ref: "#/components/responses/Generic403"
+          $ref: "#/components/responses/PermissionDenied403"
         "404":
-          $ref: "#/components/responses/Generic404"
+          $ref: "#/components/responses/NotFound404"
         "409":
-          $ref: "#/components/responses/Generic409"
+          $ref: "#/components/responses/DeleteBooking409"
         "429":
-          $ref: "#/components/responses/Generic429"
+          $ref: "#/components/responses/TooManyRequests429"
       security:
         - openId:
             - "qos-booking-and-assignment:qos-bookings:delete"
@@ -463,6 +471,8 @@ paths:
         This endpoint allows the end user to assign one or more devices to the existing QoS Booking.
         - If the assignment is successful for all the devices, the call will return 201 success code with assignmentStatus `ASSIGNED` and the network is available for the said devices to connect and use them at the requested time
         - If the assignment request failed for some reason, this call we be retured with 4xx error code with appropirate status codes
+        - If the number of devices in the request exceeds the remaining capacity of the booking (`remainingDevices`), the request is rejected with `422 QOS_BOOKING_AND_ASSIGNMENT.DEVICE_QUOTA_EXCEEDED`. The `statusInfo` value `QUOTA_EXCEEDED` is used only when the shortage is detected during asynchronous processing.
+        - If a `sink` is provided and the API provider does not support event notification delivery, the request is rejected with `422 EVENT_NOTIFICATIONS_NOT_SUPPORTED` and no device is assigned.
         - This is an asynchronous call, and assignmentStatus = `REQUESTED` if the network is still processing your request. A callback will deliver the final assignmentStatus.
         - If the network could not assign all the requested devices, then assignmentStatus = `PARTIAL_SUCCESS` and the `statusInfo` will have additional information.
         - If a 2-legged access token is used, then the device details SHOULD BE provided as part of the input, and the output will return the array of actually assigned devices.
@@ -507,15 +517,15 @@ paths:
                     x-correlator:
                       $ref: "#/components/headers/x-correlator"
                 "400":
-                  $ref: "#/components/responses/Generic400"
+                  $ref: "#/components/responses/BadRequest400"
                 "401":
-                  $ref: "#/components/responses/Generic401"
+                  $ref: "#/components/responses/Unauthenticated401"
                 "403":
-                  $ref: "#/components/responses/Generic403"
+                  $ref: "#/components/responses/PermissionDenied403"
                 "410":
-                  $ref: "#/components/responses/Generic410"
+                  $ref: "#/components/responses/SinkGone410"
                 "429":
-                  $ref: "#/components/responses/Generic429"
+                  $ref: "#/components/responses/TooManyRequests429"
               security:
                 - {}
                 - notificationsBearerAuth: []
@@ -555,19 +565,19 @@ paths:
                   $ref: "#/components/examples/ASSIGNMENT_PENDING"
 
         "400":
-          $ref: "#/components/responses/CreateBookingOrAssign400"
+          $ref: "#/components/responses/AssignOrReleaseDevices400"
         "401":
-          $ref: "#/components/responses/Generic401"
+          $ref: "#/components/responses/Unauthenticated401"
         "403":
-          $ref: "#/components/responses/Generic403"
+          $ref: "#/components/responses/PermissionDenied403"
         "404":
-          $ref: "#/components/responses/Generic404"
+          $ref: "#/components/responses/DeviceAssignmentNotFound404"
         "409":
-          $ref: "#/components/responses/Generic409"
+          $ref: "#/components/responses/DeviceAssignment409"
         "422":
-          $ref: "#/components/responses/Generic422"
+          $ref: "#/components/responses/AssignDevices422"
         "429":
-          $ref: "#/components/responses/Generic429"
+          $ref: "#/components/responses/TooManyRequests429"
       security:
         - openId:
             - "qos-booking-and-assignment:qos-bookings:devices:create"
@@ -607,15 +617,15 @@ paths:
                   $ref: "#/components/examples/ASSIGNMENT_RETRIEVED_2"
 
         "400":
-          $ref: "#/components/responses/Generic400"
+          $ref: "#/components/responses/BadRequest400"
         "401":
-          $ref: "#/components/responses/Generic401"
+          $ref: "#/components/responses/Unauthenticated401"
         "403":
-          $ref: "#/components/responses/Generic403"
+          $ref: "#/components/responses/PermissionDenied403"
         "404":
-          $ref: "#/components/responses/Generic404"
+          $ref: "#/components/responses/NotFound404"
         "429":
-          $ref: "#/components/responses/Generic429"
+          $ref: "#/components/responses/TooManyRequests429"
       security:
         - openId:
             - "qos-booking-and-assignment:qos-bookings:devices:read"
@@ -635,6 +645,7 @@ paths:
         - If the device is assigned using 3-legged access token:
           - If the device is active, then release can happen in the same way.
           - If the device has failed for some reason, and the device information is not known, then the device can't be released from booking.
+        - If a `sink` is provided and the API provider does not support event notification delivery, the request is rejected with `422 EVENT_NOTIFICATIONS_NOT_SUPPORTED` and no device is released.
         - This call uses the POST method to comply with the CAMARA Commonalities guidelines for sending sensitive or complex data in API calls. Since the device field may contain personally identifiable information, it should not be sent via DELETE.
       operationId: releaseDevices
       parameters:
@@ -687,19 +698,19 @@ paths:
                 ASSIGNMENT_RELEASE_PENDING:
                   $ref: "#/components/examples/ASSIGNMENT_RELEASE_PENDING"
         "400":
-          $ref: "#/components/responses/Generic400"
+          $ref: "#/components/responses/AssignOrReleaseDevices400"
         "401":
-          $ref: "#/components/responses/Generic401"
+          $ref: "#/components/responses/Unauthenticated401"
         "403":
-          $ref: "#/components/responses/Generic403"
+          $ref: "#/components/responses/PermissionDenied403"
         "404":
-          $ref: "#/components/responses/Generic404"
+          $ref: "#/components/responses/DeviceAssignmentNotFound404"
         "409":
-          $ref: "#/components/responses/Generic409"
+          $ref: "#/components/responses/DeviceAssignment409"
         "422":
-          $ref: "#/components/responses/Generic422"
+          $ref: "#/components/responses/ReleaseDevices422"
         "429":
-          $ref: "#/components/responses/Generic429"
+          $ref: "#/components/responses/TooManyRequests429"
       security:
         - openId:
             - "qos-booking-and-assignment:qos-bookings:devices:delete"
@@ -747,15 +758,15 @@ paths:
                 RETRIEVE_BOOKINGS_NO_ITEMS:
                   $ref: "#/components/examples/RETRIEVE_BOOKINGS_NO_ITEMS"
         "400":
-          $ref: "#/components/responses/Generic400"
+          $ref: "#/components/responses/BadRequest400"
         "401":
-          $ref: "#/components/responses/Generic401"
+          $ref: "#/components/responses/Unauthenticated401"
         "403":
-          $ref: "#/components/responses/Generic403"
+          $ref: "#/components/responses/PermissionDenied403"
         "422":
-          $ref: "#/components/responses/Generic422"
+          $ref: "#/components/responses/DeviceIdentifier422"
         "429":
-          $ref: "#/components/responses/Generic429"
+          $ref: "#/components/responses/TooManyRequests429"
       security:
         - openId:
             - "qos-booking-and-assignment:qos-bookings:retrieve-by-device"
@@ -807,12 +818,7 @@ components:
             serviceArea:
               $ref: "../common/CAMARA_common.yaml#/components/schemas/Area"
             sink:
-              type: string
-              format: uri
-              maxLength: 2048
-              pattern: "^https:\/\/.+$"
-              description: The address to which events shall be delivered, using the HTTP protocol.
-              example: "https://endpoint.example.com/sink"
+              $ref: "../common/CAMARA_event_common.yaml#/components/schemas/Sink"
             sinkCredential:
               $ref: "../common/CAMARA_event_common.yaml#/components/schemas/SinkCredential"
           required:
@@ -859,6 +865,7 @@ components:
         `remainingDevices` >= 0 and <= `bookingDeviceCount`
         - Once a device is successfully assigned to the booking, `remainingDevices` will be reduced by 1, and once the device is released then it will be incremented by 1
         - Booking Information is also returned as part of the message body when the devices are successfully assigned to the booking.
+        - `sink` is echoed in the `createBooking` response when it was provided in the request and event delivery is accepted by the API provider.
         - `bookingId` is present when `bookingStatus` is `REQUESTED`, `SCHEDULED`, or `ACTIVATED` — the booking resource exists and is addressable. It is absent when `bookingStatus` is `TERMINATED` at creation time, meaning the operator rejected the booking synchronously and no resource was created.
 
       allOf:
@@ -882,6 +889,8 @@ components:
               $ref: "#/components/schemas/BookingStatus"
             statusInfo:
               $ref: "#/components/schemas/BookingStatusInfo"
+            sink:
+              $ref: "../common/CAMARA_event_common.yaml#/components/schemas/Sink"
           required:
             - remainingDevices
             - qosProfile
@@ -903,12 +912,7 @@ components:
         devices:
           $ref: "#/components/schemas/Devices"
         sink:
-          type: string
-          format: uri
-          maxLength: 2048
-          pattern: ^https:\/\/.+$
-          description: The address to which events shall be delivered, using the HTTP protocol.
-          example: "https://endpoint.example.com/sink"
+          $ref: "../common/CAMARA_event_common.yaml#/components/schemas/Sink"
         sinkCredential:
           $ref: "../common/CAMARA_event_common.yaml#/components/schemas/SinkCredential"
 
@@ -1192,23 +1196,30 @@ components:
         $ref: "../common/CAMARA_common.yaml#/components/schemas/DeviceResponse"
 
   responses:
-    Generic400:
-      $ref: "../common/CAMARA_common.yaml#/components/responses/Generic400"
-    Generic401:
-      $ref: "../common/CAMARA_common.yaml#/components/responses/Generic401"
-    Generic403:
-      $ref: "../common/CAMARA_common.yaml#/components/responses/Generic403"
-    Generic404:
-      $ref: "../common/CAMARA_common.yaml#/components/responses/Generic404"
-    Generic410:
-      $ref: "../common/CAMARA_common.yaml#/components/responses/Generic410"
-    Generic422:
-      $ref: "../common/CAMARA_common.yaml#/components/responses/Generic422"
-    Generic429:
-      $ref: "../common/CAMARA_common.yaml#/components/responses/Generic429"
+    # Catalogue error responses provided by the Commonalities common files
+    BadRequest400:
+      $ref: "../common/CAMARA_common.yaml#/components/responses/BadRequest400"
+    Unauthenticated401:
+      $ref: "../common/CAMARA_common.yaml#/components/responses/Unauthenticated401"
+    PermissionDenied403:
+      $ref: "../common/CAMARA_common.yaml#/components/responses/PermissionDenied403"
+    NotFound404:
+      $ref: "../common/CAMARA_common.yaml#/components/responses/NotFound404"
+    AlreadyExists409:
+      $ref: "../common/CAMARA_common.yaml#/components/responses/AlreadyExists409"
+    DeviceIdentifier422:
+      $ref: "../common/CAMARA_common.yaml#/components/responses/DeviceIdentifier422"
+    TooManyRequests429:
+      $ref: "../common/CAMARA_common.yaml#/components/responses/TooManyRequests429"
+    SinkGone410:
+      $ref: "../common/CAMARA_event_common.yaml#/components/responses/SinkGone410"
 
-    CreateBookingOrAssign400:
-      description: Bad Request when creating a QoS booking or assigning devices to a booking.
+    # Error responses defined locally: API-specific codes or a combination of common codes
+    # not covered by the catalogue. Examples for common codes reference the shared examples;
+    # only the QOS_BOOKING_AND_ASSIGNMENT.* examples are defined inline (components/examples).
+
+    CreateBooking400:
+      description: Bad Request when creating a QoS booking.
       headers:
         x-correlator:
           $ref: "#/components/headers/x-correlator"
@@ -1232,42 +1243,101 @@ components:
                       - INVALID_SINK
           examples:
             GENERIC_400_INVALID_ARGUMENT:
-              description: Invalid Argument. Generic Syntax Exception
-              value:
-                status: 400
-                code: INVALID_ARGUMENT
-                message: Client specified an invalid argument, request body or query param.
+              $ref: "../common/CAMARA_common.yaml#/components/examples/GENERIC_400_INVALID_ARGUMENT"
             GENERIC_400_OUT_OF_RANGE:
-              description: Out of Range. Specific Syntax Exception used when a given field has a pre-defined range or a invalid filter criteria combination is requested
-              value:
-                status: 400
-                code: OUT_OF_RANGE
-                message: Client specified an invalid range.
+              $ref: "../common/CAMARA_common.yaml#/components/examples/GENERIC_400_OUT_OF_RANGE"
             DurationOutOfRangeForQoSProfile:
-              description: The requested duration is out of the allowed range for the specific QoS profile
-              value:
-                status: 400
-                code: QOS_BOOKING_AND_ASSIGNMENT.DURATION_OUT_OF_RANGE
-                message: The requested duration is out of the allowed range for the specific QoS profile
+              $ref: "#/components/examples/DurationOutOfRangeForQoSProfile"
             GENERIC_400_INVALID_CREDENTIAL:
-              value:
-                status: 400
-                code: INVALID_CREDENTIAL
-                message: Only Access token is supported
+              $ref: "../common/CAMARA_event_common.yaml#/components/examples/GENERIC_400_INVALID_CREDENTIAL"
             GENERIC_400_INVALID_TOKEN:
-              value:
-                status: 400
-                code: INVALID_TOKEN
-                message: Only bearer token is supported
+              $ref: "../common/CAMARA_event_common.yaml#/components/examples/GENERIC_400_INVALID_TOKEN"
             GENERIC_400_INVALID_SINK:
-              description: Invalid sink value
-              value:
-                status: 400
-                code: INVALID_SINK
-                message: sink not valid for the specified protocol
+              $ref: "../common/CAMARA_event_common.yaml#/components/examples/GENERIC_400_INVALID_SINK"
 
-    Generic409:
-      description: Handle all conflict error conditions as per commonalities guidelines
+    AssignOrReleaseDevices400:
+      description: Bad Request when assigning devices to, or releasing devices from, a QoS booking.
+      headers:
+        x-correlator:
+          $ref: "#/components/headers/x-correlator"
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "../common/CAMARA_common.yaml#/components/schemas/ErrorInfo"
+              - type: object
+                properties:
+                  status:
+                    enum:
+                      - 400
+                  code:
+                    enum:
+                      - INVALID_ARGUMENT
+                      - OUT_OF_RANGE
+                      - INVALID_CREDENTIAL
+                      - INVALID_TOKEN
+                      - INVALID_SINK
+          examples:
+            GENERIC_400_INVALID_ARGUMENT:
+              $ref: "../common/CAMARA_common.yaml#/components/examples/GENERIC_400_INVALID_ARGUMENT"
+            GENERIC_400_OUT_OF_RANGE:
+              $ref: "../common/CAMARA_common.yaml#/components/examples/GENERIC_400_OUT_OF_RANGE"
+            GENERIC_400_INVALID_CREDENTIAL:
+              $ref: "../common/CAMARA_event_common.yaml#/components/examples/GENERIC_400_INVALID_CREDENTIAL"
+            GENERIC_400_INVALID_TOKEN:
+              $ref: "../common/CAMARA_event_common.yaml#/components/examples/GENERIC_400_INVALID_TOKEN"
+            GENERIC_400_INVALID_SINK:
+              $ref: "../common/CAMARA_event_common.yaml#/components/examples/GENERIC_400_INVALID_SINK"
+
+    DeviceAssignmentNotFound404:
+      description: Not found. The booking, or a device identifier in the request, cannot be found.
+      headers:
+        x-correlator:
+          $ref: "#/components/headers/x-correlator"
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "../common/CAMARA_common.yaml#/components/schemas/ErrorInfo"
+              - type: object
+                properties:
+                  status:
+                    enum:
+                      - 404
+                  code:
+                    enum:
+                      - NOT_FOUND
+                      - IDENTIFIER_NOT_FOUND
+          examples:
+            GENERIC_404_NOT_FOUND:
+              $ref: "../common/CAMARA_common.yaml#/components/examples/GENERIC_404_NOT_FOUND"
+            GENERIC_404_IDENTIFIER_NOT_FOUND:
+              $ref: "../common/CAMARA_common.yaml#/components/examples/GENERIC_404_IDENTIFIER_NOT_FOUND"
+
+    DeleteBooking409:
+      description: Conflict. The booking is in a state incompatible with its deletion.
+      headers:
+        x-correlator:
+          $ref: "#/components/headers/x-correlator"
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "../common/CAMARA_common.yaml#/components/schemas/ErrorInfo"
+              - type: object
+                properties:
+                  status:
+                    enum:
+                      - 409
+                  code:
+                    enum:
+                      - INCOMPATIBLE_STATE
+          examples:
+            GENERIC_409_INCOMPATIBLE_STATE:
+              $ref: "../common/CAMARA_common.yaml#/components/examples/GENERIC_409_INCOMPATIBLE_STATE"
+
+    DeviceAssignment409:
+      description: Conflict when assigning devices to, or releasing devices from, a QoS booking.
       headers:
         x-correlator:
           $ref: "#/components/headers/x-correlator"
@@ -1284,34 +1354,105 @@ components:
                   code:
                     enum:
                       - ABORTED
-                      - ALREADY_EXISTS
-                      - CONFLICT
                       - INCOMPATIBLE_STATE
           examples:
             GENERIC_409_ABORTED:
-              description: Concurreny of processes of the same nature/scope
-              value:
-                status: 409
-                code: ABORTED
-                message: Concurrency conflict.
-            GENERIC_409_ALREADY_EXISTS:
-              description: Trying to create an existing resource
-              value:
-                status: 409
-                code: ALREADY_EXISTS
-                message: The resource that a client tried to create already exists.
-            GENERIC_409_CONFLICT:
-              description: Duplication of an existing resource
-              value:
-                status: 409
-                code: CONFLICT
-                message: A specified resource duplicate entry found.
+              $ref: "../common/CAMARA_common.yaml#/components/examples/GENERIC_409_ABORTED"
             GENERIC_409_INCOMPATIBLE_STATE:
-              description: A resource referenced in the request is in an incompatible state for the requested operation
-              value:
-                status: 409
-                code: INCOMPATIBLE_STATE
-                message: A referenced resource is in an incompatible state.
+              $ref: "../common/CAMARA_common.yaml#/components/examples/GENERIC_409_INCOMPATIBLE_STATE"
+
+    CreateBooking422:
+      description: Unprocessable Content when creating a QoS booking.
+      headers:
+        x-correlator:
+          $ref: "#/components/headers/x-correlator"
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "../common/CAMARA_common.yaml#/components/schemas/ErrorInfo"
+              - type: object
+                properties:
+                  status:
+                    enum:
+                      - 422
+                  code:
+                    enum:
+                      - EVENT_NOTIFICATIONS_NOT_SUPPORTED
+          examples:
+            GENERIC_422_EVENT_NOTIFICATIONS_NOT_SUPPORTED:
+              $ref: "../common/CAMARA_event_common.yaml#/components/examples/GENERIC_422_EVENT_NOTIFICATIONS_NOT_SUPPORTED"
+
+    AssignDevices422:
+      description: Unprocessable Content when assigning devices to a QoS booking.
+      headers:
+        x-correlator:
+          $ref: "#/components/headers/x-correlator"
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "../common/CAMARA_common.yaml#/components/schemas/ErrorInfo"
+              - type: object
+                properties:
+                  status:
+                    enum:
+                      - 422
+                  code:
+                    enum:
+                      - SERVICE_NOT_APPLICABLE
+                      - MISSING_IDENTIFIER
+                      - UNSUPPORTED_IDENTIFIER
+                      - UNNECESSARY_IDENTIFIER
+                      - EVENT_NOTIFICATIONS_NOT_SUPPORTED
+                      - QOS_BOOKING_AND_ASSIGNMENT.DEVICE_QUOTA_EXCEEDED
+          examples:
+            GENERIC_422_SERVICE_NOT_APPLICABLE:
+              $ref: "../common/CAMARA_common.yaml#/components/examples/GENERIC_422_SERVICE_NOT_APPLICABLE"
+            GENERIC_422_MISSING_IDENTIFIER_DEVICE:
+              $ref: "../common/CAMARA_common.yaml#/components/examples/GENERIC_422_MISSING_IDENTIFIER_DEVICE"
+            GENERIC_422_UNSUPPORTED_IDENTIFIER_DEVICE:
+              $ref: "../common/CAMARA_common.yaml#/components/examples/GENERIC_422_UNSUPPORTED_IDENTIFIER_DEVICE"
+            GENERIC_422_UNNECESSARY_IDENTIFIER_DEVICE:
+              $ref: "../common/CAMARA_common.yaml#/components/examples/GENERIC_422_UNNECESSARY_IDENTIFIER_DEVICE"
+            GENERIC_422_EVENT_NOTIFICATIONS_NOT_SUPPORTED:
+              $ref: "../common/CAMARA_event_common.yaml#/components/examples/GENERIC_422_EVENT_NOTIFICATIONS_NOT_SUPPORTED"
+            DeviceQuotaExceededForBooking:
+              $ref: "#/components/examples/DeviceQuotaExceededForBooking"
+
+    ReleaseDevices422:
+      description: Unprocessable Content when releasing devices from a QoS booking.
+      headers:
+        x-correlator:
+          $ref: "#/components/headers/x-correlator"
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "../common/CAMARA_common.yaml#/components/schemas/ErrorInfo"
+              - type: object
+                properties:
+                  status:
+                    enum:
+                      - 422
+                  code:
+                    enum:
+                      - SERVICE_NOT_APPLICABLE
+                      - MISSING_IDENTIFIER
+                      - UNSUPPORTED_IDENTIFIER
+                      - UNNECESSARY_IDENTIFIER
+                      - EVENT_NOTIFICATIONS_NOT_SUPPORTED
+          examples:
+            GENERIC_422_SERVICE_NOT_APPLICABLE:
+              $ref: "../common/CAMARA_common.yaml#/components/examples/GENERIC_422_SERVICE_NOT_APPLICABLE"
+            GENERIC_422_MISSING_IDENTIFIER_DEVICE:
+              $ref: "../common/CAMARA_common.yaml#/components/examples/GENERIC_422_MISSING_IDENTIFIER_DEVICE"
+            GENERIC_422_UNSUPPORTED_IDENTIFIER_DEVICE:
+              $ref: "../common/CAMARA_common.yaml#/components/examples/GENERIC_422_UNSUPPORTED_IDENTIFIER_DEVICE"
+            GENERIC_422_UNNECESSARY_IDENTIFIER_DEVICE:
+              $ref: "../common/CAMARA_common.yaml#/components/examples/GENERIC_422_UNNECESSARY_IDENTIFIER_DEVICE"
+            GENERIC_422_EVENT_NOTIFICATIONS_NOT_SUPPORTED:
+              $ref: "../common/CAMARA_event_common.yaml#/components/examples/GENERIC_422_EVENT_NOTIFICATIONS_NOT_SUPPORTED"
 
   examples:
     BOOKING_INPUT_1:
@@ -1728,3 +1869,19 @@ components:
       summary: No bookings found for the device
       description: No bookings are found for the device, value contains only empty array
       value: []
+
+    DurationOutOfRangeForQoSProfile:
+      summary: Duration out of range for the QoS profile
+      description: The requested duration is out of the allowed range for the specific QoS profile
+      value:
+        status: 400
+        code: QOS_BOOKING_AND_ASSIGNMENT.DURATION_OUT_OF_RANGE
+        message: The requested duration is out of the allowed range for the specific QoS profile
+
+    DeviceQuotaExceededForBooking:
+      summary: Device quota of the booking exceeded
+      description: The number of devices in the request exceeds the remaining device capacity of the booking
+      value:
+        status: 422
+        code: QOS_BOOKING_AND_ASSIGNMENT.DEVICE_QUOTA_EXCEEDED
+        message: The number of devices exceeds the remaining device capacity of the booking.
