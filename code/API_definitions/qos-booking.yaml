@@ -8,11 +8,13 @@ info:
 
     The lifecycle of a booking is expressed by the `BookingStatus` value and typically follows this pattern: a booking is accepted as `REQUESTED`, then it may become `SCHEDULED` for a future start, then `ACTIVATED` once the start time comes, and it eventually becomes `TERMINATED` when the booking expires, is cancelled or is rejected.
 
-
     # Relevant terms and definitions
 
     * **QoS profiles**:
     Latency, throughput or priority requirements of the application mapped to relevant QoS profile values. The set of QoS Profiles that a network operator is offering may be retrieved via the `qos-profiles` API (cf. https://github.com/camaraproject/QualityOnDemand/) or will be agreed during the onboarding with the API service provider.
+
+    * **Duration**:
+    Duration (in seconds) for which the QoS session (between application client and application server) should be booked. Limits for booked QoS session duration can be set by the implementation for the QoS profile. The user may request a termination before its expiration.
 
     * **Identifier for the device**:
     At least one identifier for the device (user equipment) out of four options: IPv4 address, IPv6 address, Phone number, or Network Access Identifier assigned by the network operator for the device, at the request time. After the booking request is accepted, the device may get different IP addresses, but the booking will still apply to the device that was identified during the request process. Note: Network Access Identifier is defined for future use and is not supported in this version of the API.
@@ -56,8 +58,6 @@ info:
     - If the subject can be identified from the access token and the optional `device` object is also included in the request, then the server will return an error with the `422 UNNECESSARY_IDENTIFIER` error code. This will be the case even if the same device is identified by these two methods, as the server is unable to make this comparison.
     <!-- CAMARA:MANDATORY:identifying-device-from-access-token:END -->
 
-    - If the requested `qosProfile` exists but is currently not available for creating a booking, then the server will return an error with the `422 QOS_BOOKING.QOS_PROFILE_NOT_APPLICABLE` error code.
-
     <!-- CAMARA:MANDATORY:additional-error-responses:BEGIN -->
 
     # Additional CAMARA error responses
@@ -68,6 +68,23 @@ info:
 
     As a specific rule, error `501 - NOT_IMPLEMENTED` can be only a possible error response if it is explicitly documented in the API.
     <!-- CAMARA:MANDATORY:additional-error-responses:END -->
+
+    Explanations of several error responses are the followings:
+    - If a request value is outside the valid range supported by the operator, typical examples include a start time or ports, then the server will return an error with the `400 OUT_OF_RANGE` error code.
+
+    - If the requested booking duration is shorter than the minimum or longer than the maximum duration allowed for the selected `qosProfile`, then the server will return an error with the `400 QOS_BOOKING.DURATION_OUT_OF_RANGE` error code.
+
+    - If the request bookingId in getBookingById and deleteBooking operations does not exist in the current operator-managed resource, then the server will return an error with the `404 NOT_FOUND` error code.
+
+    - A QoS booking is a reservation for an App-flow between a specific device and a specific application server, at a specific time window and, where relevant, for a specific service area. If the client attempts to create a duplicate or overlapping booking for the same flow, area and/or time window, then the server will return a `409 ALREADY_EXISTS` error code.
+
+    - If the requested area type is not supported, then the server will return an error with `422 QOS_BOOKING.NOT_MANAGED_AREA_TYPE` error code.
+
+    - If the service cannot be provided in the requested area, then the server will return an error with `422 QOS_BOOKING.AREA_NOT_COVERED` error code.
+
+    - If the requested area is syntactically valid but cannot be accepted for QoS booking by the operator, for example because it is outside the supported coverage, then the server will return an error with `422 QOS_BOOKING.INVALID_AREA` error code.
+
+    - If the requested `qosProfile` exists but is currently not available for creating a booking, then the server will return an error with the `422 QOS_BOOKING.QOS_PROFILE_NOT_APPLICABLE` error code.
 
     <!-- CAMARA:MANDATORY:request-body-strictness:BEGIN -->
 
