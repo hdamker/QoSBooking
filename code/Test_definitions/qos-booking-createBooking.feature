@@ -21,7 +21,7 @@ Feature: CAMARA QoS Booking API, vwip - Operation createBooking
     And the header "Authorization" is set to a valid access token
     And the header "x-correlator" complies with the schema at "#/components/schemas/XCorrelator"
     # Properties not explicitly overwritten in the Scenarios can take any values compliant with the schema
-    And the request body is set by default to a request body compliant with the schema at "/components/schemas/CreateBooking"
+    And the request body is set by default to a request body compliant with the schema at "#/components/schemas/CreateBooking"
 
   # Response 201
 
@@ -38,7 +38,7 @@ Feature: CAMARA QoS Booking API, vwip - Operation createBooking
     And the response header "Content-Type" is "application/json"
     And the response header "x-correlator" has the same value as the request header "x-correlator"
     # The response has to comply with the generic response schema which is part of the spec
-    And the response body complies with the OAS schema at "/components/schemas/BookingInfo"
+    And the response body complies with the OAS schema at "#/components/schemas/BookingInfo"
     # Additionally, any success response has to comply with some constraints beyond the schema compliance
     And the response property "<property>" matches the rule: <condition>
 
@@ -65,7 +65,7 @@ Feature: CAMARA QoS Booking API, vwip - Operation createBooking
     Then the response status code is 201
     And the response header "Content-Type" is "application/json"
     And the response header "x-correlator" has same value as the request header "x-correlator"
-    And the response body complies with the OAS schema at "/components/schemas/BookingInfo"
+    And the response body complies with the OAS schema at "#/components/schemas/BookingInfo"
     And the response property "$.device" does not exist
 
   @qos_booking_createBooking_03_single_device_identifier_in_response
@@ -77,7 +77,7 @@ Feature: CAMARA QoS Booking API, vwip - Operation createBooking
     Then the response status code is 201
     And the response header "Content-Type" is "application/json"
     And the response header "x-correlator" has same value as the request header "x-correlator"
-    And the response body complies with the OAS schema at "/components/schemas/BookingInfo"
+    And the response body complies with the OAS schema at "#/components/schemas/BookingInfo"
     And the response property "$.device" includes only one device
 
   @qos_booking_createBooking_04_0_booking_declined_synchronously
@@ -92,7 +92,7 @@ Feature: CAMARA QoS Booking API, vwip - Operation createBooking
     Then the response status code is 201
     And the response header "Content-Type" is "application/json"
     And the response header "x-correlator" has the same value as the request header "x-correlator"
-    And the response body complies with the OAS schema at "/components/schemas/BookingInfo"
+    And the response body complies with the OAS schema at "#/components/schemas/BookingInfo"
     And the response property "$.bookingStatus" is "TERMINATED"
     And the response property "$.statusInfo" is "BOOKING_DECLINED"
     And the response property "$.bookingId" exists
@@ -128,7 +128,7 @@ Feature: CAMARA QoS Booking API, vwip - Operation createBooking
     Then an event is received at the address of the request property "$.sink"
     And the event header "Authorization" is set to "Bearer " + the value of the request property "$.sinkCredential.accessToken"
     And the event header "Content-Type" is set to "application/cloudevents+json"
-    And the event body complies with the OAS schema at "/components/schemas/EventStatusChanged"
+    And the event body complies with the OAS schema at "#/components/schemas/EventStatusChanged"
     And the event body property "$.id" is unique
     And the event body property "$.type" is set to "org.camaraproject.qos-booking.v0.status-changed"
     And the event body property "$.data.bookingId" has the same value as createBooking response property "$.bookingId"
@@ -144,7 +144,7 @@ Feature: CAMARA QoS Booking API, vwip - Operation createBooking
     Then an event is received at the address of the request property "$.sink"
     And the event header "Authorization" is set to "Bearer " + the value of the request property "$.sinkCredential.accessToken"
     And the event header "Content-Type" is set to "application/cloudevents+json"
-    And the event body complies with the OAS schema at "/components/schemas/EventStatusChanged"
+    And the event body complies with the OAS schema at "#/components/schemas/EventStatusChanged"
     And the event body property "$.id" is unique
     And the event body property "$.type" is set to "org.camaraproject.qos-booking.v0.status-changed"
     And the event body property "$.data.bookingId" has the same value as createBooking response property "$.bookingId"
@@ -160,7 +160,7 @@ Feature: CAMARA QoS Booking API, vwip - Operation createBooking
     Then an event is received at the address of the request property "$.sink"
     And the event header "Authorization" is set to "Bearer " + the value of the request property "$.sinkCredential.accessToken"
     And the event header "Content-Type" is set to "application/cloudevents+json"
-    And the event body complies with the OAS schema at "/components/schemas/EventStatusChanged"
+    And the event body complies with the OAS schema at "#/components/schemas/EventStatusChanged"
     And the event body property "$.id" is unique
     And the event body property "$.type" is set to "org.camaraproject.qos-booking.v0.status-changed"
     And the event body property "$.data.bookingId" has the same value as createBooking response property "$.bookingId"
@@ -177,7 +177,7 @@ Feature: CAMARA QoS Booking API, vwip - Operation createBooking
     Then an event is received at the address of the request property "$.sink"
     And the event header "Authorization" is set to "Bearer " + the value of the request property "$.sinkCredential.accessToken"
     And the event header "Content-Type" is set to "application/cloudevents+json"
-    And the event body complies with the OAS schema at "/components/schemas/EventStatusChanged"
+    And the event body complies with the OAS schema at "#/components/schemas/EventStatusChanged"
     And the event body property "$.id" is unique
     And the event body property "$.type" is set to "org.camaraproject.qos-booking.v0.status-changed"
     And the event body property "$.data.bookingId" has the same value as createBooking response property "$.bookingId"
@@ -195,7 +195,7 @@ Feature: CAMARA QoS Booking API, vwip - Operation createBooking
     Then an event is received at the address of the request property "$.sink"
     And the event header "Authorization" is set to "Bearer " + the value of the request property "$.sinkCredential.accessToken"
     And the event header "Content-Type" is set to "application/cloudevents+json"
-    And the event body complies with the OAS schema at "/components/schemas/EventStatusChanged"
+    And the event body complies with the OAS schema at "#/components/schemas/EventStatusChanged"
     And the event body property "$.id" is unique
     And the event body property "$.type" is set to "org.camaraproject.qos-booking.v0.status-changed"
     And the event body property "$.data.bookingId" has the same value as createBooking response property "$.bookingId"
@@ -228,14 +228,14 @@ Feature: CAMARA QoS Booking API, vwip - Operation createBooking
 
     Examples:
       | device_identifier                | oas_spec_schema                             |
-      | $.device.phoneNumber             | /components/schemas/PhoneNumber             |
-      | $.device.ipv4Address             | /components/schemas/DeviceIpv4Address          |
-      | $.device.ipv6Address             | /components/schemas/DeviceIpv6Address       |
-      | $.device.networkAccessIdentifier | /components/schemas/NetworkAccessIdentifier |
+      | $.device.phoneNumber             | #/components/schemas/PhoneNumber             |
+      | $.device.ipv4Address             | #/components/schemas/DeviceIpv4Address          |
+      | $.device.ipv6Address             | #/components/schemas/DeviceIpv6Address       |
+      | $.device.networkAccessIdentifier | #/components/schemas/NetworkAccessIdentifier |
 
   @qos_booking_createBooking_400.1_schema_not_compliant
   Scenario: Invalid Argument. Generic Syntax Exception
-    Given the request body is set to any value which is not compliant with the schema at "/components/schemas/CreateBooking"
+    Given the request body is set to any value which is not compliant with the schema at "#/components/schemas/CreateBooking"
     When the request "createBooking" is sent
     Then the response status code is 400
     And the response header "x-correlator" has same value as the request header "x-correlator"
@@ -458,10 +458,10 @@ Feature: CAMARA QoS Booking API, vwip - Operation createBooking
 
   # Response 409
 
-  ## Code CONFLICT
+  ## Code ALREADY_EXISTS
 
-  @qos_booking_createBooking_409.1_session_conflict
-  Scenario: Booking in conflict
+  @qos_booking_createBooking_409.1_booking_already_exists
+  Scenario: Booking already exists
     Given a valid testing device supported by the service, identified by the token or provided in the request body
     And an incompatible QoS booking already exists for that device
     When the request "createBooking" is sent
@@ -469,7 +469,7 @@ Feature: CAMARA QoS Booking API, vwip - Operation createBooking
     And the response header "x-correlator" has same value as the request header "x-correlator"
     And the response header "Content-Type" is "application/json"
     And the response property "$.status" is 409
-    And the response property "$.code" is "CONFLICT"
+    And the response property "$.code" is "ALREADY_EXISTS"
     And the response property "$.message" contains a user friendly text
 
   # Response 422
@@ -555,9 +555,9 @@ Feature: CAMARA QoS Booking API, vwip - Operation createBooking
 
     Examples:
       | area_type | area_type_schema             |
-      | CIRCLE    | /components/schemas/Circle   |
-      | POLYGON   | /components/schemas/Polygon  |
-      | AREANAME  | /components/schemas/AreaName |
+      | CIRCLE    | #/components/schemas/Circle   |
+      | POLYGON   | #/components/schemas/Polygon  |
+      | AREANAME  | #/components/schemas/AreaName |
 
 ## Code QOS_BOOKING.AREA_NOT_COVERED
 
