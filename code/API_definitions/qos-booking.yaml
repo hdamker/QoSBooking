@@ -173,13 +173,13 @@ paths:
                     x-correlator:
                       $ref: "../common/CAMARA_common.yaml#/components/headers/x-correlator"
                 "400":
-                  $ref: "#/components/responses/Generic400"
+                  $ref: "../common/CAMARA_common.yaml#/components/responses/BadRequest400"
                 "401":
-                  $ref: "#/components/responses/Generic401"
+                  $ref: "../common/CAMARA_common.yaml#/components/responses/Unauthenticated401"
                 "403":
-                  $ref: "#/components/responses/Generic403"
+                  $ref: "../common/CAMARA_common.yaml#/components/responses/PermissionDenied403"
                 "410":
-                  $ref: "#/components/responses/Generic410"
+                  $ref: "../common/CAMARA_event_common.yaml#/components/responses/SinkGone410"
               security:
                 - {}
                 - notificationsBearerAuth: []
@@ -199,17 +199,17 @@ paths:
         "400":
           $ref: "#/components/responses/CreateBooking400"
         "401":
-          $ref: "#/components/responses/Generic401"
+          $ref: "../common/CAMARA_common.yaml#/components/responses/Unauthenticated401"
         "403":
-          $ref: "#/components/responses/Generic403"
+          $ref: "../common/CAMARA_common.yaml#/components/responses/PermissionDenied403"
         "404":
-          $ref: "#/components/responses/Generic404"
+          $ref: "../common/CAMARA_common.yaml#/components/responses/IdentifierNotFound404"
         "409":
-          $ref: "#/components/responses/BookingAlreadyExists409"
+          $ref: "../common/CAMARA_common.yaml#/components/responses/AlreadyExists409"
         "422":
           $ref: "#/components/responses/BookingUnprocessableEntity422"
         "429":
-          $ref: "#/components/responses/Generic429"
+          $ref: "../common/CAMARA_common.yaml#/components/responses/TooManyRequests429"
       security:
         - openId:
             - "qos-booking:device-qos-bookings:create"
@@ -247,15 +247,15 @@ paths:
                 BOOKING_TERMINATED:
                   $ref: "#/components/examples/BOOKING_TERMINATED"
         "400":
-          $ref: "#/components/responses/Generic400"
+          $ref: "../common/CAMARA_common.yaml#/components/responses/BadRequest400"
         "401":
-          $ref: "#/components/responses/Generic401"
+          $ref: "../common/CAMARA_common.yaml#/components/responses/Unauthenticated401"
         "403":
-          $ref: "#/components/responses/Generic403"
+          $ref: "../common/CAMARA_common.yaml#/components/responses/PermissionDenied403"
         "404":
-          $ref: "#/components/responses/NotFound404"
+          $ref: "../common/CAMARA_common.yaml#/components/responses/NotFound404"
         "429":
-          $ref: "#/components/responses/Generic429"
+          $ref: "../common/CAMARA_common.yaml#/components/responses/TooManyRequests429"
       security:
         - openId:
             - "qos-booking:device-qos-bookings:read"
@@ -296,15 +296,15 @@ paths:
               schema:
                 $ref: "#/components/schemas/BookingInfo"
         "400":
-          $ref: "#/components/responses/Generic400"
+          $ref: "../common/CAMARA_common.yaml#/components/responses/BadRequest400"
         "401":
-          $ref: "#/components/responses/Generic401"
+          $ref: "../common/CAMARA_common.yaml#/components/responses/Unauthenticated401"
         "403":
-          $ref: "#/components/responses/Generic403"
+          $ref: "../common/CAMARA_common.yaml#/components/responses/PermissionDenied403"
         "404":
-          $ref: "#/components/responses/NotFound404"
+          $ref: "../common/CAMARA_common.yaml#/components/responses/NotFound404"
         "429":
-          $ref: "#/components/responses/Generic429"
+          $ref: "../common/CAMARA_common.yaml#/components/responses/TooManyRequests429"
       security:
         - openId:
             - "qos-booking:device-qos-bookings:delete"
@@ -351,17 +351,17 @@ paths:
                 RETRIEVE_BOOKINGS_NO_ITEMS:
                   $ref: "#/components/examples/RETRIEVE_BOOKINGS_NO_ITEMS"
         "400":
-          $ref: "#/components/responses/Generic400"
+          $ref: "../common/CAMARA_common.yaml#/components/responses/BadRequest400"
         "401":
-          $ref: "#/components/responses/Generic401"
+          $ref: "../common/CAMARA_common.yaml#/components/responses/Unauthenticated401"
         "403":
-          $ref: "#/components/responses/Generic403"
+          $ref: "../common/CAMARA_common.yaml#/components/responses/PermissionDenied403"
         "404":
-          $ref: "#/components/responses/Generic404"
+          $ref: "../common/CAMARA_common.yaml#/components/responses/IdentifierNotFound404"
         "422":
-          $ref: "#/components/responses/Generic422"
+          $ref: "../common/CAMARA_common.yaml#/components/responses/DeviceIdentifier422"
         "429":
-          $ref: "#/components/responses/Generic429"
+          $ref: "../common/CAMARA_common.yaml#/components/responses/TooManyRequests429"
       security:
         - openId:
             - "qos-booking:device-qos-bookings:retrieve-by-device"
@@ -748,9 +748,6 @@ components:
         - TERMINATED
 
   responses:
-    Generic400:
-      $ref: '../common/CAMARA_common.yaml#/components/responses/Generic400'
-
     CreateBooking400:
       description: Bad Request when creating a QoS booking.
       headers:
@@ -804,70 +801,6 @@ components:
                 status: 400
                 code: INVALID_SINK
                 message: sink not valid for the specified protocol
-
-    Generic401:
-      $ref: '../common/CAMARA_common.yaml#/components/responses/Generic401'
-
-    Generic403:
-      $ref: '../common/CAMARA_common.yaml#/components/responses/Generic403'
-
-    Generic404:
-      $ref: '../common/CAMARA_common.yaml#/components/responses/Generic404'
-
-    NotFound404:
-      description: Not found
-      headers:
-        x-correlator:
-          $ref: "../common/CAMARA_common.yaml#/components/headers/x-correlator"
-      content:
-        application/json:
-          schema:
-            allOf:
-              - $ref: "../common/CAMARA_common.yaml#/components/schemas/ErrorInfo"
-              - type: object
-                properties:
-                  status:
-                    enum:
-                      - 404
-                  code:
-                    enum:
-                      - NOT_FOUND
-          examples:
-            GENERIC_404_NOT_FOUND:
-              description: Resource is not found
-              value:
-                status: 404
-                code: NOT_FOUND
-                message: The specified resource is not found.
-
-    BookingAlreadyExists409:
-      description: Trying to create a booking which already exists for this device
-      headers:
-        x-correlator:
-          $ref: "../common/CAMARA_common.yaml#/components/headers/x-correlator"
-      content:
-        application/json:
-          schema:
-            allOf:
-              - $ref: "../common/CAMARA_common.yaml#/components/schemas/ErrorInfo"
-              - type: object
-                properties:
-                  status:
-                    enum:
-                      - 409
-                  code:
-                    enum:
-                      - ALREADY_EXISTS
-          example:
-            status: 409
-            code: ALREADY_EXISTS
-            message: The booking that a client tried to create already exists for this device.
-
-    Generic410:
-      $ref: '../common/CAMARA_common.yaml#/components/responses/Generic410'
-
-    Generic422:
-      $ref: '../common/CAMARA_common.yaml#/components/responses/Generic422'
 
     BookingUnprocessableEntity422:
       description: Unprocessable Content
@@ -946,9 +879,6 @@ components:
                 status: 422
                 code: QOS_BOOKING.QOS_PROFILE_NOT_APPLICABLE
                 message: The requested QoS Profile is currently not available for booking creation.
-
-    Generic429:
-      $ref: '../common/CAMARA_common.yaml#/components/responses/Generic429'
 
   examples:
     EXAMPLE_CREATION_BODY:
