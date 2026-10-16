@@ -59,7 +59,7 @@ info:
 
     - If the request bookingId in getBookingById and deleteBooking operations does not exist in the current operator-managed resource, then the server will return an error with the `404 NOT_FOUND` error code.
 
-    - A QoS booking is a reservation for an App-flow between a specific device and a specific application server, a specific time window and, where relevant, a specific service area. An App-flow is expected to have at most one active booking at a time. If the client attempts to create a duplicate or overlapping booking for the same flow, then the server will return a `409 ALREADY_EXISTS` error code.
+    - A QoS booking is a reservation for an App-flow between a specific device and a specific application server, at a specific time window and, where relevant, for a specific service area. If the client attempts to create a duplicate or overlapping booking for the same flow, area and/or time window, then the server will return a `409 ALREADY_EXISTS` error code.
 
     - If the requested area is syntactically valid but cannot be accepted for QoS booking by the operator, for example because it is outside the supported coverage, then the server will return an error with `422 QOS_BOOKING.INVALID_AREA` error code.
     <!-- CAMARA:MANDATORY:identifying-device-from-access-token:END -->
