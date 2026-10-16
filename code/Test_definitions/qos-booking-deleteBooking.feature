@@ -69,7 +69,7 @@ Feature: CAMARA QoS Booking API, vwip - Operation deleteBooking
     Then an event is received at the address of the "$.sink" provided for createBooking
     And the event header "Authorization" is set to "Bearer " + the value of the property "$.sinkCredential.accessToken" provided for createBooking
     And the event header "Content-Type" is set to "application/cloudevents+json"
-    And the event body complies with the OAS schema at "/components/schemas/EventStatusChanged"
+    And the event body complies with the OAS schema at "#/components/schemas/EventStatusChanged"
     And the event body property "$.id" is unique
     And the event body property "$.type" is set to "org.camaraproject.qos-booking.v0.status-changed"
     And the event body property "$.data.bookingId" has the same value as createBooking response property "$.bookingId"

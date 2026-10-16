@@ -20,7 +20,7 @@ Feature: CAMARA QoS Booking API, vwip - Operation retrieveBookingByDevice
     And the header "Authorization" is set to a valid access token
     And the header "x-correlator" complies with the schema at "#/components/schemas/XCorrelator"
     # Properties not explicitly overwritten in the Scenarios can take any values compliant with the schema
-    And the request body is set by default to a request body compliant with the schema at "/components/schemas/RetrieveBookingByDevice"
+    And the request body is set by default to a request body compliant with the schema at "#/components/schemas/RetrieveBookingByDevice"
 
   # Response 200
 
@@ -32,7 +32,7 @@ Feature: CAMARA QoS Booking API, vwip - Operation retrieveBookingByDevice
     And the response header "Content-Type" is "application/json"
     And the response header "x-correlator" has same value as the request header "x-correlator"
     # The response has to comply with the generic response schema which is part of the spec
-    And the response body complies with the OAS schema at "/components/schemas/RetrieveBookingsOutput"
+    And the response body complies with the OAS schema at "#/components/schemas/RetrieveBookingsOutput"
     # Additionally any success response has to comply with some constraints beyond the schema compliance
     And in all items in the response, property "device" exists only if provided for createBooking, containing at most one identifier included in the request
     And in all items in the response, property "applicationServer" exists only if provided for createBooking and with the same value
@@ -80,14 +80,14 @@ Feature: CAMARA QoS Booking API, vwip - Operation retrieveBookingByDevice
 
     Examples:
       | device_identifier                | oas_spec_schema                             |
-      | $.device.phoneNumber             | /components/schemas/PhoneNumber             |
-      | $.device.ipv4Address             | /components/schemas/DeviceIpv4Address       |
-      | $.device.ipv6Address             | /components/schemas/DeviceIpv6Address       |
-      | $.device.networkAccessIdentifier | /components/schemas/NetworkAccessIdentifier |
+      | $.device.phoneNumber             | #/components/schemas/PhoneNumber             |
+      | $.device.ipv4Address             | #/components/schemas/DeviceIpv4Address       |
+      | $.device.ipv6Address             | #/components/schemas/DeviceIpv6Address       |
+      | $.device.networkAccessIdentifier | #/components/schemas/NetworkAccessIdentifier |
 
   @qos_booking_retrieveBookingByDevice_400.1_schema_not_compliant
   Scenario: Invalid Argument. Generic Syntax Exception
-    Given the request body is set to any value which is not compliant with the schema at "/components/schemas/RetrieveBookingByDevice"
+    Given the request body is set to any value which is not compliant with the schema at "#/components/schemas/RetrieveBookingByDevice"
     When the request "retrieveBookingByDevice" is sent
     Then the response status code is 400
     And the response header "x-correlator" has same value as the request header "x-correlator"
