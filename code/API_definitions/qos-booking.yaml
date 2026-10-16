@@ -61,6 +61,10 @@ info:
 
     - A QoS booking is a reservation for an App-flow between a specific device and a specific application server, at a specific time window and, where relevant, for a specific service area. If the client attempts to create a duplicate or overlapping booking for the same flow, area and/or time window, then the server will return a `409 ALREADY_EXISTS` error code.
 
+    - If the requested area type is not supported, then the server will return an error with `422 QOS_BOOKING.NOT_MANAGED_AREA_TYPE` error code.
+
+    - If the service cannot be provided in the requested area, then the server will return an error with `422 QOS_BOOKING.AREA_NOT_COVERED` error code.
+
     - If the requested area is syntactically valid but cannot be accepted for QoS booking by the operator, for example because it is outside the supported coverage, then the server will return an error with `422 QOS_BOOKING.INVALID_AREA` error code.
     <!-- CAMARA:MANDATORY:identifying-device-from-access-token:END -->
 
