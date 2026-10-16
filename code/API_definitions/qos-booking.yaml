@@ -406,12 +406,7 @@ components:
           allOf:
             - $ref: "#/components/schemas/PortsSpec"
         sink:
-          type: string
-          format: uri
-          pattern: ^https:\/\/.+$
-          maxLength: 2048
-          description: The address to which events shall be delivered, using the HTTP protocol.
-          example: "https://endpoint.example.com/sink"
+          $ref: "../common/CAMARA_event_common.yaml#/components/schemas/Sink"
         sinkCredential:
           $ref: "../common/CAMARA_event_common.yaml#/components/schemas/SinkCredential"
       required:
